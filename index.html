@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIBLIOTECA MÁGICA — CUENTOS INTERACTIVOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --amarillo:  #FFD93D;
+      --naranja:   #FF6B35;
+      --naranja2:  #FF9F1C;
+      --celeste:   #74C7EC;
+      --azul:      #3A86FF;
+      --verde:     #6BCB77;
+      --rosa:      #FF6B9D;
+      --violeta:   #C77DFF;
+      --blanco:    #FFFDF4;
+      --texto:     #2D2D2D;
+      --glow-color: rgba(255,217,61,0.0);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', cursive;
+      min-height: 100vh;
+      background: linear-gradient(160deg, #0a1f4e 0%, #0f2f6e 25%, #1a5fb4 55%, #2a7fc4 80%, #4a9fd4 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+      padding-bottom: 40px;
+      transition: background 0.9s ease;
+    }
+
+    /* ── GLOW DINÁMICO DE FONDO ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 55%, var(--glow-color) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      transition: background 0.9s ease;
+    }
+
+    /* ── ESTRELLAS ── */
+    .estrellas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .estrella {
+      position: absolute;
+      left: var(--x); top: var(--y);
+      font-size: calc(16px * var(--s));
+      animation: twinkle 3s infinite ease-in-out var(--d);
+      opacity: 0.7;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity:0.7; transform:scale(1); }
+      50%      { opacity:0.2; transform:scale(0.6); }
+    }
+
+    /* ── ENCABEZADO ── */
+    .encabezado {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 36px 20px 16px;
+      width: 100%;
+    }
+
+    .encabezado .icono-top {
+      font-size: 52px;
+      display: block;
+      margin-bottom: 8px;
+      animation: float 2.8s ease-in-out infinite;
+    }
+
+    .titulo-main {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(28px, 5vw, 52px);
+      color: var(--amarillo);
+      text-shadow: 4px 4px 0 var(--naranja), 0 0 30px rgba(255,217,61,0.5);
+      letter-spacing: 3px;
+      line-height: 1.1;
+    }
+
+    .subtitulo {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(14px, 2vw, 20px);
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 4px;
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+
+    /* ── INSTRUCCIÓN ── */
+    .instruccion {
+      font-family: 'Fredoka One', cursive;
+      color: rgba(255,255,255,0.55);
+      font-size: 15px;
+      letter-spacing: 2px;
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── ESCENA 3D ── */
+    .escena {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1200px;
+      height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+      perspective: 1600px;
+    }
+
+    .carrusel {
+      width: 480px;
+      height: 270px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.85s cubic-bezier(.77,0,.18,1);
+    }
+
+    /* ── TARJETA CUENTO ── */
+    .libro {
+      position: absolute;
+      width: 480px;
+      height: 270px;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: box-shadow 0.3s, transform 0.15s;
+      backface-visibility: hidden;
+    }
+
+    .libro-portada {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.55), inset 0 0 0 3px rgba(255,255,255,0.12);
+    }
+
+    /* fondo difuminado */
+    .libro-img-blur {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: blur(14px) brightness(0.4) saturate(1.4);
+      transform: scale(1.08);
+      z-index: 0;
+    }
+
+    /* imagen principal */
+    .libro-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      z-index: 1;
+      display: block;
+    }
+
+    /* overlay degradado */
+    .libro-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0.78) 100%);
+      z-index: 2;
+    }
+
+    /* borde de color arriba */
+    .libro-portada::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      z-index: 5;
+      border-radius: 16px 16px 0 0;
+    }
+
+    /* número del cuento */
+    .libro-num {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 4;
+      font-family: 'Fredoka One', cursive;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.85);
+      background: rgba(0,0,0,0.4);
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* emoji decorativo */
+    .libro-emoji {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      z-index: 4;
+      font-size: 28px;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+      animation: float 2.5s ease-in-out infinite;
+    }
+
+    .libro-info {
+      position: absolute;
+      bottom: 0;
+      left: 0; right: 0;
+      z-index: 4;
+      padding: 14px 20px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .libro-titulo {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(14px, 1.6vw, 18px);
+      line-height: 1.2;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+      letter-spacing: 0.5px;
+      flex: 1;
+    }
+
+    .libro-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: linear-gradient(145deg, var(--amarillo), var(--naranja2));
+      color: #2D2D2D;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #c4500a, 0 6px 16px rgba(0,0,0,0.4);
+      transition: transform 0.12s, box-shadow 0.12s;
+      letter-spacing: 1px;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .libro-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #c4500a, 0 10px 20px rgba(0,0,0,0.45);
+    }
+
+    .libro-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #c4500a;
+    }
+
+    /* ── COLORES POR CUENTO ── */
+    .libro:nth-child(1) .libro-portada::before { background: linear-gradient(90deg,#FFD93D,#FF9F1C,#FF6B35); }
+    .libro:nth-child(2) .libro-portada::before { background: linear-gradient(90deg,#74C7EC,#3A86FF,#6BCB77); }
+    .libro:nth-child(3) .libro-portada::before { background: linear-gradient(90deg,#FF6B9D,#C77DFF,#FF9F1C); }
+    .libro:nth-child(4) .libro-portada::before { background: linear-gradient(90deg,#6BCB77,#74C7EC,#FFD93D); }
+    .libro:nth-child(5) .libro-portada::before { background: linear-gradient(90deg,#C77DFF,#FF6B9D,#3A86FF); }
+    .libro:nth-child(6) .libro-portada::before { background: linear-gradient(90deg,#FF6B35,#FFD93D,#6BCB77); }
+
+    .libro:nth-child(1) .libro-img-blur { background: linear-gradient(145deg,#2a4a8a,#1a3060); }
+    .libro:nth-child(2) .libro-img-blur { background: linear-gradient(145deg,#1a6e4a,#0e4830); }
+    .libro:nth-child(3) .libro-img-blur { background: linear-gradient(145deg,#6a2060,#3a1040); }
+    .libro:nth-child(4) .libro-img-blur { background: linear-gradient(145deg,#1a5a6e,#0e3848); }
+    .libro:nth-child(5) .libro-img-blur { background: linear-gradient(145deg,#5a1a6a,#3a0e4a); }
+    .libro:nth-child(6) .libro-img-blur { background: linear-gradient(145deg,#6e3a1a,#4a200e); }
+
+    /* ── SOMBRA DEL SUELO ── */
+    .carrusel-shadow {
+      position: absolute;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 520px;
+      height: 36px;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.45) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── CONTROLES ── */
+    .controles {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 50px;
+    }
+
+    /* ── INDICADOR PUNTITOS ── */
+    .indicador {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      border: 2px solid rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .dot.active {
+      background: var(--amarillo);
+      border-color: var(--naranja);
+      transform: scale(1.35);
+      box-shadow: 0 0 10px var(--amarillo);
+    }
+
+    /* ── TÍTULO DEL CUENTO ACTIVO ── */
+    .titulo-activo {
+      position: relative;
+      z-index: 2;
+      margin-top: 28px;
+      text-align: center;
+      min-height: 60px;
+    }
+
+    .titulo-activo-texto {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(18px, 2.5vw, 26px);
+      color: var(--amarillo);
+      text-shadow: 2px 2px 0 var(--naranja), 0 0 20px rgba(255,217,61,0.4);
+      letter-spacing: 1px;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .titulo-activo-num {
+      font-family: 'Fredoka One', cursive;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 4px;
+      margin-top: 4px;
+    }
+
+    /* ── CURSOR TYPEWRITER ── */
+    .tw-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: var(--amarillo);
+      margin-left: 3px;
+      vertical-align: middle;
+      border-radius: 1px;
+      animation: blink-cursor 0.75s step-end infinite;
+    }
+    @keyframes blink-cursor {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ── ANIMACIONES ── */
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-7px); }
+    }
+
+    /* ── PARTÍCULAS ── */
+    .particula {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
+      font-size: 18px;
+      animation: particula-volar var(--dur) ease-out forwards;
+      transform-origin: center;
+    }
+
+    @keyframes particula-volar {
+      0%   { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3) rotate(var(--rot)); }
+    }
+
+    /* ── CONFETTI ── */
+    .confetti-piece {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      width: var(--w);
+      height: var(--h);
+      background: var(--col);
+      border-radius: var(--br);
+      animation: confetti-caer var(--dur) ease-out forwards;
+      top: var(--ty);
+      left: var(--tx);
+    }
+
+    @keyframes confetti-caer {
+      0%   { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
+      80%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(var(--fx), var(--fy)) rotate(var(--rot)) scale(0.5); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .escena { height: 300px; }
+      .carrusel { width: 320px; height: 180px; }
+      .libro { width: 320px; height: 180px; }
+      .libro-titulo { font-size: 13px; }
+      .libro-btn { font-size: 12px; padding: 6px 12px; }
+    }
+
+    .libro.activo-centro {
+      filter: drop-shadow(0 0 28px rgba(255,217,61,0.5));
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ESTRELLAS -->
+  <div class="estrellas" aria-hidden="true">
+    <span class="estrella" style="--x:4%;--y:7%;--s:1.2;--d:0s">⭐</span>
+    <span class="estrella" style="--x:91%;--y:10%;--s:0.9;--d:0.4s">✨</span>
+    <span class="estrella" style="--x:12%;--y:75%;--s:1.1;--d:0.9s">⭐</span>
+    <span class="estrella" style="--x:88%;--y:70%;--s:0.8;--d:1.4s">✨</span>
+    <span class="estrella" style="--x:50%;--y:4%;--s:1;--d:0.7s">⭐</span>
+    <span class="estrella" style="--x:2%;--y:48%;--s:0.7;--d:1.9s">✨</span>
+    <span class="estrella" style="--x:97%;--y:42%;--s:1.3;--d:0.2s">⭐</span>
+    <span class="estrella" style="--x:25%;--y:20%;--s:0.8;--d:1.2s">✨</span>
+    <span class="estrella" style="--x:75%;--y:85%;--s:0.9;--d:0.6s">⭐</span>
+    <span class="estrella" style="--x:60%;--y:15%;--s:0.7;--d:2.2s">✨</span>
+  </div>
+
+  <!-- ENCABEZADO -->
+  <header class="encabezado">
+    <span class="icono-top">📚</span>
+    <h1 class="titulo-main">BIBLIOTECA MÁGICA</h1>
+    <p class="subtitulo">Cuentos Interactivos · Primer Grado</p>
+    <p class="instruccion">
+      <span>👈</span> TOCÁ LAS TARJETAS PARA EXPLORAR <span>👉</span>
+    </p>
+  </header>
+
+  <!-- ESCENA 3D -->
+  <div class="escena" aria-label="Carrusel de cuentos">
+    <div class="carrusel" id="carrusel">
+
+      <!-- CUENTO 1 -->
+      <div class="libro" data-idx="0" data-titulo="LA MOCHILA QUE SABÍA ESPERAR" data-num="CUENTO 1"
+           data-glow="255,180,50" data-href="https://material-icei.github.io/cuentosparaprimero/la-mochila4/index.html">
+        <div class="libro-portada">
+          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/la-mochila4/momento1.png')"></div>
+          <img class="libro-img" src="https://material-icei.github.io/cuentosparaprimero/la-mochila4/momento1.png" alt="Cuento 1">
+          <div class="libro-overlay"></div>
+          <span class="libro-num">CUENTO 01</span>
+          <span class="libro-emoji" style="animation-delay:0s">🎒</span>
+          <div class="libro-info">
+            <p class="libro-titulo">LA MOCHILA QUE SABÍA ESPERAR</p>
+            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/la-mochila4/index.html">
+              <span>▶</span> LEER CUENTO
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUENTO 2 -->
+      <div class="libro" data-idx="1" data-titulo="LA SEÑO QUE ABRÍA PUERTAS" data-num="CUENTO 2"
+           data-glow="100,200,240" data-href="https://material-icei.github.io/cuentosparaprimero/la-srita/index.html">
+        <div class="libro-portada">
+          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/la-srita/momento1.png')"></div>
+          <img class="libro-img" src="https://material-icei.github.io/cuentosparaprimero/la-srita/momento1.png" alt="Cuento 2">
+          <div class="libro-overlay"></div>
+          <span class="libro-num">CUENTO 02</span>
+          <span class="libro-emoji" style="animation-delay:0.3s">🌟</span>
+          <div class="libro-info">
+            <p class="libro-titulo">LA SEÑO QUE ABRÍA PUERTAS</p>
+            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/la-srita/index.html">
+              <span>▶</span> LEER CUENTO
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUENTO 3 -->
+      <div class="libro" data-idx="2" data-titulo="EL AULA QUE CAMBIABA CUANDO ALGUIEN LEÍA" data-num="CUENTO 3"
+           data-glow="200,100,255" data-href="https://material-icei.github.io/cuentosparaprimero/el-aula/index.html">
+        <div class="libro-portada">
+          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/el-aula/momento1.png')"></div>
+          <img class="libro-img" src="https://material-icei.github.io/cuentosparaprimero/el-aula/momento1.png" alt="Cuento 3">
+          <div class="libro-overlay"></div>
+          <span class="libro-num">CUENTO 03</span>
+          <span class="libro-emoji" style="animation-delay:0.6s">🦋</span>
+          <div class="libro-info">
+            <p class="libro-titulo">EL AULA QUE CAMBIABA CUANDO ALGUIEN LEÍA</p>
+            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/el-aula/index.html">
+              <span>▶</span> LEER CUENTO
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUENTO 4 -->
+      <div class="libro" data-idx="3" data-titulo="NUESTRO PRIMER DÍA EN PRIMERO" data-num="CUENTO 4"
+           data-glow="100,220,120" data-href="https://material-icei.github.io/cuentosparaprimero/primer-dia/index.html">
+        <div class="libro-portada">
+          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/primer-dia/momento1.png')"></div>
+          <img class="libro-img" src="https://material-icei.github.io/cuentosparaprimero/primer-dia/momento1.png" alt="Cuento 4">
+          <div class="libro-overlay"></div>
+          <span class="libro-num">CUENTO 04</span>
+          <span class="libro-emoji" style="animation-delay:0.9s">🌈</span>
+          <div class="libro-info">
+            <p class="libro-titulo">NUESTRO PRIMER DÍA EN PRIMERO</p>
+            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/primer-dia/index.html">
+              <span>▶</span> LEER CUENTO
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUENTO 5 -->
+      <div class="libro" data-idx="4" data-titulo="EL RECREO TENÍA TIEMPO" data-num="CUENTO 5"
+           data-glow="255,100,180" data-href="https://material-icei.github.io/cuentosparaprimero/el-recreo/index.html">
+        <div class="libro-portada">
+          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/el-recreo/momento1.png')"></div>
+          <img class="libro-img" src="https://material-icei.github.io/cuentosparaprimero/el-recreo/momento1.png" alt="Cuento 5">
+          <div class="libro-overlay"></div>
+          <span class="libro-num">CUENTO 05</span>
+          <span class="libro-emoji" style="animation-delay:1.2s">🎨</span>
+          <div class="libro-info">
+            <p class="libro-titulo">EL RECREO TENÍA TIEMPO</p>
+            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/el-recreo/index.html">
+              <span>▶</span> LEER CUENTO
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUENTO 6 -->
+      <div class="libro" data-idx="5" data-titulo="LA MOCHILA PESABA DISTINTO" data-num="CUENTO 6"
+           data-glow="255,140,60" data-href="https://material-icei.github.io/cuentosparaprimero/mochila_distinta/index.html">
+        <div class="libro-portada">
+          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/mochila_distinta/momento1.png')"></div>
+          <img class="libro-img" src="https://material-icei.github.io/cuentosparaprimero/mochila_distinta/momento1.png" alt="Cuento 6">
+          <div class="libro-overlay"></div>
+          <span class="libro-num">CUENTO 06</span>
+          <span class="libro-emoji" style="animation-delay:1.5s">🚀</span>
+          <div class="libro-info">
+            <p class="libro-titulo">LA MOCHILA PESABA DISTINTO</p>
+            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/mochila_distinta/index.html">
+              <span>▶</span> LEER CUENTO
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="carrusel-shadow"></div>
+  </div>
+
+  <!-- CONTROLES -->
+  <nav class="controles" aria-label="Navegación del carrusel">
+    <div class="indicador" id="indicador">
+      <span class="dot active" data-idx="0"></span>
+      <span class="dot" data-idx="1"></span>
+      <span class="dot" data-idx="2"></span>
+      <span class="dot" data-idx="3"></span>
+      <span class="dot" data-idx="4"></span>
+      <span class="dot" data-idx="5"></span>
+    </div>
+  </nav>
+
+  <!-- TÍTULO ACTIVO -->
+  <div class="titulo-activo">
+    <div class="titulo-activo-texto" id="tituloActivo">
+      <span id="twText"></span><span class="tw-cursor" id="twCursor"></span>
+    </div>
+    <div class="titulo-activo-num" id="numActivo">CUENTO 01 DE 06</div>
+  </div>
+
+  <script>
+    const TOTAL    = 6;
+    const carrusel = document.getElementById('carrusel');
+    const libros   = document.querySelectorAll('.libro');
+    const dots     = document.querySelectorAll('.dot');
+    const twText   = document.getElementById('twText');
+    const twCursor = document.getElementById('twCursor');
+    const numEl    = document.getElementById('numActivo');
+
+    let actual   = 0;
+    let animando = false;
+    let twTimer  = null;
+
+    /* ══════════════════════════════════════
+       GLOW DINÁMICO POR CUENTO
+    ══════════════════════════════════════ */
+    function aplicarGlow(idx) {
+      const libro = libros[idx];
+      const rgb   = libro.dataset.glow || '255,217,61';
+      document.documentElement.style.setProperty('--glow-color', `rgba(${rgb},0.18)`);
+    }
+
+    /* ══════════════════════════════════════
+       TYPEWRITER
+    ══════════════════════════════════════ */
+    function typewriter(texto) {
+      if (twTimer) clearTimeout(twTimer);
+      twText.textContent = '';
+      let i = 0;
+      function paso() {
+        if (i < texto.length) {
+          twText.textContent += texto[i++];
+          twTimer = setTimeout(paso, 38);
+        }
+      }
+      paso();
+    }
+
+    /* ══════════════════════════════════════
+       PARTÍCULAS AL GIRAR
+    ══════════════════════════════════════ */
+    const EMOJIS_PARTICULAS = ['✨','⭐','🌟','💫','🔮','🌈','🎈','🎀'];
+
+    function lanzarParticulas() {
+      const escena = document.querySelector('.escena');
+      const rect   = escena.getBoundingClientRect();
+      const cx     = rect.left + rect.width  / 2;
+      const cy     = rect.top  + rect.height / 2;
+      const count  = 14;
+
+      for (let i = 0; i < count; i++) {
+        const p   = document.createElement('span');
+        p.className = 'particula';
+        const angulo = (360 / count) * i + Math.random() * 20;
+        const dist   = 90 + Math.random() * 140;
+        const rad    = (angulo * Math.PI) / 180;
+        const dx     = Math.cos(rad) * dist;
+        const dy     = Math.sin(rad) * dist;
+        const dur    = 0.55 + Math.random() * 0.45;
+        const emoji  = EMOJIS_PARTICULAS[Math.floor(Math.random() * EMOJIS_PARTICULAS.length)];
+
+        p.textContent = emoji;
+        p.style.cssText = `
+          left: ${cx}px; top: ${cy}px;
+          --dx: ${dx}px; --dy: ${dy}px;
+          --dur: ${dur}s;
+          --rot: ${-180 + Math.random() * 360}deg;
+          font-size: ${14 + Math.random() * 12}px;
+          margin-left: -10px; margin-top: -10px;
+        `;
+
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), dur * 1000 + 100);
+      }
+    }
+
+    /* ══════════════════════════════════════
+       CONFETTI AL ABRIR CUENTO
+    ══════════════════════════════════════ */
+    const CONFETTI_COLORES = [
+      '#FFD93D','#FF6B35','#FF9F1C','#74C7EC',
+      '#3A86FF','#6BCB77','#FF6B9D','#C77DFF',
+      '#ffffff','#FFF176'
+    ];
+    const CONFETTI_SHAPES = ['50%','4px','2px / 8px'];
+
+    function lanzarConfetti(originX, originY) {
+      const count = 60;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+
+        const col  = CONFETTI_COLORES[Math.floor(Math.random() * CONFETTI_COLORES.length)];
+        const shape= CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)];
+        const w    = 8 + Math.random() * 8;
+        const h    = 8 + Math.random() * 8;
+        const angulo = Math.random() * 360;
+        const dist   = 80 + Math.random() * 220;
+        const rad    = (angulo * Math.PI) / 180;
+        const fx     = Math.cos(rad) * dist;
+        const fy     = Math.sin(rad) * dist - 60; // más hacia arriba
+        const dur    = 0.7 + Math.random() * 0.7;
+
+        p.style.cssText = `
+          --col: ${col}; --w: ${w}px; --h: ${h}px;
+          --br: ${shape}; --dur: ${dur}s;
+          --tx: ${originX - w/2}px; --ty: ${originY - h/2}px;
+          --fx: ${fx}px; --fy: ${fy}px;
+          --rot: ${-360 + Math.random() * 720}deg;
+        `;
+
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), dur * 1000 + 200);
+      }
+    }
+
+    /* ══════════════════════════════════════
+       POSICIONAMIENTO 3D
+    ══════════════════════════════════════ */
+    const RADIO = 680;
+
+    function anguloPorIndex(i) { return (360 / TOTAL) * i; }
+
+    function posicionar() {
+      libros.forEach((libro, i) => {
+        const angulo = anguloPorIndex(i) - anguloPorIndex(actual);
+        const rad    = (angulo * Math.PI) / 180;
+        const x      = Math.sin(rad) * RADIO;
+        const z      = Math.cos(rad) * RADIO - RADIO;
+        const escala = 0.55 + 0.45 * ((Math.cos(rad) + 1) / 2);
+        const opac   = 0.35 + 0.65 * ((Math.cos(rad) + 1) / 2);
+        const anguloNorm = ((angulo % 360) + 360) % 360;
+        const esCentro   = anguloNorm < 5 || anguloNorm > 355;
+        // Tarjetas muy por detrás (opuestas al frente) no son clickeables
+        const esOculta   = anguloNorm > 120 && anguloNorm < 240;
+
+        libro.style.transform     = `translateX(${x}px) translateZ(${z}px) scale(${escala})`;
+        libro.style.opacity       = opac;
+        libro.style.zIndex        = Math.round(escala * 100);
+        libro.style.pointerEvents = esOculta ? 'none' : 'auto';
+        libro.style.cursor        = esCentro ? 'default' : 'pointer';
+        libro.classList.toggle('activo-centro', esCentro);
+      });
+    }
+
+    /* ══════════════════════════════════════
+       ACTUALIZAR ESTADO
+    ══════════════════════════════════════ */
+    function actualizar(dir, conParticulas = true) {
+      if (animando) return;
+      animando = true;
+
+      dots.forEach((d, i) => d.classList.toggle('active', i === actual));
+
+      const libroActual = libros[actual];
+      const titulo = libroActual.dataset.titulo;
+
+      // Typewriter con fade
+      twText.style.opacity = '0';
+      setTimeout(() => {
+        twText.style.opacity = '1';
+        typewriter(titulo);
+        numEl.textContent = `CUENTO ${String(actual + 1).padStart(2,'0')} DE 06`;
+      }, 180);
+
+      // Glow dinámico
+      aplicarGlow(actual);
+
+      // Partículas
+      if (conParticulas) lanzarParticulas();
+
+      posicionar();
+      setTimeout(() => { animando = false; }, 850);
+    }
+
+    function girar(dir) {
+      actual = (actual + dir + TOTAL) % TOTAL;
+      actualizar(dir);
+    }
+
+    /* ══════════════════════════════════════
+       CONFETTI AL HACER CLIC EN "LEER CUENTO"
+    ══════════════════════════════════════ */
+    document.querySelectorAll('.libro-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const rect = btn.getBoundingClientRect();
+        const ox   = rect.left + rect.width  / 2;
+        const oy   = rect.top  + rect.height / 2;
+        lanzarConfetti(ox, oy);
+        // Dejar navegar después de un pequeño delay para ver el efecto
+        e.preventDefault();
+        const href = btn.getAttribute('href');
+        setTimeout(() => { window.location.href = href; }, 700);
+      });
+    });
+
+    /* ── Botones ── */
+    // (navegación por clic en tarjetas laterales — ver abajo)
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        if (animando || i === actual) return;
+        const dir = i > actual ? 1 : -1;
+        actual = i;
+        actualizar(dir);
+      });
+    });
+
+    /* ── Clic en tarjeta lateral: avanzar o retroceder ── */
+    libros.forEach((libro, i) => {
+      libro.addEventListener('click', (e) => {
+        if (animando) return;
+        if (i === actual) return; // la tarjeta central solo se opera con el botón LEER
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Determinar dirección según posición angular visual
+        const anguloRel = ((anguloPorIndex(i) - anguloPorIndex(actual)) % 360 + 360) % 360;
+        // 0–180 → está a la derecha → avanzar (+1)
+        // 180–360 → está a la izquierda → retroceder (-1)
+        const dir = anguloRel <= 180 ? 1 : -1;
+        actual = i;
+        actualizar(dir);
+      });
+    });
+
+    /* ── Teclado ── */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); girar(1);  }
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); girar(-1); }
+    });
+
+    /* ── Swipe touch ── */
+    let touchStartX = null;
+    document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    document.addEventListener('touchend', e => {
+      if (touchStartX === null) return;
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) girar(diff > 0 ? 1 : -1);
+      touchStartX = null;
+    });
+
+    /* ── Inicio ── */
+    posicionar();
+    actualizar(0, false); // sin partículas al inicio
+  </script>
+
+</body>
+</html>

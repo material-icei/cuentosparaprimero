@@ -1,0 +1,454 @@
+/* ============================================================
+   VARIABLES Y RESET
+============================================================ */
+:root {
+  --amarillo:  #FFD93D;
+  --naranja:   #FF6B35;
+  --naranja2:  #FF9F1C;
+  --celeste:   #74C7EC;
+  --azul:      #3A86FF;
+  --verde:     #6BCB77;
+  --blanco:    #FFFDF4;
+  --texto:     #2D2D2D;
+  --radio:     24px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ============================================================
+   FONDO
+============================================================ */
+body {
+  font-family: 'Nunito', 'Comic Sans MS', cursive;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #0f2f6e 0%, #1a5fb4 40%, #3584c5 70%, #6fb3d3 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px 20px;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   ESTRELLAS
+============================================================ */
+.estrellas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+.estrella {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  font-size: calc(18px * var(--s));
+  animation: twinkle 3s infinite ease-in-out var(--d);
+  opacity: 0.8;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50%       { opacity: 0.3; transform: scale(0.7); }
+}
+
+/* ============================================================
+   ENCABEZADO
+============================================================ */
+.encabezado {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.titulo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.titulo-icon {
+  font-size: 36px;
+  animation: float 2.5s ease-in-out infinite;
+}
+.titulo-icon:last-child { animation-delay: 1.2s; }
+
+.titulo {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(22px, 4vw, 38px);
+  color: var(--amarillo);
+  text-shadow: 3px 3px 0 var(--naranja), 0 0 20px rgba(255,217,61,0.5);
+  letter-spacing: 2px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* ============================================================
+   INDICADOR DE PÁGINAS
+============================================================ */
+.indicador {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  border: 2px solid rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dot.active {
+  background: var(--amarillo);
+  border-color: var(--naranja);
+  transform: scale(1.3);
+  box-shadow: 0 0 8px var(--amarillo);
+}
+
+/* ============================================================
+   ESCENARIO — contenedor con perspectiva
+============================================================ */
+.escenario {
+  position: relative;
+  z-index: 1;
+  width: 860px;
+  height: 460px;
+  perspective: 1400px;
+}
+
+/* ============================================================
+   TARJETAS
+============================================================ */
+.card {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: none;
+}
+
+.card.active  { display: block; }
+.card.salir   { display: block; } /* visible mientras anima la salida */
+
+/* ---- Animaciones de cambio de página ---- */
+/* Página que sale: gira hacia la izquierda (se "da vuelta") */
+.card.anim-salir {
+  animation: girarSalir 0.7s cubic-bezier(.77,0,.18,1) forwards;
+}
+
+/* Página que entra: aparece desde la derecha con un ligero giro */
+.card.anim-entrar {
+  animation: girarEntrar 0.7s cubic-bezier(.77,0,.18,1) forwards;
+}
+
+@keyframes girarSalir {
+  0%   { transform: rotateY(0deg);     opacity: 1; }
+  100% { transform: rotateY(-90deg);   opacity: 0; }
+}
+
+@keyframes girarEntrar {
+  0%   { transform: rotateY(90deg);    opacity: 0; }
+  100% { transform: rotateY(0deg);     opacity: 1; }
+}
+
+/* Animaciones inversas para botón ANTERIOR */
+.card.anim-salir-inv {
+  animation: girarSalirInv 0.7s cubic-bezier(.77,0,.18,1) forwards;
+}
+.card.anim-entrar-inv {
+  animation: girarEntrarInv 0.7s cubic-bezier(.77,0,.18,1) forwards;
+}
+
+@keyframes girarSalirInv {
+  0%   { transform: rotateY(0deg);    opacity: 1; }
+  100% { transform: rotateY(90deg);   opacity: 0; }
+}
+@keyframes girarEntrarInv {
+  0%   { transform: rotateY(-90deg);  opacity: 0; }
+  100% { transform: rotateY(0deg);    opacity: 1; }
+}
+
+/* ============================================================
+   CARAS DE LA TARJETA
+============================================================ */
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.card-face {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radio);
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 4px rgba(255,255,255,0.15);
+}
+
+/* El reverso no se usa para navegación pero sirve como fondo decorativo
+   durante la animación de salida */
+.card-back {
+  display: none; /* oculto, solo el frente es visible */
+}
+
+/* ============================================================
+   FRENTE — texto + imagen
+============================================================ */
+.card-front {
+  background: var(--blanco);
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+
+/* Borde arcoíris superior */
+.card-front::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--naranja), var(--amarillo), var(--verde), var(--celeste), var(--azul));
+  border-radius: var(--radio) var(--radio) 0 0;
+  z-index: 2;
+}
+
+/* ---- Lado texto ---- */
+.lado-texto {
+  width: 50%;
+  padding: 30px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #fff9ee 0%, #fff3cd 100%);
+}
+
+.lado-texto p {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(16px, 2.2vw, 22px);
+  line-height: 1.45;
+  color: var(--texto);
+}
+
+/* ============================================================
+   LADO IMAGEN — con video overlay
+============================================================ */
+.lado-imagen {
+  width: 50%;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Imagen base */
+.lado-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.lado-imagen:hover img {
+  transform: scale(1.04);
+}
+
+/* ---- Video overlay (encima de la imagen) ---- */
+.lado-imagen video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  pointer-events: none;        /* no intercepta clics cuando está oculto */
+  transition: opacity 0.3s ease;
+  z-index: 3;
+}
+
+/* Cuando el video está activo: visible y recibe clics */
+.lado-imagen.video-activo video {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Ocultar imagen de fondo mientras el video está activo */
+.lado-imagen.video-activo img {
+  transform: scale(1);
+}
+
+/* ---- Botón play (visible sobre la imagen) ---- */
+.play-btn {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52px;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.08);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: 0 var(--radio) var(--radio) 0;
+}
+
+/* Mostrar botón play al hacer hover sobre la imagen */
+.lado-imagen:hover .play-btn {
+  opacity: 1;
+}
+
+/* Ocultar botón play cuando el video está reproduciendo */
+.lado-imagen.video-activo .play-btn {
+  opacity: 0;
+}
+
+/* ============================================================
+   HINT
+============================================================ */
+.hint {
+  position: relative;
+  z-index: 1;
+  font-family: 'Fredoka One', cursive;
+  font-size: 16px;
+  color: rgba(255,255,255,0.8);
+  background: rgba(0,0,0,0.2);
+  padding: 6px 20px;
+  border-radius: 30px;
+  transition: opacity 0.5s;
+}
+
+.hint.oculto { opacity: 0; pointer-events: none; }
+
+/* ============================================================
+   BOTONES DE NAVEGACIÓN
+============================================================ */
+.controls {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 24px;
+  margin-top: 4px;
+}
+
+.controls button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(145deg, var(--naranja2), var(--naranja));
+  color: #fff;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 50px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #c4500a, 0 8px 20px rgba(0,0,0,0.3);
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.controls button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #c4500a, 0 12px 24px rgba(0,0,0,0.35);
+}
+
+.controls button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #c4500a, 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.btn-icon { font-size: 22px; }
+
+/* ============================================================
+   PANTALLA FINAL
+============================================================ */
+.pantalla-final {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(160deg, #0f2f6e 0%, #1a5fb4 40%, #3584c5 70%, #6fb3d3 100%);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.final-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: entradaFinal 0.8s ease;
+}
+
+@keyframes entradaFinal {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.final-card {
+  border-radius: var(--radio);
+  overflow: hidden;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.5), 0 0 0 5px rgba(255,255,255,0.15);
+}
+
+.pantalla-final video {
+  width: 800px;
+  height: 450px;
+  object-fit: cover;
+  display: block;
+}
+
+.mensaje-final {
+  font-family: 'Fredoka One', cursive;
+  color: var(--amarillo);
+  font-size: 30px;
+  text-shadow: 2px 2px 0 var(--naranja), 0 0 20px rgba(255,217,61,0.6);
+  opacity: 0;
+  transform: translateY(15px);
+  animation: aparecerTexto 1s 0.8s ease forwards;
+}
+
+@keyframes aparecerTexto {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.btn-volver {
+  background: linear-gradient(145deg, var(--verde), #4da85a);
+  color: #fff;
+  border: none;
+  padding: 14px 34px;
+  border-radius: 50px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #2f7a38, 0 10px 20px rgba(0,0,0,0.3);
+  transition: transform 0.1s, box-shadow 0.1s;
+  opacity: 0;
+  animation: aparecerTexto 1s 1.5s ease forwards;
+}
+
+.btn-volver:hover  { transform: translateY(-2px); }
+.btn-volver:active { transform: translateY(3px); box-shadow: 0 2px 0 #2f7a38; }
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 920px) {
+  .escenario { width: 98vw; height: auto; aspect-ratio: 860/460; }
+  .titulo    { font-size: 20px; }
+  .lado-texto p { font-size: 14px; }
+}

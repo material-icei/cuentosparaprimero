@@ -1,0 +1,192 @@
+body{
+  margin:0;
+  font-family:'Comic Sans MS', sans-serif;
+  background: linear-gradient(#a8e6ff, #fff3cd);
+  text-align:center;
+}
+
+.titulo{
+  margin-top:15px;
+  color:#ff7a00;
+}
+
+.book{
+  width:700px;
+  height:420px;
+  margin:20px auto;
+  perspective:1200px;
+  position:relative;
+}
+
+.card{
+  width:100%;
+  height:100%;
+  position:absolute;
+  display:none;
+}
+
+.card.active{
+  display:block;
+}
+
+.card-inner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s;
+}
+
+.card.flipped .card-inner{
+  transform: rotateY(180deg);
+}
+
+.card-face{
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:20px;
+  backface-visibility:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+  background:white;
+  display:flex;
+  overflow:hidden;
+}
+
+/* FRENTE */
+.card-front{
+  flex-direction:row;
+}
+
+.lado-texto{
+  width:50%;
+  padding:25px;
+  text-align:left;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.lado-texto p{
+  font-size:18px;
+  line-height:1.4;
+}
+
+/* IMAGEN DERECHA */
+.lado-imagen{
+  width:50%;
+}
+
+.lado-imagen img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* REVERSO VIDEO COMPLETO */
+.card-back{
+  transform: rotateY(180deg);
+  justify-content:center;
+  align-items:center;
+}
+
+.card-back video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* BOTONES */
+.controls{
+  margin-top:15px;
+}
+
+button{
+  background:#ff7a00;
+  color:white;
+  border:none;
+  padding:12px 20px;
+  margin:5px;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#ff5500;
+}
+
+
+/* PANTALLA FINAL */
+.pantalla-final{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  
+  /* mismo fondo general que el sitio */
+  background: linear-gradient(#a8e6ff, #fff3cd);
+
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+/* VIDEO CON ESTILO DE TARJETA */
+.pantalla-final video{
+  width:700px;
+  height:420px;
+  object-fit:cover;
+
+  /* estilo idéntico a las tarjetas */
+  background:white;
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* CONTENEDOR FINAL */
+.final-contenido{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:15px;
+}
+
+/* MENSAJE FINAL */
+.mensaje-final{
+  font-family:'Comic Sans MS', sans-serif;
+  color:#ff7a00;             /* mismo color que .titulo */
+  font-size:26px;
+  margin:0;
+}
+
+
+/* ANIMACIÓN SUAVE DEL MENSAJE FINAL */
+.mensaje-final{
+  font-family:'Comic Sans MS', sans-serif;
+  color:#ff7a00;
+  font-size:26px;
+  margin:0;
+
+  /* estado inicial oculto */
+  opacity:0;
+  transform: translateY(15px);
+
+  /* animación */
+  animation: aparecerTexto 1.2s ease forwards;
+  animation-delay: 0.6s; /* espera a que cargue el video */
+}
+
+/* KEYFRAMES */
+@keyframes aparecerTexto{
+  from{
+    opacity:0;
+    transform: translateY(15px);
+  }
+  to{
+    opacity:1;
+    transform: translateY(0);
+  }
+}

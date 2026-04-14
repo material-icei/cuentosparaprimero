@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>NEL RECREO TENÍA TIEMPO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ESTRELLAS DECORATIVAS -->
+  <div class="estrellas" aria-hidden="true">
+    <span class="estrella" style="--x:5%;--y:8%;--s:1.2;--d:0s">⭐</span>
+    <span class="estrella" style="--x:92%;--y:12%;--s:0.9;--d:0.5s">✨</span>
+    <span class="estrella" style="--x:15%;--y:80%;--s:1.1;--d:1s">⭐</span>
+    <span class="estrella" style="--x:85%;--y:75%;--s:0.8;--d:1.5s">✨</span>
+    <span class="estrella" style="--x:50%;--y:5%;--s:1;--d:0.8s">⭐</span>
+    <span class="estrella" style="--x:3%;--y:50%;--s:0.7;--d:2s">✨</span>
+    <span class="estrella" style="--x:96%;--y:45%;--s:1.3;--d:0.3s">⭐</span>
+  </div>
+
+  <header class="encabezado">
+    <div class="titulo-wrapper">
+      <span class="titulo-icon">📖</span>
+      <h1 class="titulo">EL RECREO TENÍA TIEMPO</h1>
+      <span class="titulo-icon">🚪</span>
+    </div>
+    <div class="indicador" id="indicador">
+      <span class="dot active" data-idx="0"></span>
+      <span class="dot" data-idx="1"></span>
+      <span class="dot" data-idx="2"></span>
+      <span class="dot" data-idx="3"></span>
+      <span class="dot" data-idx="4"></span>
+    </div>
+  </header>
+
+  <main class="escenario">
+
+    <!-- TARJETA 1 -->
+    <div class="card active">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-imagen-bg" style="background-image:url('momento1.png')"></div>
+          <div class="card-contenido">
+            <div class="texto-bloque">
+              <p>EL PRIMER DÍA QUE SONÓ EL TIMBRE EN PRIMERO, NOS QUEDAMOS QUIETOS.<br>
+¡RIIIIING!<br>
+ESE SONIDO NO ESTABA EN EL JARDÍN.
+</p>
+            </div>
+            <button class="btn-video" data-video="momento1.mp4">
+              <span class="btn-video-icon">▶</span>
+              <span class="btn-video-label">VER VIDEO</span>
+            </button>
+          </div>
+          <div class="video-overlay">
+            <video muted playsinline></video>
+            <button class="btn-cerrar-video">✕ CERRAR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARJETA 2 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-imagen-bg" style="background-image:url('momento2.png')"></div>
+          <div class="card-contenido">
+            <div class="texto-bloque">
+              <p>EN PRIMERO, EL RECREO TENÍA SONIDO PROPIO.<br>
+SALIMOS AL PATIO COMO SIEMPRE.<br>
+LOS JUEGOS ESTABAN EN SU LUGAR.<br>
+NUESTROS AMIGOS TAMBIÉN.
+</p>
+            </div>
+            <button class="btn-video" data-video="momento2.mp4">
+              <span class="btn-video-icon">▶</span>
+              <span class="btn-video-label">VER VIDEO</span>
+            </button>
+          </div>
+          <div class="video-overlay">
+            <video muted playsinline></video>
+            <button class="btn-cerrar-video">✕ CERRAR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARJETA 3 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-imagen-bg" style="background-image:url('momento3.png')"></div>
+          <div class="card-contenido">
+            <div class="texto-bloque">
+              <p>PERO ESE DÍA DESCUBRIMOS ALGO NUEVO.
+EL RECREO TENÍA TIEMPO.
+NO SABÍAMOS CUÁNTO.
+NO SE VEÍA.
+NO ESTABA ESCRITO EN NINGÚN LADO.
+PERO ESTABA.<br>
+ABRIMOS LA MOCHILA APURADOS.
+LA MERIENDA PARECÍA TARDAR MÁS QUE OTROS AÑOS.
+UN ENVOLTORIO NO SE ROMPÍA.
+UNA BOTELLA NO SE ABRÍA.<br>
+MIENTRAS TANTO, EL PATIO NOS LLAMABA.<br>
+—¡VENÍ!<br>
+ —¡YA VOY!
+</p>
+            </div>
+            <button class="btn-video" data-video="momento3.mp4">
+              <span class="btn-video-icon">▶</span>
+              <span class="btn-video-label">VER VIDEO</span>
+            </button>
+          </div>
+          <div class="video-overlay">
+            <video muted playsinline></video>
+            <button class="btn-cerrar-video">✕ CERRAR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARJETA 4 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-imagen-bg" style="background-image:url('momento4.png')"></div>
+          <div class="card-contenido">
+            <div class="texto-bloque">
+              <p>CUANDO POR FIN EMPEZAMOS A JUGAR, TODO FUE RÁPIDO.
+DEMASIADO RÁPIDO.
+EL JUEGO RECIÉN SE ESTABA PONIENDO INTERESANTE…<br>
+¡RIIIIING!<br>
+EL SONIDO VOLVIÓ A CORTAR EL AIRE.
+NOS MIRAMOS SORPRENDIDOS.<br>
+¿CÓMO PODÍA TERMINAR ALGO QUE RECIÉN EMPEZABA?
+</p>
+            </div>
+            <button class="btn-video" data-video="momento4.mp4">
+              <span class="btn-video-icon">▶</span>
+              <span class="btn-video-label">VER VIDEO</span>
+            </button>
+          </div>
+          <div class="video-overlay">
+            <video muted playsinline></video>
+            <button class="btn-cerrar-video">✕ CERRAR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARJETA 5 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-imagen-bg" style="background-image:url('momento5.png')"></div>
+          <div class="card-contenido">
+            <div class="texto-bloque">
+              <p>AL DÍA SIGUIENTE, CUANDO EL TIMBRE VOLVIÓ A SONAR, NOS MIRAMOS OTRA VEZ.
+ESTA VEZ NADIE HABLÓ.
+LAS MOCHILAS SE ABRIERON EN SEGUNDOS.
+LAS MANOS SE MOVIERON MÁS RÁPIDO.
+ Y EL JUEGO EMPEZÓ ANTES.<br>
+EL TIMBRE VOLVIÓ A SONAR AL FINAL, COMO SIEMPRE.
+EL RECREO SEGUÍA TENIENDO TIEMPO.
+SOLO QUE AHORA SABÍAMOS ALGO:<br>
+SI QUERÍAMOS QUE PARECIERA LARGO,
+TENÍAMOS QUE EMPEZARLO SIN PERDER NI UN SEGUNDO.
+</p>
+            </div>
+            <button class="btn-video" data-video="momento5.mp4">
+              <span class="btn-video-icon">▶</span>
+              <span class="btn-video-label">VER VIDEO</span>
+            </button>
+          </div>
+          <div class="video-overlay">
+            <video muted playsinline></video>
+            <button class="btn-cerrar-video">✕ CERRAR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- BOTONES DE NAVEGACIÓN -->
+  <nav class="controls">
+    <button id="prevBtn" aria-label="Anterior">
+      <span class="btn-icon">⬅</span>
+      <span class="btn-label">ANTERIOR</span>
+    </button>
+    <button id="nextBtn" aria-label="Siguiente">
+      <span class="btn-label">SIGUIENTE</span>
+      <span class="btn-icon">➡</span>
+    </button>
+  </nav>
+
+  <!-- PANTALLA FINAL -->
+  <div id="pantallaFinal" class="pantalla-final">
+    <div class="final-contenido">
+      <div class="final-card">
+        <video id="videoFinal" src="fin.mp4" controls></video>
+      </div>
+      <p class="mensaje-final">✨ HASTA EL PRÓXIMO CUENTO ✨</p>
+      <button id="btnVolver" class="btn-volver">📖 LEER DE NUEVO</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
