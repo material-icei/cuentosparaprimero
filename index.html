@@ -279,6 +279,7 @@
     .libro:nth-child(4) .libro-portada::before { background: linear-gradient(90deg,#6BCB77,#74C7EC,#FFD93D); }
     .libro:nth-child(5) .libro-portada::before { background: linear-gradient(90deg,#C77DFF,#FF6B9D,#3A86FF); }
     .libro:nth-child(6) .libro-portada::before { background: linear-gradient(90deg,#FF6B35,#FFD93D,#6BCB77); }
+    .libro:nth-child(7) .libro-portada::before { background: linear-gradient(90deg,#FFD93D,#FF9F1C,#FF6B35); }
 
     .libro:nth-child(1) .libro-img-blur { background: linear-gradient(145deg,#2a4a8a,#1a3060); }
     .libro:nth-child(2) .libro-img-blur { background: linear-gradient(145deg,#1a6e4a,#0e4830); }
@@ -286,6 +287,7 @@
     .libro:nth-child(4) .libro-img-blur { background: linear-gradient(145deg,#1a5a6e,#0e3848); }
     .libro:nth-child(5) .libro-img-blur { background: linear-gradient(145deg,#5a1a6a,#3a0e4a); }
     .libro:nth-child(6) .libro-img-blur { background: linear-gradient(145deg,#6e3a1a,#4a200e); }
+    .libro:nth-child(7) .libro-img-blur { background: linear-gradient(145deg,#2a4a8a,#1a3060); }
 
     /* ── SOMBRA DEL SUELO ── */
     .carrusel-shadow {
@@ -568,6 +570,26 @@
         </div>
       </div>
 
+
+  <!-- CUENTO 7 -->
+      <div class="libro" data-idx="6" data-titulo="EL DÍA QUE NOS TOCÓ EL PRIMER BANCO" data-num="CUENTO 7"
+           data-glow="255,140,60" data-href="https://material-icei.github.io/cuentosparaprimero/primer-banco/index.html">
+        <div class="libro-portada">
+          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/primer-banco/momento1.png')"></div>
+          <img class="libro-img" src="https://material-icei.github.io/cuentosparaprimero/primer-banco/momento1.png" alt="Cuento 7">
+          <div class="libro-overlay"></div>
+          <span class="libro-num">CUENTO 07</span>
+          <span class="libro-emoji" style="animation-delay:1.5s">🚀</span>
+          <div class="libro-info">
+            <p class="libro-titulo">EL DÍA QUE NOS TOCÓ EL PRIMER BANCO</p>
+            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/primer-banco/index.html">
+              <span>▶</span> LEER CUENTO
+            </a>
+          </div>
+        </div>
+      </div>
+
+
     </div>
     <div class="carrusel-shadow"></div>
   </div>
@@ -581,6 +603,7 @@
       <span class="dot" data-idx="3"></span>
       <span class="dot" data-idx="4"></span>
       <span class="dot" data-idx="5"></span>
+      <span class="dot" data-idx="6"></span>
     </div>
   </nav>
 
@@ -589,11 +612,11 @@
     <div class="titulo-activo-texto" id="tituloActivo">
       <span id="twText"></span><span class="tw-cursor" id="twCursor"></span>
     </div>
-    <div class="titulo-activo-num" id="numActivo">CUENTO 01 DE 06</div>
+    <div class="titulo-activo-num" id="numActivo">CUENTO 01 DE 07</div>
   </div>
 
   <script>
-    const TOTAL    = 6;
+    const TOTAL    = 7;
     const carrusel = document.getElementById('carrusel');
     const libros   = document.querySelectorAll('.libro');
     const dots     = document.querySelectorAll('.dot');
