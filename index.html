@@ -283,14 +283,16 @@
     .libro:nth-child(5) .libro-portada::before { background: linear-gradient(90deg,#C77DFF,#FF6B9D,#3A86FF); }
     .libro:nth-child(6) .libro-portada::before { background: linear-gradient(90deg,#FF6B35,#FFD93D,#6BCB77); }
     .libro:nth-child(7) .libro-portada::before { background: linear-gradient(90deg,#FFD93D,#FF9F1C,#FF6B35); }
+    .libro:nth-child(8) .libro-portada::before { background: linear-gradient(90deg,#74C7EC,#3A86FF,#6BCB77); }
 
     .libro:nth-child(1) .libro-img-blur { background: linear-gradient(145deg,#2a4a8a,#1a3060); }
-    .libro:nth-child(2) .libro-img-blur { background: linear-gradient(145deg,#1a6e4a,#0e4830); }
+    .libro:nth-child(2) .libro-img-blur { background: linear-gradient(145deg,#1a6e4a,#0e3a27); }
     .libro:nth-child(3) .libro-img-blur { background: linear-gradient(145deg,#6a2060,#3a1040); }
     .libro:nth-child(4) .libro-img-blur { background: linear-gradient(145deg,#1a5a6e,#0e3848); }
     .libro:nth-child(5) .libro-img-blur { background: linear-gradient(145deg,#5a1a6a,#3a0e4a); }
     .libro:nth-child(6) .libro-img-blur { background: linear-gradient(145deg,#6e3a1a,#4a200e); }
     .libro:nth-child(7) .libro-img-blur { background: linear-gradient(145deg,#2a4a8a,#1a3060); }
+    .libro:nth-child(8) .libro-img-blur { background: linear-gradient(145deg,#1a6e4a,#0e3a27); }
 
     /* ── SOMBRA DEL SUELO ── */
     .carrusel-shadow {
@@ -592,12 +594,30 @@
         </div>
       </div>
 
+<!-- CUENTO 8 -->
+      <div class="libro" data-idx="6" data-titulo="ANTES DE QUE SUENE EL TIMBRE" data-num="CUENTO 8"
+           data-glow="255,140,60" data-href="https://material-icei.github.io/cuentosparaprimero/timbre/index.html">
+        <div class="libro-portada">
+          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/timbre/momento1.png')"></div>
+          <img class="libro-img" loading="lazy" src="https://material-icei.github.io/cuentosparaprimero/timbre/momento1.png" alt="Cuento 7">
+          <div class="libro-overlay"></div>
+          <span class="libro-num">CUENTO 08</span>
+          <span class="libro-emoji" style="animation-delay:1.5s">🪑</span>
+          <div class="libro-info">
+            <p class="libro-titulo">ANTES DE QUE SUENE EL TIMBRE</p>
+            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/timbre/index.html">
+              <span>▶</span> LEER CUENTO
+            </a>
+          </div>
+        </div>
+      </div>
+
 
     </div>
     <div class="carrusel-shadow"></div>
   </div>
 
-  <!-- CONTROLES -->
+  <!-- CONTROLES       *********actualizar!!!!***********************************-->
   <nav class="controles" aria-label="Navegación del carrusel">
     <div class="indicador" id="indicador">
       <span class="dot active" data-idx="0"></span>
@@ -607,25 +627,23 @@
       <span class="dot" data-idx="4"></span>
       <span class="dot" data-idx="5"></span>
       <span class="dot" data-idx="6"></span>
+      <span class="dot" data-idx="7"></span>      
     </div>
   </nav>
 
-  <!-- TÍTULO ACTIVO -->
+  <!-- TÍTULO ACTIVO     *********actualizar!!!!*********************************** -->
   <div class="titulo-activo">
     <div class="titulo-activo-texto" id="tituloActivo">
       <span id="twText"></span><span class="tw-cursor" id="twCursor"></span>
     </div>
- //*****************************************************************************************************
- //******************Actualizar CUENTO 01 DE ....************************
- //******************************************************************************************************
-    <div class="titulo-activo-num" id="numActivo">CUENTO 01 DE 07</div>
+    <div class="titulo-activo-num" id="numActivo">CUENTO 01 DE 08</div>
   </div>
 
   <script>
     //*****************************************************************************************************
     //******************Actualizar la constante TOTAL con la cantidad total de cuentos************************
     //******************************************************************************************************
-    const TOTAL    = 7;
+    const TOTAL    = 8;
     const carrusel = document.getElementById('carrusel');
     const libros   = document.querySelectorAll('.libro');
     const dots     = document.querySelectorAll('.dot');
