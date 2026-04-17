@@ -17,35 +17,23 @@
       --verde:     #6BCB77;
       --rosa:      #FF6B9D;
       --violeta:   #C77DFF;
-      --blanco:    #FFFDF4;
-      --texto:     #2D2D2D;
-      --glow-color: rgba(255,217,61,0.0);
+      --madera-clara: #c8934a;
+      --madera-med:   #a0692a;
+      --madera-osc:   #7a4e1e;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Nunito', cursive;
       min-height: 100vh;
-      background: linear-gradient(160deg, #0a1f4e 0%, #0f2f6e 25%, #1a5fb4 55%, #2a7fc4 80%, #4a9fd4 100%);
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,217,61,0.07) 0%, transparent 60%),
+        linear-gradient(170deg, #080f2a 0%, #0d1f52 30%, #0f2f6e 60%, #1a3a7a 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       overflow-x: hidden;
-      padding-bottom: 40px;
-      transition: background 0.9s ease;
-    }
-
-    /* ── GLOW DINÁMICO DE FONDO ── */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse 70% 60% at 50% 55%, var(--glow-color) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-      transition: background 0.9s ease;
+      padding-bottom: 60px;
     }
 
     /* ── ESTRELLAS ── */
@@ -53,387 +41,304 @@
     .estrella {
       position: absolute;
       left: var(--x); top: var(--y);
-      font-size: calc(16px * var(--s));
+      font-size: calc(14px * var(--s));
       animation: twinkle 3s infinite ease-in-out var(--d);
-      opacity: 0.7;
+      opacity: 0.6;
     }
     @keyframes twinkle {
-      0%,100% { opacity:0.7; transform:scale(1); }
-      50%      { opacity:0.2; transform:scale(0.6); }
+      0%,100% { opacity:0.6; transform:scale(1); }
+      50%      { opacity:0.12; transform:scale(0.5); }
     }
 
     /* ── ENCABEZADO ── */
     .encabezado {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding: 36px 20px 16px;
-      width: 100%;
+      position: relative; z-index: 2;
+      text-align: center; padding: 40px 20px 10px; width: 100%;
     }
-
-    .encabezado .icono-top {
-      font-size: 52px;
-      display: block;
-      margin-bottom: 8px;
-      animation: float 2.8s ease-in-out infinite;
+    .icono-top {
+      font-size: 56px; display: block; margin-bottom: 10px;
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 4px 16px rgba(255,217,61,0.5));
     }
-
     .titulo-main {
       font-family: 'Fredoka One', cursive;
-      font-size: clamp(28px, 5vw, 52px);
+      font-size: clamp(30px, 5vw, 58px);
       color: var(--amarillo);
-      text-shadow: 4px 4px 0 var(--naranja), 0 0 30px rgba(255,217,61,0.5);
-      letter-spacing: 3px;
-      line-height: 1.1;
+      text-shadow: 4px 4px 0 var(--naranja), 0 0 40px rgba(255,217,61,0.4);
+      letter-spacing: 3px; line-height: 1.1;
     }
-
     .subtitulo {
       font-family: 'Fredoka One', cursive;
-      font-size: clamp(14px, 2vw, 20px);
-      color: rgba(255,255,255,0.7);
-      letter-spacing: 4px;
-      margin-top: 6px;
-      text-transform: uppercase;
+      font-size: clamp(13px, 1.8vw, 19px);
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 4px; margin-top: 8px;
     }
-
-    /* ── INSTRUCCIÓN ── */
     .instruccion {
       font-family: 'Fredoka One', cursive;
-      color: rgba(255,255,255,0.55);
-      font-size: 15px;
-      letter-spacing: 2px;
-      margin-top: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      color: rgba(255,255,255,0.45);
+      font-size: 14px; letter-spacing: 2px; margin-top: 14px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
 
-    /* ── ESCENA 3D ── */
-    .escena {
+    /* ── SALA ── */
+    .sala {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 1100px;
+      padding: 0 20px; margin-top: 32px;
+    }
+
+    /* ── ESTANTERÍA ── */
+    .estanteria { position: relative; width: 100%; }
+
+    /* Fila de libros */
+    .fila-libros {
       position: relative;
-      z-index: 2;
-      width: 100%;
-      max-width: 1200px;
-      height: 420px;
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
-      margin-top: 20px;
-      perspective: 1600px;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 20px 30px 0;
+      min-height: 210px;
     }
 
-    .carrusel {
-      width: 480px;
-      height: 270px;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.85s cubic-bezier(.77,0,.18,1);
+    /* Tablón de madera */
+    .tablon {
+      position: relative; width: 100%; height: 26px;
+      background: linear-gradient(180deg,
+        #e0a050 0%, var(--madera-clara) 18%,
+        var(--madera-med) 55%, var(--madera-osc) 100%);
+      border-radius: 4px;
+      box-shadow: 0 7px 20px rgba(0,0,0,0.6),
+        inset 0 2px 0 rgba(255,255,255,0.22),
+        inset 0 -2px 0 rgba(0,0,0,0.28);
     }
-
-    /* ── TARJETA CUENTO ── */
-    .libro {
-      position: absolute;
-      width: 480px;
-      height: 270px;
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      transform-style: preserve-3d;
-      transition: box-shadow 0.3s, transform 0.15s;
-      backface-visibility: hidden;
-    }
-
-    .libro-portada {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.55), inset 0 0 0 3px rgba(255,255,255,0.12);
-    }
-
-    /* fondo difuminado */
-    .libro-img-blur {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      filter: blur(14px) brightness(0.4) saturate(1.4);
-      transform: scale(1.08);
-      z-index: 0;
-    }
-
-    /* imagen principal */
-    .libro-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
-      z-index: 1;
-      display: block;
-    }
-
-    /* overlay degradado */
-    .libro-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0.78) 100%);
-      z-index: 2;
-    }
-
-    /* borde de color arriba */
-    .libro-portada::before {
+    .tablon::before {
       content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 6px;
-      z-index: 5;
-      border-radius: 16px 16px 0 0;
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        90deg, transparent 0px, transparent 40px,
+        rgba(0,0,0,0.05) 40px, rgba(0,0,0,0.05) 42px,
+        transparent 42px, transparent 90px,
+        rgba(255,255,255,0.04) 90px, rgba(255,255,255,0.04) 91px);
+      border-radius: 4px;
     }
 
-    /* número del cuento */
-    .libro-num {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      z-index: 4;
-      font-family: 'Fredoka One', cursive;
-      font-size: 13px;
-      letter-spacing: 3px;
-      color: rgba(255,255,255,0.85);
-      background: rgba(0,0,0,0.4);
-      padding: 3px 10px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.2);
+    /* Soportes laterales */
+    .soporte {
+      position: absolute; top: 0; bottom: 0; width: 20px;
+      background: linear-gradient(180deg,#d08040 0%,var(--madera-med) 40%,var(--madera-osc) 100%);
+      box-shadow: inset -3px 0 6px rgba(0,0,0,0.3), 2px 0 8px rgba(0,0,0,0.4);
     }
+    .soporte.izq { left:0; border-radius:4px 0 0 4px; }
+    .soporte.der { right:0; border-radius:0 4px 4px 0; }
 
-    /* emoji decorativo */
-    .libro-emoji {
-      position: absolute;
-      top: 10px;
-      right: 14px;
-      z-index: 4;
-      font-size: 28px;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
-      animation: float 2.5s ease-in-out infinite;
-    }
-
-    .libro-info {
-      position: absolute;
-      bottom: 0;
-      left: 0; right: 0;
-      z-index: 4;
-      padding: 14px 20px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .libro-titulo {
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(14px, 1.6vw, 18px);
-      line-height: 1.2;
-      color: #ffffff;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.9);
-      letter-spacing: 0.5px;
-      flex: 1;
-    }
-
-    .libro-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: linear-gradient(145deg, var(--amarillo), var(--naranja2));
-      color: #2D2D2D;
-      border: none;
-      padding: 8px 18px;
-      border-radius: 50px;
-      font-family: 'Fredoka One', cursive;
-      font-size: 13px;
-      cursor: pointer;
-      box-shadow: 0 4px 0 #c4500a, 0 6px 16px rgba(0,0,0,0.4);
-      transition: transform 0.12s, box-shadow 0.12s;
-      letter-spacing: 1px;
-      text-decoration: none;
-      white-space: nowrap;
+    /* ── LIBRO (lomo) ── */
+    .libro-lomo {
+      position: relative;
       flex-shrink: 0;
-    }
-
-    .libro-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 #c4500a, 0 10px 20px rgba(0,0,0,0.45);
-    }
-
-    .libro-btn:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px 0 #c4500a;
-    }
-
-//******************************************************************************************
-//**********************************AGREGAR LINEA*******************************************
-//******************************************************************************************    
-    /* ── COLORES POR CUENTO ── */
-    .libro:nth-child(1) .libro-portada::before { background: linear-gradient(90deg,#FFD93D,#FF9F1C,#FF6B35); }
-    .libro:nth-child(2) .libro-portada::before { background: linear-gradient(90deg,#74C7EC,#3A86FF,#6BCB77); }
-    .libro:nth-child(3) .libro-portada::before { background: linear-gradient(90deg,#FF6B9D,#C77DFF,#FF9F1C); }
-    .libro:nth-child(4) .libro-portada::before { background: linear-gradient(90deg,#6BCB77,#74C7EC,#FFD93D); }
-    .libro:nth-child(5) .libro-portada::before { background: linear-gradient(90deg,#C77DFF,#FF6B9D,#3A86FF); }
-    .libro:nth-child(6) .libro-portada::before { background: linear-gradient(90deg,#FF6B35,#FFD93D,#6BCB77); }
-    .libro:nth-child(7) .libro-portada::before { background: linear-gradient(90deg,#FFD93D,#FF9F1C,#FF6B35); }
-    .libro:nth-child(8) .libro-portada::before { background: linear-gradient(90deg,#74C7EC,#3A86FF,#6BCB77); }
-
-    .libro:nth-child(1) .libro-img-blur { background: linear-gradient(145deg,#2a4a8a,#1a3060); }
-    .libro:nth-child(2) .libro-img-blur { background: linear-gradient(145deg,#1a6e4a,#0e3a27); }
-    .libro:nth-child(3) .libro-img-blur { background: linear-gradient(145deg,#6a2060,#3a1040); }
-    .libro:nth-child(4) .libro-img-blur { background: linear-gradient(145deg,#1a5a6e,#0e3848); }
-    .libro:nth-child(5) .libro-img-blur { background: linear-gradient(145deg,#5a1a6a,#3a0e4a); }
-    .libro:nth-child(6) .libro-img-blur { background: linear-gradient(145deg,#6e3a1a,#4a200e); }
-    .libro:nth-child(7) .libro-img-blur { background: linear-gradient(145deg,#2a4a8a,#1a3060); }
-    .libro:nth-child(8) .libro-img-blur { background: linear-gradient(145deg,#1a6e4a,#0e3a27); }
-
-    /* ── SOMBRA DEL SUELO ── */
-    .carrusel-shadow {
-      position: absolute;
-      bottom: -24px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 520px;
-      height: 36px;
-      background: radial-gradient(ellipse, rgba(0,0,0,0.45) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* ── CONTROLES ── */
-    .controles {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-top: 50px;
-    }
-
-    /* ── INDICADOR PUNTITOS ── */
-    .indicador {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .dot {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.3);
-      border: 2px solid rgba(255,255,255,0.5);
+      width: var(--ancho, 62px);
+      height: var(--alto, 170px);
+      border-radius: 3px 7px 7px 3px;
       cursor: pointer;
-      transition: all 0.3s;
+      transform-origin: bottom center;
+      transition: transform 0.30s cubic-bezier(0.34,1.56,0.64,1),
+                  filter 0.25s ease;
+      z-index: 1;
+      background: var(--color-lomo);
+      box-shadow:
+        -3px 0 0 rgba(0,0,0,0.4),
+        3px 0 8px rgba(0,0,0,0.3),
+        inset 3px 0 5px rgba(255,255,255,0.2),
+        inset -2px 0 4px rgba(0,0,0,0.18);
+    }
+    /* Canto del libro (brillo izquierdo) */
+    .libro-lomo::before {
+      content: '';
+      position: absolute; left:0; top:0; bottom:0; width:5px;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 50%, rgba(0,0,0,0.08) 100%);
+      border-radius: 3px 0 0 3px;
+    }
+    /* Sombra bajo el libro al hover */
+    .libro-lomo::after {
+      content: '';
+      position: absolute; bottom:-5px; left:5px; right:5px;
+      height:10px;
+      background: rgba(0,0,0,0.28);
+      filter: blur(5px);
+      border-radius: 50%;
+      z-index: -1; opacity:0;
+      transition: opacity 0.3s;
     }
 
-    .dot.active {
-      background: var(--amarillo);
-      border-color: var(--naranja);
-      transform: scale(1.35);
-      box-shadow: 0 0 10px var(--amarillo);
+    .lomo-titulo {
+      position: absolute; inset:0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 10px 4px; gap: 5px;
     }
-
-    /* ── TÍTULO DEL CUENTO ACTIVO ── */
-    .titulo-activo {
-      position: relative;
-      z-index: 2;
-      margin-top: 28px;
-      text-align: center;
-      min-height: 60px;
-    }
-
-    .titulo-activo-texto {
+    .lomo-texto {
       font-family: 'Fredoka One', cursive;
-      font-size: clamp(18px, 2.5vw, 26px);
-      color: var(--amarillo);
-      text-shadow: 2px 2px 0 var(--naranja), 0 0 20px rgba(255,217,61,0.4);
-      letter-spacing: 1px;
-      transition: opacity 0.3s, transform 0.3s;
+      font-size: 10px; color: rgba(255,255,255,0.93);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.65);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      letter-spacing: 1.5px; line-height: 1.2;
+      text-align: center; max-height: 120px; overflow: hidden;
+    }
+    .lomo-emoji { font-size: 17px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.55)); }
+    .lomo-num {
+      font-family: 'Fredoka One', cursive; font-size: 9px;
+      color: rgba(255,255,255,0.5); letter-spacing: 1px;
+      writing-mode: vertical-rl; transform: rotate(180deg);
     }
 
-    .titulo-activo-num {
-      font-family: 'Fredoka One', cursive;
-      font-size: 13px;
-      color: rgba(255,255,255,0.5);
-      letter-spacing: 4px;
-      margin-top: 4px;
+    /* Hover: se inclina y sube */
+    .libro-lomo:hover {
+      transform: translateY(-22px) rotate(-5deg) scale(1.1);
+      filter: brightness(1.18) drop-shadow(0 14px 22px rgba(0,0,0,0.6));
+      z-index: 10;
+    }
+    .libro-lomo:hover::after { opacity: 1; }
+
+    /* Libro abierto (seleccionado) */
+    .libro-lomo.abierto {
+      transform: translateY(-28px) scale(1.12);
+      filter: brightness(1.22) drop-shadow(0 0 22px var(--glow-lomo,rgba(255,217,61,0.7)));
+      z-index: 10;
+    }
+    .libro-lomo.abierto::after { opacity: 1; }
+
+    /* Decorativos */
+    .libro-lomo.deco {
+      cursor: default; opacity: 0.5;
+      background: linear-gradient(160deg,#445,#223);
+    }
+    .libro-lomo.deco:hover { transform: none; filter: none; }
+    .libro-lomo.deco::after { display: none; }
+
+    /* Sujetalibros metálico */
+    .sujetalibros {
+      width: 16px; height: 48px;
+      background: linear-gradient(160deg,#c0c8d8,#6a7888);
+      border-radius: 3px 3px 2px 2px;
+      flex-shrink: 0; align-self: flex-end;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
     }
 
-    /* ── CURSOR TYPEWRITER ── */
-    .tw-cursor {
-      display: inline-block;
-      width: 2px;
-      height: 1.1em;
-      background: var(--amarillo);
-      margin-left: 3px;
-      vertical-align: middle;
-      border-radius: 1px;
-      animation: blink-cursor 0.75s step-end infinite;
+    /* ── OVERLAY ── */
+    .overlay-fondo {
+      position: fixed; inset: 0;
+      background: rgba(4,8,28,0.78);
+      backdrop-filter: blur(7px);
+      z-index: 100; opacity: 0; pointer-events: none;
+      transition: opacity 0.32s ease;
     }
-    @keyframes blink-cursor {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0; }
-    }
+    .overlay-fondo.visible { opacity:1; pointer-events:auto; }
 
-    /* ── ANIMACIONES ── */
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50%      { transform: translateY(-7px); }
+    /* ── TARJETA FLOTANTE ── */
+    .tarjeta-flotante {
+      position: fixed; top:50%; left:50%;
+      transform: translate(-50%,-50%) scale(0.82);
+      z-index: 101;
+      width: min(500px, 92vw);
+      background: #fffdf4;
+      border-radius: 22px; overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.72),
+        0 0 0 4px rgba(255,255,255,0.14),
+        0 0 60px var(--glow-tarjeta,rgba(255,217,61,0.25));
+      opacity: 0; pointer-events: none;
+      transition:
+        opacity  0.35s cubic-bezier(0.34,1.56,0.64,1),
+        transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
     }
-
-    /* ── PARTÍCULAS ── */
-    .particula {
-      position: fixed;
-      pointer-events: none;
-      z-index: 999;
-      font-size: 18px;
-      animation: particula-volar var(--dur) ease-out forwards;
-      transform-origin: center;
+    .tarjeta-flotante.visible {
+      opacity:1; transform: translate(-50%,-50%) scale(1); pointer-events:auto;
     }
-
-    @keyframes particula-volar {
-      0%   { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
-      100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3) rotate(var(--rot)); }
+    .tarjeta-borde { height:7px; width:100%; }
+    .tarjeta-img-wrap { position:relative; width:100%; height:250px; overflow:hidden; }
+    .tarjeta-img-blur {
+      position:absolute; inset:0;
+      background-size:cover; background-position:center;
+      filter:blur(16px) brightness(0.32) saturate(1.5);
+      transform:scale(1.1);
     }
+    .tarjeta-img {
+      position:absolute; inset:0; width:100%; height:100%;
+      object-fit:contain; object-position:center;
+    }
+    .tarjeta-body {
+      padding: 20px 26px 24px; background:#fffdf4;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .tarjeta-num {
+      font-family:'Fredoka One',cursive; font-size:12px;
+      letter-spacing:3px; color:rgba(80,60,20,0.5);
+    }
+    .tarjeta-titulo {
+      font-family:'Fredoka One',cursive;
+      font-size: clamp(17px,3vw,23px);
+      color:#2d2d2d; line-height:1.2; letter-spacing:0.5px;
+    }
+    .tarjeta-acciones {
+      display:flex; align-items:center;
+      justify-content:space-between; gap:12px; margin-top:4px;
+    }
+    .tarjeta-emoji { font-size:36px; animation:float 2.5s ease-in-out infinite; }
+    .tarjeta-btn {
+      display:inline-flex; align-items:center; gap:8px;
+      background:linear-gradient(145deg,var(--amarillo),var(--naranja2));
+      color:#2d2d2d; border:none; padding:12px 28px;
+      border-radius:50px; font-family:'Fredoka One',cursive;
+      font-size:16px; cursor:pointer;
+      box-shadow:0 5px 0 #c4500a,0 8px 20px rgba(0,0,0,0.35);
+      text-decoration:none; letter-spacing:1px;
+      transition:transform 0.12s,box-shadow 0.12s; white-space:nowrap;
+    }
+    .tarjeta-btn:hover { transform:translateY(-2px); box-shadow:0 7px 0 #c4500a,0 12px 24px rgba(0,0,0,0.4); }
+    .tarjeta-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #c4500a; }
+    .btn-cerrar {
+      position:absolute; top:12px; right:14px; z-index:10;
+      background:rgba(0,0,0,0.45); border:2px solid rgba(255,255,255,0.25);
+      color:#fff; font-size:15px; width:32px; height:32px;
+      border-radius:50%; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:background 0.2s,transform 0.15s;
+      font-family:'Fredoka One',cursive;
+    }
+    .btn-cerrar:hover { background:rgba(220,60,60,0.82); transform:scale(1.1); }
 
     /* ── CONFETTI ── */
     .confetti-piece {
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      width: var(--w);
-      height: var(--h);
-      background: var(--col);
-      border-radius: var(--br);
-      animation: confetti-caer var(--dur) ease-out forwards;
-      top: var(--ty);
-      left: var(--tx);
+      position:fixed; pointer-events:none; z-index:9999;
+      width:var(--w); height:var(--h); background:var(--col);
+      border-radius:var(--br);
+      animation:confetti-caer var(--dur) ease-out forwards;
+      top:var(--ty); left:var(--tx);
+    }
+    @keyframes confetti-caer {
+      0%   { opacity:1; transform:translate(0,0) rotate(0deg) scale(1); }
+      80%  { opacity:1; }
+      100% { opacity:0; transform:translate(var(--fx),var(--fy)) rotate(var(--rot)) scale(0.4); }
     }
 
-    @keyframes confetti-caer {
-      0%   { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
-      80%  { opacity: 1; }
-      100% { opacity: 0; transform: translate(var(--fx), var(--fy)) rotate(var(--rot)) scale(0.5); }
+    /* ── ANIMACIONES ── */
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+    /* ── PIE ── */
+    .pie-sala {
+      position:relative; z-index:2; margin-top:22px;
+      font-family:'Fredoka One',cursive; font-size:13px;
+      color:rgba(255,255,255,0.3); letter-spacing:2px;
     }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 600px) {
-      .escena { height: 300px; }
-      .carrusel { width: 320px; height: 180px; }
-      .libro { width: 320px; height: 180px; }
-      .libro-titulo { font-size: 13px; }
-      .libro-btn { font-size: 12px; padding: 6px 12px; }
-    }
-
-    .libro.activo-centro {
-      filter: drop-shadow(0 0 28px rgba(255,217,61,0.5));
+    @media (max-width: 700px) {
+      .fila-libros { padding:12px 14px 0; gap:3px; min-height:160px; }
+      .lomo-texto  { font-size:8px; }
+      .lomo-emoji  { font-size:13px; }
     }
   </style>
 </head>
@@ -441,16 +346,18 @@
 
   <!-- ESTRELLAS -->
   <div class="estrellas" aria-hidden="true">
-    <span class="estrella" style="--x:4%;--y:7%;--s:1.2;--d:0s">⭐</span>
-    <span class="estrella" style="--x:91%;--y:10%;--s:0.9;--d:0.4s">✨</span>
-    <span class="estrella" style="--x:12%;--y:75%;--s:1.1;--d:0.9s">⭐</span>
-    <span class="estrella" style="--x:88%;--y:70%;--s:0.8;--d:1.4s">✨</span>
-    <span class="estrella" style="--x:50%;--y:4%;--s:1;--d:0.7s">⭐</span>
-    <span class="estrella" style="--x:2%;--y:48%;--s:0.7;--d:1.9s">✨</span>
-    <span class="estrella" style="--x:97%;--y:42%;--s:1.3;--d:0.2s">⭐</span>
-    <span class="estrella" style="--x:25%;--y:20%;--s:0.8;--d:1.2s">✨</span>
-    <span class="estrella" style="--x:75%;--y:85%;--s:0.9;--d:0.6s">⭐</span>
-    <span class="estrella" style="--x:60%;--y:15%;--s:0.7;--d:2.2s">✨</span>
+    <span class="estrella" style="--x:4%;--y:6%;--s:1.2;--d:0s">⭐</span>
+    <span class="estrella" style="--x:92%;--y:9%;--s:0.9;--d:0.4s">✨</span>
+    <span class="estrella" style="--x:11%;--y:72%;--s:1.1;--d:0.9s">⭐</span>
+    <span class="estrella" style="--x:87%;--y:68%;--s:0.8;--d:1.4s">✨</span>
+    <span class="estrella" style="--x:50%;--y:3%;--s:1;--d:0.7s">⭐</span>
+    <span class="estrella" style="--x:2%;--y:44%;--s:0.7;--d:1.9s">✨</span>
+    <span class="estrella" style="--x:97%;--y:38%;--s:1.3;--d:0.2s">⭐</span>
+    <span class="estrella" style="--x:26%;--y:18%;--s:0.8;--d:1.2s">✨</span>
+    <span class="estrella" style="--x:74%;--y:82%;--s:0.9;--d:0.6s">⭐</span>
+    <span class="estrella" style="--x:60%;--y:14%;--s:0.7;--d:2.2s">✨</span>
+    <span class="estrella" style="--x:35%;--y:88%;--s:1;--d:1.6s">⭐</span>
+    <span class="estrella" style="--x:80%;--y:30%;--s:0.8;--d:0.8s">✨</span>
   </div>
 
   <!-- ENCABEZADO -->
@@ -458,436 +365,310 @@
     <span class="icono-top">📚</span>
     <h1 class="titulo-main">BIBLIOTECA MÁGICA</h1>
     <p class="subtitulo">Cuentos Interactivos · Primer Grado</p>
-    <p class="instruccion">
-      <span>👈</span> TOCÁ LAS TARJETAS PARA EXPLORAR <span>👉</span>
-    </p>
   </header>
 
-  <!-- ESCENA 3D -->
-  <div class="escena" aria-label="Carrusel de cuentos">
-    <div class="carrusel" id="carrusel">
+  <!-- SALA -->
+  <div class="sala">
+    <div class="estanteria">
 
-      <!-- CUENTO 1 -->
-      <div class="libro" data-idx="0" data-titulo="LA MOCHILA QUE SABÍA ESPERAR" data-num="CUENTO 1"
-           data-glow="255,180,50" data-href="https://material-icei.github.io/cuentosparaprimero/la-mochila4/index.html">
-        <div class="libro-portada">
-          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/la-mochila4/momento1.png')"></div>
-          <img class="libro-img" loading="lazy" src="https://material-icei.github.io/cuentosparaprimero/la-mochila4/momento1.png" alt="Cuento 1">
-          <div class="libro-overlay"></div>
-          <span class="libro-num">CUENTO 01</span>
-          <span class="libro-emoji" style="animation-delay:0s">🎒</span>
-          <div class="libro-info">
-            <p class="libro-titulo">LA MOCHILA QUE SABÍA ESPERAR</p>
-            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/la-mochila4/index.html">
-              <span>▶</span> LEER CUENTO
-            </a>
+      <div class="soporte izq"></div>
+      <div class="soporte der"></div>
+
+      <!-- ═══ FILA 1 ═══ -->
+      <div class="fila-libros">
+
+        <div class="libro-lomo deco" style="--alto:95px;--ancho:26px;transform:rotate(9deg);margin-bottom:3px;"></div>
+        <div class="libro-lomo deco" style="--alto:118px;--ancho:20px;"></div>
+
+        <!-- CUENTO 1 -->
+        <div class="libro-lomo" tabindex="0" role="button"
+          style="--color-lomo:linear-gradient(160deg,#FFD93D,#FF9F1C,#FF6B35);--glow-lomo:rgba(255,180,50,0.75);--alto:178px;--ancho:64px;"
+          data-titulo="LA MOCHILA QUE SABÍA ESPERAR"
+          data-num="CUENTO 01" data-emoji="🎒"
+          data-img="https://lauraelzu.github.io/cuentosparaprimero/la-mochila4/momento1.png"
+          data-href="https://lauraelzu.github.io/cuentosparaprimero/la-mochila4/index.html"
+          data-grad="linear-gradient(90deg,#FFD93D,#FF9F1C,#FF6B35)"
+          data-glow-tarjeta="rgba(255,180,50,0.32)">
+          <div class="lomo-titulo">
+            <span class="lomo-emoji">🎒</span>
+            <span class="lomo-texto">LA MOCHILA QUE SABÍA ESPERAR</span>
+            <span class="lomo-num">01</span>
           </div>
         </div>
-      </div>
 
-      <!-- CUENTO 2 -->
-      <div class="libro" data-idx="1" data-titulo="LA SEÑO QUE ABRÍA PUERTAS" data-num="CUENTO 2"
-           data-glow="100,200,240" data-href="https://material-icei.github.io/cuentosparaprimero/la-srita/index.html">
-        <div class="libro-portada">
-          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/la-srita/momento1.png')"></div>
-          <img class="libro-img" loading="lazy" src="https://material-icei.github.io/cuentosparaprimero/la-srita/momento1.png" alt="Cuento 2">
-          <div class="libro-overlay"></div>
-          <span class="libro-num">CUENTO 02</span>
-          <span class="libro-emoji" style="animation-delay:0.3s">🌟</span>
-          <div class="libro-info">
-            <p class="libro-titulo">LA SEÑO QUE ABRÍA PUERTAS</p>
-            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/la-srita/index.html">
-              <span>▶</span> LEER CUENTO
-            </a>
+        <!-- CUENTO 2 -->
+        <div class="libro-lomo" tabindex="0" role="button"
+          style="--color-lomo:linear-gradient(160deg,#74C7EC,#3A86FF,#6BCB77);--glow-lomo:rgba(100,200,240,0.75);--alto:190px;--ancho:57px;"
+          data-titulo="LA SEÑO QUE ABRÍA PUERTAS"
+          data-num="CUENTO 02" data-emoji="🌟"
+          data-img="https://lauraelzu.github.io/cuentosparaprimero/la-srita/momento1.png"
+          data-href="https://lauraelzu.github.io/cuentosparaprimero/la-srita/index.html"
+          data-grad="linear-gradient(90deg,#74C7EC,#3A86FF,#6BCB77)"
+          data-glow-tarjeta="rgba(100,200,240,0.32)">
+          <div class="lomo-titulo">
+            <span class="lomo-emoji">🌟</span>
+            <span class="lomo-texto">LA SEÑO QUE ABRÍA PUERTAS</span>
+            <span class="lomo-num">02</span>
           </div>
         </div>
-      </div>
 
-      <!-- CUENTO 3 -->
-      <div class="libro" data-idx="2" data-titulo="EL AULA QUE CAMBIABA CUANDO ALGUIEN LEÍA" data-num="CUENTO 3"
-           data-glow="200,100,255" data-href="https://material-icei.github.io/cuentosparaprimero/el-aula/index.html">
-        <div class="libro-portada">
-          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/el-aula/momento1.png')"></div>
-          <img class="libro-img" loading="lazy" src="https://material-icei.github.io/cuentosparaprimero/el-aula/momento1.png" alt="Cuento 3">
-          <div class="libro-overlay"></div>
-          <span class="libro-num">CUENTO 03</span>
-          <span class="libro-emoji" style="animation-delay:0.6s">🦋</span>
-          <div class="libro-info">
-            <p class="libro-titulo">EL AULA QUE CAMBIABA CUANDO ALGUIEN LEÍA</p>
-            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/el-aula/index.html">
-              <span>▶</span> LEER CUENTO
-            </a>
+        <!-- CUENTO 3 -->
+        <div class="libro-lomo" tabindex="0" role="button"
+          style="--color-lomo:linear-gradient(160deg,#FF6B9D,#C77DFF,#FF9F1C);--glow-lomo:rgba(200,100,255,0.75);--alto:172px;--ancho:70px;"
+          data-titulo="EL AULA QUE CAMBIABA CUANDO ALGUIEN LEÍA"
+          data-num="CUENTO 03" data-emoji="🦋"
+          data-img="https://lauraelzu.github.io/cuentosparaprimero/el-aula/momento1.png"
+          data-href="https://lauraelzu.github.io/cuentosparaprimero/el-aula/index.html"
+          data-grad="linear-gradient(90deg,#FF6B9D,#C77DFF,#FF9F1C)"
+          data-glow-tarjeta="rgba(200,100,255,0.32)">
+          <div class="lomo-titulo">
+            <span class="lomo-emoji">🦋</span>
+            <span class="lomo-texto">EL AULA QUE CAMBIABA CUANDO ALGUIEN LEÍA</span>
+            <span class="lomo-num">03</span>
           </div>
         </div>
-      </div>
 
-      <!-- CUENTO 4 -->
-      <div class="libro" data-idx="3" data-titulo="NUESTRO PRIMER DÍA EN PRIMERO" data-num="CUENTO 4"
-           data-glow="100,220,120" data-href="https://material-icei.github.io/cuentosparaprimero/primer-dia/index.html">
-        <div class="libro-portada">
-          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/primer-dia/momento1.png')"></div>
-          <img class="libro-img" loading="lazy" src="https://material-icei.github.io/cuentosparaprimero/primer-dia/momento1.png" alt="Cuento 4">
-          <div class="libro-overlay"></div>
-          <span class="libro-num">CUENTO 04</span>
-          <span class="libro-emoji" style="animation-delay:0.9s">🌈</span>
-          <div class="libro-info">
-            <p class="libro-titulo">NUESTRO PRIMER DÍA EN PRIMERO</p>
-            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/primer-dia/index.html">
-              <span>▶</span> LEER CUENTO
-            </a>
+        <!-- CUENTO 4 -->
+        <div class="libro-lomo" tabindex="0" role="button"
+          style="--color-lomo:linear-gradient(160deg,#6BCB77,#74C7EC,#FFD93D);--glow-lomo:rgba(100,220,120,0.75);--alto:183px;--ancho:59px;"
+          data-titulo="NUESTRO PRIMER DÍA EN PRIMERO"
+          data-num="CUENTO 04" data-emoji="🌈"
+          data-img="https://lauraelzu.github.io/cuentosparaprimero/primer-dia/momento1.png"
+          data-href="https://lauraelzu.github.io/cuentosparaprimero/primer-dia/index.html"
+          data-grad="linear-gradient(90deg,#6BCB77,#74C7EC,#FFD93D)"
+          data-glow-tarjeta="rgba(100,220,120,0.32)">
+          <div class="lomo-titulo">
+            <span class="lomo-emoji">🌈</span>
+            <span class="lomo-texto">NUESTRO PRIMER DÍA EN PRIMERO</span>
+            <span class="lomo-num">04</span>
           </div>
         </div>
-      </div>
 
-      <!-- CUENTO 5 -->
-      <div class="libro" data-idx="4" data-titulo="EL RECREO TENÍA TIEMPO" data-num="CUENTO 5"
-           data-glow="255,100,180" data-href="https://material-icei.github.io/cuentosparaprimero/el-recreo/index.html">
-        <div class="libro-portada">
-          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/el-recreo/momento1.png')"></div>
-          <img class="libro-img" loading="lazy" src="https://material-icei.github.io/cuentosparaprimero/el-recreo/momento1.png" alt="Cuento 5">
-          <div class="libro-overlay"></div>
-          <span class="libro-num">CUENTO 05</span>
-          <span class="libro-emoji" style="animation-delay:1.2s">🎨</span>
-          <div class="libro-info">
-            <p class="libro-titulo">EL RECREO TENÍA TIEMPO</p>
-            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/el-recreo/index.html">
-              <span>▶</span> LEER CUENTO
-            </a>
+        <!-- CUENTO 5 -->
+        <div class="libro-lomo" tabindex="0" role="button"
+          style="--color-lomo:linear-gradient(160deg,#FF6B9D,#C77DFF,#3A86FF);--glow-lomo:rgba(255,100,180,0.75);--alto:167px;--ancho:62px;"
+          data-titulo="EL RECREO TENÍA TIEMPO"
+          data-num="CUENTO 05" data-emoji="🎨"
+          data-img="https://lauraelzu.github.io/cuentosparaprimero/el-recreo/momento1.png"
+          data-href="https://lauraelzu.github.io/cuentosparaprimero/el-recreo/index.html"
+          data-grad="linear-gradient(90deg,#FF6B9D,#C77DFF,#3A86FF)"
+          data-glow-tarjeta="rgba(255,100,180,0.32)">
+          <div class="lomo-titulo">
+            <span class="lomo-emoji">🎨</span>
+            <span class="lomo-texto">EL RECREO TENÍA TIEMPO</span>
+            <span class="lomo-num">05</span>
           </div>
         </div>
-      </div>
 
-      <!-- CUENTO 6 -->
-      <div class="libro" data-idx="5" data-titulo="LA MOCHILA PESABA DISTINTO" data-num="CUENTO 6"
-           data-glow="255,140,60" data-href="https://material-icei.github.io/cuentosparaprimero/mochila_distinta/index.html">
-        <div class="libro-portada">
-          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/mochila_distinta/momento1.png')"></div>
-          <img class="libro-img" loading="lazy" src="https://material-icei.github.io/cuentosparaprimero/mochila_distinta/momento1.png" alt="Cuento 6">
-          <div class="libro-overlay"></div>
-          <span class="libro-num">CUENTO 06</span>
-          <span class="libro-emoji" style="animation-delay:1.5s">🚀</span>
-          <div class="libro-info">
-            <p class="libro-titulo">LA MOCHILA PESABA DISTINTO</p>
-            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/mochila_distinta/index.html">
-              <span>▶</span> LEER CUENTO
-            </a>
+        <!-- CUENTO 6 -->
+        <div class="libro-lomo" tabindex="0" role="button"
+          style="--color-lomo:linear-gradient(160deg,#FF6B35,#FFD93D,#6BCB77);--glow-lomo:rgba(255,140,60,0.75);--alto:188px;--ancho:65px;"
+          data-titulo="LA MOCHILA PESABA DISTINTO"
+          data-num="CUENTO 06" data-emoji="🚀"
+          data-img="https://lauraelzu.github.io/cuentosparaprimero/mochila_distinta/momento1.png"
+          data-href="https://lauraelzu.github.io/cuentosparaprimero/mochila_distinta/index.html"
+          data-grad="linear-gradient(90deg,#FF6B35,#FFD93D,#6BCB77)"
+          data-glow-tarjeta="rgba(255,140,60,0.32)">
+          <div class="lomo-titulo">
+            <span class="lomo-emoji">🚀</span>
+            <span class="lomo-texto">LA MOCHILA PESABA DISTINTO</span>
+            <span class="lomo-num">06</span>
           </div>
         </div>
+
+        <div class="sujetalibros"></div>
+        <div class="libro-lomo deco" style="--alto:108px;--ancho:28px;"></div>
+        <div class="libro-lomo deco" style="--alto:122px;--ancho:34px;transform:rotate(-4deg);margin-bottom:2px;"></div>
+        <div class="libro-lomo deco" style="--alto:92px;--ancho:22px;transform:rotate(6deg);"></div>
+
       </div>
+      <div class="tablon"></div>
 
+      <!-- ═══ FILA 2: espacio para cuentos futuros ═══ -->
+      <div class="fila-libros" style="justify-content:flex-start;">
+        <div class="libro-lomo deco" style="--alto:104px;--ancho:28px;transform:rotate(-7deg);margin-bottom:4px;"></div>
+        <div class="libro-lomo deco" style="--alto:125px;--ancho:38px;"></div>
 
-  <!-- CUENTO 7 -->
-      <div class="libro" data-idx="6" data-titulo="EL DÍA QUE NOS TOCÓ EL PRIMER BANCO" data-num="CUENTO 7"
-           data-glow="255,140,60" data-href="https://material-icei.github.io/cuentosparaprimero/primer-banco/index.html">
-        <div class="libro-portada">
-          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/primer-banco/momento1.png')"></div>
-          <img class="libro-img" loading="lazy" src="https://material-icei.github.io/cuentosparaprimero/primer-banco/momento1.png" alt="Cuento 7">
-          <div class="libro-overlay"></div>
-          <span class="libro-num">CUENTO 07</span>
-          <span class="libro-emoji" style="animation-delay:1.5s">🪑</span>
-          <div class="libro-info">
-            <p class="libro-titulo">EL DÍA QUE NOS TOCÓ EL PRIMER BANCO</p>
-            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/primer-banco/index.html">
-              <span>▶</span> LEER CUENTO
-            </a>
+ <!-- CUENTO 7 -->
+        <div class="libro-lomo" tabindex="0" role="button"
+          style="--color-lomo:linear-gradient(160deg,#FFD93D,#FF9F1C,#FF6B35);--glow-lomo:rgba(255,180,50,0.75);--alto:178px;--ancho:64px;"
+          data-titulo="EL DÍA QUE NOS TOCÓ EL PRIMER BANCO"
+          data-num="CUENTO 07" data-emoji="🪑"
+          data-img="https://lauraelzu.github.io/cuentosparaprimero/primer-banco/momento1.png"
+          data-href="https://lauraelzu.github.io/cuentosparaprimero/primer-banco/index.html"
+          data-grad="linear-gradient(90deg,#FFD93D,#FF9F1C,#FF6B35)"
+          data-glow-tarjeta="rgba(255,180,50,0.32)">
+          <div class="lomo-titulo">
+            <span class="lomo-emoji">🪑</span>
+            <span class="lomo-texto">EL DÍA QUE NOS TOCÓ EL PRIMER BANCO</span>
+            <span class="lomo-num">07</span>
           </div>
         </div>
-      </div>
 
-<!-- CUENTO 8 -->
-      <div class="libro" data-idx="6" data-titulo="ANTES DE QUE SUENE EL TIMBRE" data-num="CUENTO 8"
-           data-glow="255,140,60" data-href="https://material-icei.github.io/cuentosparaprimero/timbre/index.html">
-        <div class="libro-portada">
-          <div class="libro-img-blur" style="background-image:url('https://material-icei.github.io/cuentosparaprimero/timbre/momento1.png')"></div>
-          <img class="libro-img" loading="lazy" src="https://material-icei.github.io/cuentosparaprimero/timbre/momento1.png" alt="Cuento 7">
-          <div class="libro-overlay"></div>
-          <span class="libro-num">CUENTO 08</span>
-          <span class="libro-emoji" style="animation-delay:1.5s">🪑</span>
-          <div class="libro-info">
-            <p class="libro-titulo">ANTES DE QUE SUENE EL TIMBRE</p>
-            <a class="libro-btn" href="https://material-icei.github.io/cuentosparaprimero/timbre/index.html">
-              <span>▶</span> LEER CUENTO
-            </a>
+ <!-- CUENTO 8 -->
+        <div class="libro-lomo" tabindex="0" role="button"
+          style="--color-lomo:linear-gradient(160deg,#74C7EC,#3A86FF,#6BCB77);--glow-lomo:rgba(100,200,240,0.75);--alto:190px;--ancho:57px;"
+          data-titulo="ANTES DE QUE SUENE EL TIMBRE"
+          data-num="CUENTO 08" data-emoji="🌟"
+          data-img="https://lauraelzu.github.io/cuentosparaprimero/timbre/momento1.png"
+          data-href="https://lauraelzu.github.io/cuentosparaprimero/timbre/index.html"
+          data-grad="linear-gradient(90deg,#74C7EC,#3A86FF,#6BCB77)"
+          data-glow-tarjeta="rgba(100,200,240,0.32)">
+          <div class="lomo-titulo">
+            <span class="lomo-emoji">🌟</span>
+            <span class="lomo-texto">ANTES DE QUE SUENE EL TIMBRE</span>
+            <span class="lomo-num">08</span>
           </div>
         </div>
-      </div>
 
+ <!-- CUENTO 9 -->
+        <div class="libro-lomo" tabindex="0" role="button"
+          style="--color-lomo:linear-gradient(160deg,#FF6B9D,#C77DFF,#FF9F1C);--glow-lomo:rgba(200,100,255,0.75);--alto:172px;--ancho:70px;"
+          data-titulo="EL RECREO QUE CAMBIÓ DE JUEGO"
+          data-num="CUENTO 09" data-emoji="🤸"
+          data-img="https://lauraelzu.github.io/cuentosparaprimero/recreo2/momento1.png"
+          data-href="https://lauraelzu.github.io/cuentosparaprimero/recreo2/index.html"
+          data-grad="linear-gradient(90deg,#FF6B9D,#C77DFF,#FF9F1C)"
+          data-glow-tarjeta="rgba(200,100,255,0.32)">
+          <div class="lomo-titulo">
+            <span class="lomo-emoji">🤸</span>
+            <span class="lomo-texto">EL RECREO QUE CAMBIÓ DE JUEGO </span>
+            <span class="lomo-num">09</span>
+          </div>
+        </div>
+
+
+
+
+
+
+
+        <div class="libro-lomo deco" style="--alto:110px;--ancho:30px;transform:rotate(5deg);"></div>
+        <div class="libro-lomo deco" style="--alto:98px;--ancho:24px;"></div>
+        <div class="libro-lomo deco" style="--alto:132px;--ancho:42px;transform:rotate(-2deg);"></div>
+        <div class="libro-lomo deco" style="--alto:115px;--ancho:32px;"></div>
+        <div class="sujetalibros" style="height:38px;"></div>
+        <div style="
+          align-self:center; margin-left:16px;
+          font-family:'Fredoka One',cursive; font-size:13px;
+          color:rgba(255,255,255,0.28); letter-spacing:2px;
+          border:2px dashed rgba(255,255,255,0.14);
+          padding:6px 16px; border-radius:8px;">
+          ✦ MÁS CUENTOS PRONTO ✦
+        </div>
+      </div>
+      <div class="tablon"></div>
 
     </div>
-    <div class="carrusel-shadow"></div>
   </div>
 
-  <!-- CONTROLES       *********actualizar!!!!***********************************-->
-  <nav class="controles" aria-label="Navegación del carrusel">
-    <div class="indicador" id="indicador">
-      <span class="dot active" data-idx="0"></span>
-      <span class="dot" data-idx="1"></span>
-      <span class="dot" data-idx="2"></span>
-      <span class="dot" data-idx="3"></span>
-      <span class="dot" data-idx="4"></span>
-      <span class="dot" data-idx="5"></span>
-      <span class="dot" data-idx="6"></span>
-      <span class="dot" data-idx="7"></span>      
-    </div>
-  </nav>
+  <p class="pie-sala">📖 · BIBLIOTECA MÁGICA · PRIMER GRADO · 📖</p>
 
-  <!-- TÍTULO ACTIVO     *********actualizar!!!!*********************************** -->
-  <div class="titulo-activo">
-    <div class="titulo-activo-texto" id="tituloActivo">
-      <span id="twText"></span><span class="tw-cursor" id="twCursor"></span>
+  <!-- OVERLAY -->
+  <div class="overlay-fondo" id="overlayFondo"></div>
+
+  <!-- TARJETA FLOTANTE -->
+  <div class="tarjeta-flotante" id="tarjetaFlotante">
+    <button class="btn-cerrar" id="btnCerrar" aria-label="Cerrar">✕</button>
+    <div class="tarjeta-borde" id="tarjetaBorde"></div>
+    <div class="tarjeta-img-wrap">
+      <div class="tarjeta-img-blur" id="tarjetaImgBlur"></div>
+      <img class="tarjeta-img" id="tarjetaImg" src="" alt="">
     </div>
-    <div class="titulo-activo-num" id="numActivo">CUENTO 01 DE 08</div>
+    <div class="tarjeta-body">
+      <span class="tarjeta-num" id="tarjetaNum"></span>
+      <h2 class="tarjeta-titulo" id="tarjetaTitulo"></h2>
+      <div class="tarjeta-acciones">
+        <span class="tarjeta-emoji" id="tarjetaEmoji"></span>
+        <a class="tarjeta-btn" id="tarjetaBtn" href="#">
+          <span>▶</span> LEER CUENTO
+        </a>
+      </div>
+    </div>
   </div>
 
   <script>
-    //*****************************************************************************************************
-    //******************Actualizar la constante TOTAL con la cantidad total de cuentos************************
-    //******************************************************************************************************
-    const TOTAL    = 8;
-    const carrusel = document.getElementById('carrusel');
-    const libros   = document.querySelectorAll('.libro');
-    const dots     = document.querySelectorAll('.dot');
-    const twText   = document.getElementById('twText');
-    const twCursor = document.getElementById('twCursor');
-    const numEl    = document.getElementById('numActivo');
+    const overlay        = document.getElementById('overlayFondo');
+    const tarjeta        = document.getElementById('tarjetaFlotante');
+    const btnCerrar      = document.getElementById('btnCerrar');
+    const tarjetaBorde   = document.getElementById('tarjetaBorde');
+    const tarjetaImgBlur = document.getElementById('tarjetaImgBlur');
+    const tarjetaImg     = document.getElementById('tarjetaImg');
+    const tarjetaNum     = document.getElementById('tarjetaNum');
+    const tarjetaTitulo  = document.getElementById('tarjetaTitulo');
+    const tarjetaEmoji   = document.getElementById('tarjetaEmoji');
+    const tarjetaBtn     = document.getElementById('tarjetaBtn');
 
-    let actual   = 0;
-    let animando = false;
-    let twTimer  = null;
+    const CONFETTI_COLORES = ['#FFD93D','#FF6B35','#FF9F1C','#74C7EC','#3A86FF','#6BCB77','#FF6B9D','#C77DFF','#ffffff'];
+    const CONFETTI_SHAPES  = ['50%','4px','2px / 8px'];
 
-    /* ══════════════════════════════════════
-       GLOW DINÁMICO POR CUENTO
-    ══════════════════════════════════════ */
-    function aplicarGlow(idx) {
-      const libro = libros[idx];
-      const rgb   = libro.dataset.glow || '255,217,61';
-      document.documentElement.style.setProperty('--glow-color', `rgba(${rgb},0.18)`);
-    }
+    let libroActivo = null;
 
-    /* ══════════════════════════════════════
-       TYPEWRITER
-    ══════════════════════════════════════ */
-    function typewriter(texto) {
-      if (twTimer) clearTimeout(twTimer);
-      twText.textContent = '';
-      let i = 0;
-      function paso() {
-        if (i < texto.length) {
-          twText.textContent += texto[i++];
-          twTimer = setTimeout(paso, 38);
-        }
-      }
-      paso();
-    }
-
-    /* ══════════════════════════════════════
-       PARTÍCULAS AL GIRAR
-    ══════════════════════════════════════ */
-    const EMOJIS_PARTICULAS = ['✨','⭐','🌟','💫','🔮','🌈','🎈','🎀'];
-
-    function lanzarParticulas() {
-      const escena = document.querySelector('.escena');
-      const rect   = escena.getBoundingClientRect();
-      const cx     = rect.left + rect.width  / 2;
-      const cy     = rect.top  + rect.height / 2;
-      const count  = 14;
-
-      for (let i = 0; i < count; i++) {
-        const p   = document.createElement('span');
-        p.className = 'particula';
-        const angulo = (360 / count) * i + Math.random() * 20;
-        const dist   = 90 + Math.random() * 140;
-        const rad    = (angulo * Math.PI) / 180;
-        const dx     = Math.cos(rad) * dist;
-        const dy     = Math.sin(rad) * dist;
-        const dur    = 0.55 + Math.random() * 0.45;
-        const emoji  = EMOJIS_PARTICULAS[Math.floor(Math.random() * EMOJIS_PARTICULAS.length)];
-
-        p.textContent = emoji;
-        p.style.cssText = `
-          left: ${cx}px; top: ${cy}px;
-          --dx: ${dx}px; --dy: ${dy}px;
-          --dur: ${dur}s;
-          --rot: ${-180 + Math.random() * 360}deg;
-          font-size: ${14 + Math.random() * 12}px;
-          margin-left: -10px; margin-top: -10px;
-        `;
-
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), dur * 1000 + 100);
-      }
-    }
-
-    /* ══════════════════════════════════════
-       CONFETTI AL ABRIR CUENTO
-    ══════════════════════════════════════ */
-    const CONFETTI_COLORES = [
-      '#FFD93D','#FF6B35','#FF9F1C','#74C7EC',
-      '#3A86FF','#6BCB77','#FF6B9D','#C77DFF',
-      '#ffffff','#FFF176'
-    ];
-    const CONFETTI_SHAPES = ['50%','4px','2px / 8px'];
-
-    function lanzarConfetti(originX, originY) {
-      const count = 60;
-      for (let i = 0; i < count; i++) {
+    function lanzarConfetti(ox, oy) {
+      for (let i = 0; i < 55; i++) {
         const p = document.createElement('div');
         p.className = 'confetti-piece';
-
-        const col  = CONFETTI_COLORES[Math.floor(Math.random() * CONFETTI_COLORES.length)];
-        const shape= CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)];
-        const w    = 8 + Math.random() * 8;
-        const h    = 8 + Math.random() * 8;
-        const angulo = Math.random() * 360;
-        const dist   = 80 + Math.random() * 220;
-        const rad    = (angulo * Math.PI) / 180;
-        const fx     = Math.cos(rad) * dist;
-        const fy     = Math.sin(rad) * dist - 60; // más hacia arriba
-        const dur    = 0.7 + Math.random() * 0.7;
-
+        const col   = CONFETTI_COLORES[Math.floor(Math.random() * CONFETTI_COLORES.length)];
+        const shape = CONFETTI_SHAPES[Math.floor(Math.random() * CONFETTI_SHAPES.length)];
+        const w = 7 + Math.random() * 8, h = 7 + Math.random() * 8;
+        const ang = Math.random() * 360, dist = 80 + Math.random() * 200;
+        const rad = ang * Math.PI / 180;
+        const dur = 0.65 + Math.random() * 0.65;
         p.style.cssText = `
-          --col: ${col}; --w: ${w}px; --h: ${h}px;
-          --br: ${shape}; --dur: ${dur}s;
-          --tx: ${originX - w/2}px; --ty: ${originY - h/2}px;
-          --fx: ${fx}px; --fy: ${fy}px;
-          --rot: ${-360 + Math.random() * 720}deg;
+          --col:${col};--w:${w}px;--h:${h}px;--br:${shape};--dur:${dur}s;
+          --tx:${ox-w/2}px;--ty:${oy-h/2}px;
+          --fx:${Math.cos(rad)*dist}px;--fy:${Math.sin(rad)*dist - 60}px;
+          --rot:${-360+Math.random()*720}deg;
         `;
-
         document.body.appendChild(p);
         setTimeout(() => p.remove(), dur * 1000 + 200);
       }
     }
 
-    /* ══════════════════════════════════════
-       POSICIONAMIENTO 3D
-    ══════════════════════════════════════ */
-    const RADIO = 680;
+    function abrirTarjeta(libro) {
+      const d = libro.dataset;
+      tarjetaBorde.style.background        = d.grad;
+      tarjetaImgBlur.style.backgroundImage = `url('${d.img}')`;
+      tarjetaImg.src                       = d.img;
+      tarjetaImg.alt                       = d.titulo;
+      tarjetaNum.textContent               = d.num;
+      tarjetaTitulo.textContent            = d.titulo;
+      tarjetaEmoji.textContent             = d.emoji;
+      tarjetaBtn.href                      = d.href;
+      tarjeta.style.setProperty('--glow-tarjeta', d.glowTarjeta || 'rgba(255,217,61,0.28)');
 
-    function anguloPorIndex(i) { return (360 / TOTAL) * i; }
+      if (libroActivo) libroActivo.classList.remove('abierto');
+      libroActivo = libro;
+      libro.classList.add('abierto');
 
-    function posicionar() {
-      libros.forEach((libro, i) => {
-        const angulo = anguloPorIndex(i) - anguloPorIndex(actual);
-        const rad    = (angulo * Math.PI) / 180;
-        const x      = Math.sin(rad) * RADIO;
-        const z      = Math.cos(rad) * RADIO - RADIO;
-        const escala = 0.55 + 0.45 * ((Math.cos(rad) + 1) / 2);
-        const opac   = 0.35 + 0.65 * ((Math.cos(rad) + 1) / 2);
-        const anguloNorm = ((angulo % 360) + 360) % 360;
-        const esCentro   = anguloNorm < 5 || anguloNorm > 355;
-        // Tarjetas muy por detrás (opuestas al frente) no son clickeables
-        const esOculta   = anguloNorm > 120 && anguloNorm < 240;
-
-        libro.style.transform     = `translateX(${x}px) translateZ(${z}px) scale(${escala})`;
-        libro.style.opacity       = opac;
-        libro.style.zIndex        = Math.round(escala * 100);
-        libro.style.pointerEvents = esOculta ? 'none' : 'auto';
-        libro.style.cursor        = esCentro ? 'default' : 'pointer';
-        libro.classList.toggle('activo-centro', esCentro);
-      });
+      overlay.classList.add('visible');
+      tarjeta.classList.add('visible');
     }
 
-    /* ══════════════════════════════════════
-       ACTUALIZAR ESTADO
-    ══════════════════════════════════════ */
-    function actualizar(dir, conParticulas = true) {
-      if (animando) return;
-      animando = true;
-
-      dots.forEach((d, i) => d.classList.toggle('active', i === actual));
-
-      const libroActual = libros[actual];
-      const titulo = libroActual.dataset.titulo;
-
-      // Typewriter con fade
-      twText.style.opacity = '0';
-      setTimeout(() => {
-        twText.style.opacity = '1';
-        typewriter(titulo);
-        numEl.textContent = `CUENTO ${String(actual + 1).padStart(2,'0')} DE ${String(libros.length).padStart(2,'0')}`;
-      }, 180);
-
-      // Glow dinámico
-      aplicarGlow(actual);
-
-      // Partículas
-      if (conParticulas) lanzarParticulas();
-
-      posicionar();
-      setTimeout(() => { animando = false; }, 850);
+    function cerrarTarjeta() {
+      overlay.classList.remove('visible');
+      tarjeta.classList.remove('visible');
+      if (libroActivo) { libroActivo.classList.remove('abierto'); libroActivo = null; }
     }
 
-    function girar(dir) {
-      actual = (actual + dir + TOTAL) % TOTAL;
-      actualizar(dir);
-    }
-
-    /* ══════════════════════════════════════
-       CONFETTI AL HACER CLIC EN "LEER CUENTO"
-    ══════════════════════════════════════ */
-    document.querySelectorAll('.libro-btn').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        const rect = btn.getBoundingClientRect();
-        const ox   = rect.left + rect.width  / 2;
-        const oy   = rect.top  + rect.height / 2;
-        lanzarConfetti(ox, oy);
-        // Dejar navegar después de un pequeño delay para ver el efecto
-        e.preventDefault();
-        const href = btn.getAttribute('href');
-        setTimeout(() => { window.location.href = href; }, 700);
+    document.querySelectorAll('.libro-lomo[data-href]').forEach(libro => {
+      libro.addEventListener('click', () => abrirTarjeta(libro));
+      libro.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirTarjeta(libro); }
       });
     });
 
-    /* ── Botones ── */
-    // (navegación por clic en tarjetas laterales — ver abajo)
+    overlay.addEventListener('click', cerrarTarjeta);
+    btnCerrar.addEventListener('click', cerrarTarjeta);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarTarjeta(); });
 
-    dots.forEach((dot, i) => {
-      dot.addEventListener('click', () => {
-        if (animando || i === actual) return;
-        const dir = i > actual ? 1 : -1;
-        actual = i;
-        actualizar(dir);
-      });
+    tarjetaBtn.addEventListener('click', function(e) {
+      const rect = tarjetaBtn.getBoundingClientRect();
+      lanzarConfetti(rect.left + rect.width/2, rect.top + rect.height/2);
+      e.preventDefault();
+      const href = tarjetaBtn.href;
+      setTimeout(() => { window.location.href = href; }, 650);
     });
-
-    /* ── Clic en tarjeta lateral: avanzar o retroceder ── */
-    libros.forEach((libro, i) => {
-      libro.addEventListener('click', (e) => {
-        if (animando) return;
-        if (i === actual) return; // la tarjeta central solo se opera con el botón LEER
-
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Determinar dirección según posición angular visual
-        const anguloRel = ((anguloPorIndex(i) - anguloPorIndex(actual)) % 360 + 360) % 360;
-        // 0–180 → está a la derecha → avanzar (+1)
-        // 180–360 → está a la izquierda → retroceder (-1)
-        const dir = anguloRel <= 180 ? 1 : -1;
-        actual = i;
-        actualizar(dir);
-      });
-    });
-
-    /* ── Teclado ── */
-    document.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); girar(1);  }
-      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); girar(-1); }
-    });
-
-    /* ── Swipe touch ── */
-    let touchStartX = null;
-    document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-    document.addEventListener('touchend', e => {
-      if (touchStartX === null) return;
-      const diff = touchStartX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 50) girar(diff > 0 ? 1 : -1);
-      touchStartX = null;
-    });
-
-    /* ── Inicio ── */
-    posicionar();
-    actualizar(0, false); // sin partículas al inicio
   </script>
 
 </body>
