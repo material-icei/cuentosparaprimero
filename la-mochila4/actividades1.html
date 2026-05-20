@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACTIVIDADES - LA MOCHILA QUE SABÍA ESPERAR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --amarillo:  #FFD93D; --naranja:   #FF6B35; --celeste:   #74C7EC;
+      --verde:     #6BCB77; --rosa:      #FF6B9D; --blanco:    #fffdf4;
+      --azul:      #3A86FF;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', cursive; min-height: 100vh;
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,217,61,0.07) 0%, transparent 60%),
+                  linear-gradient(170deg, #080f2a 0%, #0d1f52 30%, #0f2f6e 60%, #1a3a7a 100%);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 40px 20px; color: #333; overflow-x: hidden;
+    }
+
+    /* Estrellas de fondo */
+    .estrellas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .estrella { position: absolute; left: var(--x); top: var(--y); font-size: calc(14px * var(--s)); opacity: 0.6; animation: twinkle 3s infinite ease-in-out var(--d); }
+    @keyframes twinkle { 0%,100% { opacity:0.6; transform:scale(1); } 50% { opacity:0.12; transform:scale(0.5); } }
+
+    /* Contenedor Principal */
+    .contenedor { position: relative; z-index: 2; width: 100%; max-width: 850px; }
+
+    .encabezado { text-align: center; margin-bottom: 40px; color: var(--blanco); }
+    .titulo-main { font-family: 'Fredoka One', cursive; font-size: clamp(28px, 4vw, 42px); color: var(--amarillo); text-shadow: 3px 3px 0 var(--naranja); letter-spacing: 2px; }
+    .subtitulo { font-family: 'Fredoka One', cursive; font-size: 18px; opacity: 0.8; margin-top: 10px; letter-spacing: 1px; }
+    
+    .btn-volver { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 10px 20px; border-radius: 50px; font-family: 'Fredoka One', cursive; margin-bottom: 20px; transition: 0.3s; text-transform: uppercase; }
+    .btn-volver:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
+
+    /* Tarjetas de Preguntas */
+    .pregunta-card { 
+      background: var(--blanco); border-radius: 20px; padding: 25px; margin-bottom: 25px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 4px solid var(--celeste); 
+      display: none; 
+    }
+    
+    .pregunta-card.activa { 
+      display: block; 
+      animation: entradaSuave 0.4s ease-out forwards; 
+    }
+    
+    @keyframes entradaSuave {
+      0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .pregunta-texto { font-family: 'Fredoka One', cursive; font-size: 22px; margin-bottom: 20px; color: #1a3a7a; letter-spacing: 0.5px; }
+    
+    .opciones { display: flex; flex-direction: column; gap: 12px; }
+    .opcion { background: #f0f4f8; border: 3px solid #d0dce8; border-radius: 15px; padding: 15px 20px; font-size: 18px; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.2s; letter-spacing: 0.5px; }
+    .opcion:hover { background: #e2eaf1; border-color: var(--celeste); }
+    
+    /* Estados de respuesta */
+    .opcion.correcta { background: #e8f5e9; border-color: var(--verde); color: #2e7d32; pointer-events: none; }
+    .opcion.incorrecta { background: #ffebee; border-color: var(--rosa); color: #c62828; pointer-events: none; animation: shake 0.4s; }
+    .opcion.deshabilitada { pointer-events: none; opacity: 0.6; }
+    
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+    .feedback { font-family: 'Fredoka One', cursive; font-size: 18px; margin-top: 15px; display: none; letter-spacing: 0.5px; line-height: 1.4; }
+    .feedback.mostrar { display: block; animation: popIn 0.3s ease-out; }
+    .feedback.exito { color: var(--verde); }
+    .feedback.error { color: var(--rosa); }
+
+    /* BOTONES DE ACCIÓN */
+    .btn-siguiente {
+      display: none; background: linear-gradient(145deg, var(--azul), #2563eb);
+      color: white; border: none; border-radius: 50px; padding: 14px 28px;
+      font-family: 'Fredoka One', cursive; font-size: 18px; cursor: pointer;
+      margin-top: 25px; margin-left: auto; box-shadow: 0 5px 0 #1d4ed8;
+      transition: 0.2s; letter-spacing: 1px;
+    }
+    .btn-siguiente:hover { transform: scale(1.05); }
+    .btn-siguiente:active { transform: translateY(3px); box-shadow: 0 2px 0 #1d4ed8; }
+
+    /* FORMATO HORIZONTAL EN 2 COLUMNAS (ORDENAR HISTORIA) */
+    .ordenar-contenedor { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+    .columna-orden { display: flex; flex-direction: column; }
+    .columna-titulo { font-family: 'Fredoka One', cursive; font-size: 15px; margin-bottom: 12px; letter-spacing: 0.5px; }
+    
+    .slots-destino { display: flex; flex-direction: column; gap: 12px; }
+    .slot { border: 3px dashed var(--celeste); border-radius: 15px; padding: 10px; min-height: 85px; background: rgba(116, 199, 236, 0.08); display: flex; align-items: center; gap: 12px; position: relative; transition: 0.2s; }
+    .slot-numero { font-family: 'Fredoka One', cursive; font-size: 24px; color: var(--naranja); min-width: 40px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); text-align: center; }
+    
+    .opciones-origen { display: flex; flex-direction: column; gap: 12px; padding: 15px; background: #eef4f8; border: 3px solid #d0dce8; border-radius: 15px; min-height: 280px; justify-content: center; transition: 0.2s; }
+    
+    .item-arrastrable { background: white; border: 3px solid var(--azul); border-radius: 12px; padding: 10px 14px; font-size: 15px; font-weight: 900; cursor: grab; user-select: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; transition: transform 0.2s, box-shadow 0.2s; letter-spacing: 0.5px; line-height: 1.3; }
+    .item-arrastrable:active { cursor: grabbing; }
+    .item-arrastrable.dragging { opacity: 0.4; }
+    .item-arrastrable.seleccionado { border-color: var(--amarillo); background: #fff9db; box-shadow: 0 0 14px var(--amarillo); transform: scale(1.01); }
+
+    /* ESTILOS DE LA NUEVA ACTIVIDAD: COMPLETAR ORACIONES */
+    .completar-contenedor { display: flex; flex-direction: column; gap: 22px; margin-top: 15px; }
+    .completar-oracion { font-size: 18px; font-weight: 900; color: #1a3a7a; line-height: 2; letter-spacing: 0.5px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .hueco { display: inline-flex; align-items: center; justify-content: center; min-width: 140px; height: 42px; border-bottom: 4px solid var(--azul); background: rgba(58, 134, 255, 0.05); border-radius: 8px 8px 0 0; padding: 0 12px; font-family: 'Fredoka One', cursive; font-size: 16px; color: var(--azul); cursor: pointer; transition: 0.2s; vertical-align: middle; }
+    .hueco.lleno { border: 3px solid var(--azul); border-bottom-width: 6px; background: white; border-radius: 12px; color: #1a3a7a; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .banco-palabras { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 15px; padding: 18px; background: #eef4f8; border: 3px solid #d0dce8; border-radius: 15px; }
+    .palabra-opcion { background: white; border: 3px solid var(--celeste); border-radius: 12px; padding: 10px 22px; font-family: 'Fredoka One', cursive; font-size: 16px; color: #1a3a7a; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s; }
+    .palabra-opcion:hover { transform: scale(1.05); border-color: var(--azul); }
+    .palabra-opcion.seleccionada { border-color: var(--amarillo); background: #fff9db; box-shadow: 0 0 14px var(--amarillo); }
+    .palabra-opcion.oculta { display: none; }
+
+    /* Diseño responsivo para pantallas pequeñas (Celulares) */
+    @media (max-width: 700px) {
+      .ordenar-contenedor { grid-template-columns: 1fr; gap: 20px; }
+      .opciones-origen { min-height: auto; }
+      .completar-oracion { font-size: 15px; line-height: 2.2; }
+      .hueco { min-width: 110px; height: 36px; font-size: 14px; }
+    }
+
+    /* TARJETA FLOTANTE DE ESTRELLAS */
+    .tarjeta-estrellas {
+      position: fixed; bottom: 20px; right: 20px; background: var(--blanco);
+      border: 4px solid var(--amarillo); border-radius: 20px; padding: 12px 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4); z-index: 1000;
+      font-family: 'Fredoka One', cursive; text-align: center; min-width: 160px;
+      animation: popIn 0.5s ease-out;
+    }
+    .estrellas-titulo { font-size: 14px; color: var(--naranja); margin-bottom: 5px; letter-spacing: 1px; }
+    .estrellas-contenedor { font-size: 26px; display: flex; justify-content: center; gap: 4px; min-height: 32px; transition: transform 0.2s; flex-wrap: wrap; }
+    .estrellas-contenedor.brillo { transform: scale(1.2); }
+
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+
+    /* Confeti */
+    .confetti-piece { position:fixed; pointer-events:none; z-index:9999; width:var(--w); height:var(--h); background:var(--col); border-radius:var(--br); animation:confetti-caer var(--dur) ease-out forwards; top:var(--ty); left:var(--tx); }
+    @keyframes confetti-caer { 0% { opacity:1; transform:translate(0,0) rotate(0deg) scale(1); } 100% { opacity:0; transform:translate(var(--fx),var(--fy)) rotate(var(--rot)) scale(0.4); } }
+  </style>
+</head>
+<body>
+
+  <div class="estrellas" aria-hidden="true">
+    <span class="estrella" style="--x:10%;--y:10%;--s:1.2;--d:0s">⭐</span>
+    <span class="estrella" style="--x:90%;--y:20%;--s:0.9;--d:0.4s">✨</span>
+    <span class="estrella" style="--x:20%;--y:80%;--s:1.1;--d:0.9s">⭐</span>
+    <span class="estrella" style="--x:80%;--y:70%;--s:0.8;--d:1.4s">✨</span>
+  </div>
+
+  <div class="tarjeta-estrellas" id="tarjetaEstrellas">
+    <div class="estrellas-titulo">MIS ESTRELLAS</div>
+    <div class="estrellas-contenedor" id="contenedorEstrellas"></div>
+  </div>
+
+  <div class="contenedor">
+    <a href="index.html" class="btn-volver">⬅ VOLVER A LA BIBLIOTECA</a>
+    
+    <div class="encabezado">
+      <h1 class="titulo-main">🎒 ACTIVIDADES 🎒</h1>
+      <p class="subtitulo">LA MOCHILA QUE SABÍA ESPERAR</p>
+    </div>
+
+    <div class="pregunta-card" id="q1">
+      <h2 class="pregunta-texto">1. ¿CÓMO ESTABA LA MOCHILA LA NOCHE ANTERIOR?</h2>
+      <div class="opciones">
+        <div class="opcion" onclick="verificar(this, false, 'q1')">A) VACÍA Y TRISTE 😔</div>
+        <div class="opcion" onclick="verificar(this, true, 'q1')">B) UN POCO PESADA, INFLADA Y MUY LLENA 🎒</div>
+        <div class="opcion" onclick="verificar(this, false, 'q1')">C) LIGERA Y ABURRIDA 🎈</div>
+      </div>
+      <div class="feedback"></div>
+      <button class="btn-siguiente" onclick="avanzarPregunta()">SIGUIENTE ➡️</button>
+    </div>
+
+    <div class="pregunta-card" id="q2">
+      <h2 class="pregunta-texto">2. ¿QUÉ LLEVABA LA MOCHILA ADENTRO QUE NO SE VEÍA?</h2>
+      <div class="opciones">
+        <div class="opcion" onclick="verificar(this, false, 'q2')">A) JUGUETES Y GOLOSINAS 🍬</div>
+        <div class="opcion" onclick="verificar(this, true, 'q2')">B) PREGUNTAS Y CURIOSIDAD 🤔</div>
+        <div class="opcion" onclick="verificar(this, false, 'q2')">C) ZAPATOS NUEVOS 👟</div>
+      </div>
+      <div class="feedback"></div>
+      <button class="btn-siguiente" onclick="avanzarPregunta()">SIGUIENTE ➡️</button>
+    </div>
+
+    <div class="pregunta-card" id="q3">
+      <h2 class="pregunta-texto">3. AL LLEGAR AL COLEGIO, ¿A QUÉ LUGAR ENTRARON?</h2>
+      <div class="opciones">
+        <div class="opcion" onclick="verificar(this, false, 'q3')">A) A LA MISMA SALA DEL JARDÍN 🎨</div>
+        <div class="opcion" onclick="verificar(this, false, 'q3')">B) A UN PARQUE DE DIVERSIONES 🎡</div>
+        <div class="opcion" onclick="verificar(this, true, 'q3')">C) A UN AULA NUEVA DE PRIMER GRADO 🏫</div>
+      </div>
+      <div class="feedback"></div>
+      <button class="btn-siguiente" onclick="avanzarPregunta()">SIGUIENTE ➡️</button>
+    </div>
+
+    <div class="pregunta-card" id="q4">
+      <h2 class="pregunta-texto">4. ¿QUÉ PASABA CADA DÍA CON EL PESO DE LA MOCHILA EN PRIMER GRADO?</h2>
+      <div class="opciones">
+        <div class="opcion" onclick="verificar(this, true, 'q4')">A) PESABA DISTINTO PORQUE SE LLENABA DE INTENTOS Y RISAS 😂</div>
+        <div class="opcion" onclick="verificar(this, false, 'q4')">B) PESABA MENOS PORQUE PERDÍA SUS ÚTILES ✏️</div>
+        <div class="opcion" onclick="verificar(this, false, 'q4')">C) NO CAMBIABA NUNCA, PESABA IGUAL 🪨</div>
+      </div>
+      <div class="feedback"></div>
+      <button class="btn-siguiente" onclick="avanzarPregunta()">SIGUIENTE ➡️</button>
+    </div>
+
+    <div class="pregunta-card" id="q5">
+      <h2 class="pregunta-texto">5. AL FINAL, ¿QUÉ ERA LO MÁS IMPORTANTE QUE TRAÍA LA MOCHILA?</h2>
+      <div class="opciones">
+        <div class="opcion" onclick="verificar(this, false, 'q5')">A) SOLO LÁPICES DE COLORES 🖍️</div>
+        <div class="opcion" onclick="verificar(this, false, 'q5')">B) UN CUADERNO ESCONDIDO 📓</div>
+        <div class="opcion" onclick="verificar(this, true, 'q5')">C) GANAS DE APRENDER, CONFIANZA Y CURIOSIDAD ✨</div>
+      </div>
+      <div class="feedback"></div>
+      <button class="btn-siguiente" onclick="avanzarPregunta()">SIGUIENTE ➡️</button>
+    </div>
+
+    <div class="pregunta-card" id="ordenarHistorial">
+      <h2 class="pregunta-texto">6. ¡ORDENA LA HISTORIA!</h2>
+      <p style="font-size: 16px; font-weight: 900; color: #555; margin-bottom: 10px; line-height: 1.4;">ARRASTRA LAS ORACIONES O TÓCALAS PARA ARMAR EL ORDEN CORRECTO DEL CUENTO.</p>
+      
+      <div class="ordenar-contenedor">
+        <div class="columna-orden">
+          <div class="columna-titulo" style="color: var(--naranja);">ORDEN DE LA HISTORIA:</div>
+          <div class="slots-destino">
+            <div class="slot" data-paso="1">
+              <div class="slot-numero">1°</div>
+            </div>
+            <div class="slot" data-paso="2">
+              <div class="slot-numero">2°</div>
+            </div>
+            <div class="slot" data-paso="3">
+              <div class="slot-numero">3°</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="columna-orden">
+          <div class="columna-titulo" style="color: var(--azul);">👇 TOCÁ O ARRASTRÁ LAS ORACIONES:</div>
+          <div class="opciones-origen" id="origenOpciones">
+            <div class="item-arrastrable" draggable="true" data-orden="3">AL FINAL, LA MOCHILA ENTENDIÓ QUE LLEVABA GANAS DE APRENDER Y MUCHA CONFIANZA.</div>
+            <div class="item-arrastrable" draggable="true" data-orden="1">LA MOCHILA ESTABA LISTA DESDE LA NOCHE ANTERIOR Y LLEVABA PREGUNTAS ADENTRO.</div>
+            <div class="item-arrastrable" draggable="true" data-orden="2">A LA MAÑANA SIGUIENTE, DESCUBRIÓ UN AULA NUEVA EN PRIMER GRADO.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feedback" id="feedbackOrden"></div>
+      <button class="btn-siguiente" id="btnComprobarOrden" onclick="verificarOrden()" style="background: linear-gradient(145deg, var(--naranja), #e65100); box-shadow: 0 5px 0 #bf360c;">COMPROBAR ORDEN 🧐</button>
+      <button class="btn-siguiente" id="btnSiguienteOrden" onclick="avanzarPregunta()">SIGUIENTE ACTIVIDAD ➡️</button>
+    </div>
+
+    <div class="pregunta-card" id="completarOraciones">
+      <h2 class="pregunta-texto">7. ¡COMPLETA LAS ORACIONES!</h2>
+      <p style="font-size: 16px; font-weight: 900; color: #555; margin-bottom: 20px; line-height: 1.4;">TOCÁ UNA PALABRA DEL BANCO DE ABAJO Y LUEGO TOCÁ EL ESPACIO VACÍO PARA COMPLETAR LA ORACIÓN.</p>
+      
+      <div class="completar-contenedor">
+        <div class="completar-oracion">
+          A) LA MOCHILA ESTABA MUY <span class="hueco" id="h1" onclick="colocarPalabra(this)">_________</span> LA NOCHE ANTERIOR.
+        </div>
+        <div class="completar-oracion">
+          B) AL LLEGAR AL COLEGIO ENTRARON A UN AULA NUEVA DE <span class="hueco" id="h2" onclick="colocarPalabra(this)">_________</span> GRADO.
+        </div>
+        <div class="completar-oracion">
+          C) CADA DÍA LA MOCHILA SE LLENABA DE INTENTOS Y <span class="hueco" id="h3" onclick="colocarPalabra(this)">_________</span>.
+        </div>
+        
+        <p style="font-size: 15px; font-weight: 900; color: var(--azul); margin-top: 15px; text-align: center;">👇 BANCO DE PALABRAS:</p>
+        <div class="banco-palabras">
+          <div class="palabra-opcion" onclick="seleccionarPalabra(this)">RISAS</div>
+          <div class="palabra-opcion" onclick="seleccionarPalabra(this)">LLENA</div>
+          <div class="palabra-opcion" onclick="seleccionarPalabra(this)">PRIMER</div>
+        </div>
+      </div>
+
+      <div class="feedback" id="feedbackCompletar"></div>
+      <button class="btn-siguiente" id="btnComprobarCompletar" onclick="verificarCompletar()" style="background: linear-gradient(145deg, var(--naranja), #e65100); box-shadow: 0 5px 0 #bf360c;">COMPROBAR PALABRAS 🧐</button>
+      <button class="btn-siguiente" id="btnSiguienteCompletar" onclick="avanzarPregunta()">VER RESULTADO 🏆</button>
+    </div>
+
+    <div class="pregunta-card" id="pantallaFinal" style="text-align: center;">
+      <h2 class="pregunta-texto" style="font-size: 28px; color: var(--naranja);">¡TERMINASTE EL JUEGO! 🎉</h2>
+      <p style="font-size: 20px; font-weight: 900; color: #1a3a7a; margin-bottom: 25px;">¡LO HICISTE EXCELENTE! COMPLETASTE TODAS LAS PREGUNTAS SOBRE EL CUENTO.</p>
+      <div id="estrellasFinales" style="font-size: 45px; margin-bottom: 35px; min-height: 50px;"></div>
+      <a href="index.html" class="btn-volver" style="background: linear-gradient(145deg, var(--verde), #4caf50); font-size: 18px; padding: 15px 30px; box-shadow: 0 5px 0 #388e3c;">⬅️ VOLVER A LA BIBLIOTECA</a>
+    </div>
+
+  </div>
+
+  <script>
+    const CONFETTI_COLORES = ['#FFD93D','#FF6B35','#74C7EC','#6BCB77','#FF6B9D','#C77DFF'];
+    let aciertos = 0;
+    let indicePreguntaActual = 0;
+    let itemSeleccionado = null;
+    let palabraSeleccionada = null;
+    
+    // Flujo actualizado incluyendo las 7 actividades en secuencia
+    const flujoPreguntas = ['q1', 'q2', 'q3', 'q4', 'q5', 'ordenarHistorial', 'completarOraciones', 'pantallaFinal'];
+
+    function actualizarPreguntaVisible() {
+      flujoPreguntas.forEach((id, index) => {
+        const tarjeta = document.getElementById(id);
+        if (index === indicePreguntaActual) {
+          tarjeta.classList.add('activa');
+        } else {
+          tarjeta.classList.remove('activa');
+        }
+      });
+    }
+
+    function avanzarPregunta() {
+      indicePreguntaActual++;
+      actualizarPreguntaVisible();
+      
+      if (flujoPreguntas[indicePreguntaActual] === 'pantallaFinal') {
+        const contenedorFinal = document.getElementById('estrellasFinales');
+        contenedorFinal.innerHTML = '';
+        
+        for (let i = 0; i < aciertos; i++) {
+          contenedorFinal.innerHTML += '⭐';
+        }
+        if (aciertos === 0) {
+          contenedorFinal.innerHTML = '✨ ¡SIGUE INTENTANDO! ✨';
+        }
+        
+        setTimeout(() => lanzarConfetti(window.innerWidth / 2, window.innerHeight / 2, 100), 300);
+      }
+    }
+
+    function actualizarTarjetaEstrellas() {
+      const contenedor = document.getElementById('contenedorEstrellas');
+      contenedor.innerHTML = '';
+      
+      for (let i = 0; i < aciertos; i++) {
+        contenedor.innerHTML += '⭐';
+      }
+
+      contenedor.classList.add('brillo');
+      setTimeout(() => contenedor.classList.remove('brillo'), 200);
+    }
+
+    function lanzarConfetti(ox, oy, cantidad) {
+      for (let i = 0; i < cantidad; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        const col = CONFETTI_COLORES[Math.floor(Math.random() * CONFETTI_COLORES.length)];
+        const w = 8 + Math.random() * 6, h = 8 + Math.random() * 6;
+        const ang = Math.random() * 360, dist = 50 + Math.random() * 150;
+        const rad = ang * Math.PI / 180;
+        const dur = 0.6 + Math.random() * 0.5;
+        p.style.cssText = `
+          --col:${col};--w:${w}px;--h:${h}px;--br:50%;--dur:${dur}s;
+          --tx:${ox}px;--ty:${oy}px;
+          --fx:${Math.cos(rad)*dist}px;--fy:${Math.sin(rad)*dist - 50}px;
+          --rot:${-360+Math.random()*720}deg;
+        `;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), dur * 1000 + 100);
+      }
+    }
+
+    function verificar(elemento, esCorrecta, idPregunta) {
+      const tarjeta = document.getElementById(idPregunta);
+      const opciones = tarjeta.querySelectorAll('.opcion');
+      const feedback = tarjeta.querySelector('.feedback');
+      const btnSiguiente = tarjeta.querySelector('.btn-siguiente');
+
+      opciones.forEach(op => op.classList.add('deshabilitada'));
+
+      if (esCorrecta) {
+        elemento.classList.add('correcta');
+        feedback.textContent = "¡EXCELENTE! RESPUESTA CORRECTA 🌟";
+        feedback.className = "feedback mostrar exito";
+        
+        const rect = elemento.getBoundingClientRect();
+        lanzarConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2, 20);
+        
+        aciertos++;
+        actualizarTarjetaEstrellas();
+      } else {
+        elemento.classList.add('incorrecta');
+        feedback.textContent = "¡UY! INTENTA RECORDAR EL CUENTO Y VUELVE A INTENTARLO. 😉";
+        feedback.className = "feedback mostrar error";
+        
+        opciones.forEach(op => {
+          if (op.getAttribute('onclick').includes('true')) {
+            op.classList.remove('deshabilitada');
+            op.classList.add('correcta');
+          }
+        });
+      }
+
+      if (btnSiguiente) {
+        btnSiguiente.style.display = 'block';
+      }
+    }
+
+    /* --- LÓGICA DE ORDENAR LA HISTORIA --- */
+    function configurarEventosOrden() {
+      const items = document.querySelectorAll('.item-arrastrable');
+      const slots = document.querySelectorAll('.slot');
+      const origen = document.getElementById('origenOpciones');
+
+      items.forEach(item => {
+        item.addEventListener('dragstart', () => item.classList.add('dragging'));
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+          comprobarSlotsLlenos();
+        });
+
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (item.parentElement.classList.contains('slot')) {
+            origen.appendChild(item);
+            item.classList.remove('seleccionado');
+            item.style.borderColor = 'var(--azul)';
+            item.style.background = 'white';
+            itemSeleccionado = null;
+            document.getElementById('feedbackOrden').className = "feedback";
+            comprobarSlotsLlenos();
+            return;
+          }
+          if (itemSeleccionado) itemSeleccionado.classList.remove('seleccionado');
+          itemSeleccionado = item;
+          item.classList.add('seleccionado');
+        });
+      });
+
+      slots.forEach(slot => {
+        slot.addEventListener('dragover', (e) => e.preventDefault());
+        slot.addEventListener('drop', () => {
+          const itemDragging = document.querySelector('.item-arrastrable.dragging');
+          if (itemDragging && slot.children.length === 1) {
+            slot.appendChild(itemDragging);
+            restablecerEstiloItem(itemDragging);
+          }
+        });
+
+        slot.addEventListener('click', () => {
+          if (itemSeleccionado && slot.children.length === 1) {
+            slot.appendChild(itemSeleccionado);
+            restablecerEstiloItem(itemSeleccionado);
+            itemSeleccionado.classList.remove('seleccionado');
+            itemSeleccionado = null;
+            comprobarSlotsLlenos();
+          }
+        });
+      });
+
+      origen.addEventListener('dragover', (e) => e.preventDefault());
+      origen.addEventListener('drop', () => {
+        const itemDragging = document.querySelector('.item-arrastrable.dragging');
+        if (itemDragging) {
+          origen.appendChild(itemDragging);
+          restablecerEstiloItem(itemDragging);
+        }
+      });
+      origen.addEventListener('click', () => {
+        if (itemSeleccionado) {
+          origen.appendChild(itemSeleccionado);
+          restablecerEstiloItem(itemSeleccionado);
+          itemSeleccionado.classList.remove('seleccionado');
+          itemSeleccionado = null;
+          comprobarSlotsLlenos();
+        }
+      });
+    }
+
+    function restablecerEstiloItem(item) {
+      item.style.borderColor = 'var(--azul)';
+      item.style.background = 'white';
+      document.getElementById('feedbackOrden').className = "feedback";
+    }
+
+    function comprobarSlotsLlenos() {
+      const slots = document.querySelectorAll('.slot');
+      let todosLlenos = true;
+      slots.forEach(slot => {
+        if (slot.children.length < 2) todosLlenos = false;
+      });
+      document.getElementById('btnComprobarOrden').style.display = todosLlenos ? 'block' : 'none';
+    }
+
+    function verificarOrden() {
+      const slots = document.querySelectorAll('.slot');
+      let todoCorrecto = true;
+      
+      slots.forEach(slot => {
+        const pasoEsperado = slot.getAttribute('data-paso');
+        const itemColocado = slot.querySelector('.item-arrastrable');
+        
+        if (itemColocado) {
+          const ordenItem = itemColocado.getAttribute('data-orden');
+          if (pasoEsperado !== ordenItem) {
+            todoCorrecto = false;
+            itemColocado.style.borderColor = 'var(--rosa)';
+            itemColocado.style.background = '#ffebee';
+          } else {
+            itemColocado.style.borderColor = 'var(--verde)';
+            itemColocado.style.background = '#e8f5e9';
+          }
+        }
+      });
+      
+      const feedback = document.getElementById('feedbackOrden');
+      if (todoCorrecto) {
+        feedback.textContent = "¡EXCELENTE! ORDENASTE LA HISTORIA PERFECTO 🌟";
+        feedback.className = "feedback mostrar exito";
+        document.getElementById('btnComprobarOrden').style.display = 'none';
+        document.getElementById('btnSiguienteOrden').style.display = 'block';
+        
+        document.querySelectorAll('.item-arrastrable').forEach(item => {
+          item.setAttribute('draggable', 'false');
+          item.style.pointerEvents = 'none';
+        });
+        
+        aciertos++;
+        actualizarTarjetaEstrellas();
+        
+        const rect = feedback.getBoundingClientRect();
+        lanzarConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2, 30);
+      } else {
+        feedback.textContent = "¡UY! ALGUNAS ORACIONES NO ESTÁN EN EL LUGAR CORRECTO. TOCÁ LAS EQUIVOCADAS PARA BAJARLAS E INTENTALO DE NUEVO. 🎒";
+        feedback.className = "feedback mostrar error";
+      }
+    }
+
+    /* --- LÓGICA DE COMPLETAR LAS ORACIONES --- */
+    function seleccionarPalabra(elemento) {
+      if (palabraSeleccionada) {
+        palabraSeleccionada.classList.remove('seleccionada');
+      }
+      palabraSeleccionada = elemento;
+      elemento.classList.add('seleccionada');
+    }
+
+    function colocarPalabra(hueco) {
+      // Si el hueco ya tiene una palabra, al tocarlo la devuelve mágicamente al banco
+      if (hueco.classList.contains('lleno')) {
+        const textoPalabra = hueco.innerText;
+        const palabraOriginal = Array.from(document.querySelectorAll('.palabra-opcion')).find(p => p.innerText === textoPalabra && p.classList.contains('oculta'));
+        if (palabraOriginal) palabraOriginal.classList.remove('oculta');
+        
+        hueco.innerText = "_________";
+        hueco.classList.remove('lleno');
+        hueco.removeAttribute('data-palabra');
+        hueco.style.borderColor = 'var(--azul)';
+        hueco.style.background = 'rgba(58, 134, 255, 0.05)';
+        
+        comprobarHuecosLlenos();
+        document.getElementById('feedbackCompletar').className = "feedback";
+        return;
+      }
+      
+      // Si hay una palabra seleccionada en espera, la ubica en el hueco
+      if (palabraSeleccionada) {
+        hueco.innerText = palabraSeleccionada.innerText;
+        hueco.setAttribute('data-palabra', palabraSeleccionada.innerText);
+        hueco.classList.add('lleno');
+        
+        palabraSeleccionada.classList.remove('seleccionada');
+        palabraSeleccionada.classList.add('oculta');
+        palabraSeleccionada = null;
+        
+        comprobarHuecosLlenos();
+        document.getElementById('feedbackCompletar').className = "feedback";
+      }
+    }
+
+    function comprobarHuecosLlenos() {
+      const huecos = document.querySelectorAll('.hueco');
+      let todosLlenos = true;
+      huecos.forEach(h => {
+        if (!h.classList.contains('lleno')) todosLlenos = false;
+      });
+      
+      document.getElementById('btnComprobarCompletar').style.display = todosLlenos ? 'block' : 'none';
+    }
+
+    function verificarCompletar() {
+      const h1 = document.getElementById('h1');
+      const h2 = document.getElementById('h2');
+      const h3 = document.getElementById('h3');
+      let todoCorrecto = true;
+      
+      // Control de respuestas de cada hueco
+      if (h1.getAttribute('data-palabra') === 'LLENA') {
+        h1.style.borderColor = 'var(--verde)'; h1.style.background = '#e8f5e9';
+      } else {
+        todoCorrecto = false; h1.style.borderColor = 'var(--rosa)'; h1.style.background = '#ffebee';
+      }
+      
+      if (h2.getAttribute('data-palabra') === 'PRIMER') {
+        h2.style.borderColor = 'var(--verde)'; h2.style.background = '#e8f5e9';
+      } else {
+        todoCorrecto = false; h2.style.borderColor = 'var(--rosa)'; h2.style.background = '#ffebee';
+      }
+      
+      if (h3.getAttribute('data-palabra') === 'RISAS') {
+        h3.style.borderColor = 'var(--verde)'; h3.style.background = '#e8f5e9';
+      } else {
+        todoCorrecto = false; h3.style.borderColor = 'var(--rosa)'; h3.style.background = '#ffebee';
+      }
+      
+      const feedback = document.getElementById('feedbackCompletar');
+      if (todoCorrecto) {
+        feedback.textContent = "¡GENIAL! COMPLETASTE TODAS LAS ORACIONES CORRECTAMENTE 🌟";
+        feedback.className = "feedback mostrar exito";
+        document.getElementById('btnComprobarCompletar').style.display = 'none';
+        document.getElementById('btnSiguienteCompletar').style.display = 'block';
+        
+        // Deshabilitar clicks en los huecos ya correctos
+        document.querySelectorAll('.hueco').forEach(h => h.style.pointerEvents = 'none');
+        
+        aciertos++; // Suma la estrella número 7 al total general
+        actualizarTarjetaEstrellas();
+        
+        const rect = feedback.getBoundingClientRect();
+        lanzarConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2, 30);
+      } else {
+        feedback.textContent = "¡UY! ALGUNAS PALABRAS NO ESTÁN EN LA ORACIÓN CORRECTA. TOCÁ LAS EQUIVOCADAS PARA SACARLAS E INTÉNTALO DE NUEVO. 🎒";
+        feedback.className = "feedback mostrar error";
+      }
+    }
+
+    // Inicialización al cargar la aplicación
+    actualizarPreguntaVisible();
+    actualizarTarjetaEstrellas();
+    configurarEventosOrden();
+  </script>
+</body>
+</html>

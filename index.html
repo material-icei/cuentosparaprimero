@@ -299,6 +299,20 @@
     }
     .tarjeta-btn:hover { transform:translateY(-2px); box-shadow:0 7px 0 #c4500a,0 12px 24px rgba(0,0,0,0.4); }
     .tarjeta-btn:active { transform:translateY(2px); box-shadow:0 2px 0 #c4500a; }
+
+
+.btn-actividades {
+      background: linear-gradient(145deg, var(--verde), #4caf50);
+      box-shadow: 0 5px 0 #388e3c, 0 8px 20px rgba(0,0,0,0.35);
+    }
+    .btn-actividades:hover { box-shadow: 0 7px 0 #388e3c, 0 12px 24px rgba(0,0,0,0.4); }
+    .btn-actividades:active { box-shadow: 0 2px 0 #388e3c; }
+    
+    .contenedor-botones {
+      display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;
+    }
+
+
     .btn-cerrar {
       position:absolute; top:12px; right:14px; z-index:10;
       background:rgba(0,0,0,0.45); border:2px solid rgba(255,255,255,0.25);
@@ -388,7 +402,10 @@
           data-img="https://material-icei.github.io/cuentosparaprimero/la-mochila4/momento1.png"
           data-href="https://material-icei.github.io/cuentosparaprimero/la-mochila4/index.html"
           data-grad="linear-gradient(90deg,#FFD93D,#FF9F1C,#FF6B35)"
-          data-glow-tarjeta="rgba(255,180,50,0.32)">
+          data-glow-tarjeta="rgba(255,180,50,0.32)"
+        
+          data-actividades="https://material-icei.github.io/cuentosparaprimero/la-mochila4/actividades1.html"> 
+
           <div class="lomo-titulo">
             <span class="lomo-emoji">🎒</span>
             <span class="lomo-texto">LA MOCHILA QUE SABÍA ESPERAR</span>
@@ -641,7 +658,7 @@
           data-img="https://material-icei.github.io/cuentosparaprimero/el-ultimo-rayo-de-la-tarde/portada.png"
           data-href="https://gemini.google.com/share/65d6fe0be780"
           data-grad="linear-gradient(90deg,#6BCB77,#FFD93D,#FF9F1C)"
-          data-glow-tarjeta="rgba(100,200,100,0.32)">
+          data-glow-tarjeta="rgba(100,200,100,0.32)">  
           <div class="lomo-titulo">
             <span class="lomo-emoji">🌳</span>
             <span class="lomo-texto">EL ÚLTIMO RAYO DE LA TARDE</span>
@@ -692,12 +709,22 @@
     <div class="tarjeta-body">
       <span class="tarjeta-num" id="tarjetaNum"></span>
       <h2 class="tarjeta-titulo" id="tarjetaTitulo"></h2>
-      <div class="tarjeta-acciones">
+
+
+      <div class="tarjeta-acciones"> 
         <span class="tarjeta-emoji" id="tarjetaEmoji"></span>
-        <a class="tarjeta-btn" id="tarjetaBtn" href="#">
-          <span>▶</span> LEER CUENTO
-        </a>
+        <div class="contenedor-botones">
+          <a class="tarjeta-btn btn-actividades" id="tarjetaBtnActividades" href="#" style="display: none;">
+            <span>✏️</span> ACTIVIDADES
+          </a>
+          <a class="tarjeta-btn" id="tarjetaBtn" href="#">
+            <span>▶</span> LEER CUENTO
+          </a>
+        </div>
       </div>
+
+
+
     </div>
   </div>
 
@@ -712,9 +739,12 @@
     const tarjetaTitulo  = document.getElementById('tarjetaTitulo');
     const tarjetaEmoji   = document.getElementById('tarjetaEmoji');
     const tarjetaBtn     = document.getElementById('tarjetaBtn');
+    const tarjetaBtnActividades = document.getElementById('tarjetaBtnActividades'); 
+
 
     const CONFETTI_COLORES = ['#FFD93D','#FF6B35','#FF9F1C','#74C7EC','#3A86FF','#6BCB77','#FF6B9D','#C77DFF','#ffffff'];
     const CONFETTI_SHAPES  = ['50%','4px','2px / 8px'];
+
 
     let libroActivo = null;
 
@@ -751,6 +781,14 @@
       tarjetaBtn.href                      = d.href;
       tarjeta.style.setProperty('--glow-tarjeta', d.glowTarjeta || 'rgba(255,217,61,0.28)');
 
+      // LÓGICA NUEVA PARA EL BOTÓN DE ACTIVIDADES
+      if (d.actividades) {
+        tarjetaBtnActividades.href = d.actividades;
+        tarjetaBtnActividades.style.display = 'inline-flex';
+      } else {
+        tarjetaBtnActividades.style.display = 'none';
+      }
+
       if (libroActivo) libroActivo.classList.remove('abierto');
       libroActivo = libro;
       libro.classList.add('abierto');
@@ -758,6 +796,7 @@
       overlay.classList.add('visible');
       tarjeta.classList.add('visible');
     }
+
 
     function cerrarTarjeta() {
       overlay.classList.remove('visible');
