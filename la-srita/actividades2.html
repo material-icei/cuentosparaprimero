@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACTIVIDADES · LA SEÑO QUE ABRÍA PUERTAS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --amarillo: #FFD93D;
+      --naranja:  #FF6B35;
+      --naranja2: #FF9F1C;
+      --celeste:  #74C7EC;
+      --azul:     #3A86FF;
+      --verde:    #6BCB77;
+      --rosa:     #FF6B9D;
+      --violeta:  #C77DFF;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(116,199,236,0.09) 0%, transparent 60%),
+        linear-gradient(170deg, #080f2a 0%, #0d1f52 30%, #0f2f6e 60%, #1a3a7a 100%);
+      display: flex; flex-direction: column; align-items: center;
+      overflow-x: hidden; padding-bottom: 60px;
+    }
+
+    /* ESTRELLAS FONDO */
+    .estrellas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .estrella {
+      position: absolute; left: var(--x); top: var(--y);
+      font-size: calc(14px * var(--s));
+      animation: twinkle 3s infinite ease-in-out var(--d); opacity: 0.5;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity:0.5; transform:scale(1); }
+      50%      { opacity:0.1; transform:scale(0.5); }
+    }
+
+    /* ENCABEZADO */
+    .encabezado {
+      position: relative; z-index: 2;
+      text-align: center; padding: 36px 20px 16px; width: 100%;
+    }
+    .icono-top {
+      font-size: 50px; display: block; margin-bottom: 8px;
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 4px 16px rgba(116,199,236,0.5));
+    }
+    .titulo-main {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(20px,4vw,36px);
+      color: var(--celeste);
+      text-shadow: 3px 3px 0 #1a50cc, 0 0 30px rgba(116,199,236,0.4);
+      letter-spacing: 3px; line-height: 1.1;
+    }
+    .subtitulo {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(13px,2vw,18px);
+      color: rgba(255,255,255,0.55); letter-spacing: 3px; margin-top: 6px;
+    }
+    .volver-link {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
+      font-family: 'Fredoka One', cursive; font-size: 13px; letter-spacing: 2px;
+      color: rgba(255,255,255,0.4); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .volver-link:hover { color: var(--amarillo); }
+
+    /* CONTENEDOR PRINCIPAL */
+    .contenedor {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 980px;
+      padding: 0 18px; margin-top: 10px;
+      display: flex; flex-direction: column; gap: 24px;
+    }
+
+    /* BARRA DE PROGRESO GLOBAL */
+    .barra-progreso {
+      background: rgba(0,0,0,0.35);
+      border-radius: 50px; padding: 10px 22px;
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .barra-label {
+      font-family: 'Fredoka One', cursive; font-size: 13px;
+      color: rgba(255,255,255,0.55); letter-spacing: 2px; white-space: nowrap;
+    }
+    .estrellas-iconos { display: flex; gap: 5px; flex-wrap: wrap; }
+    .estrella-icono {
+      font-size: 24px; transition: transform 0.3s, filter 0.3s;
+      filter: grayscale(1) brightness(0.35);
+    }
+    .estrella-icono.ganada {
+      filter: none;
+      animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes pop { 0%{transform:scale(0.4)} 100%{transform:scale(1)} }
+    .puntaje-texto {
+      font-family: 'Fredoka One', cursive; font-size: 15px;
+      color: var(--amarillo); margin-left: auto; white-space: nowrap;
+    }
+
+    /* TARJETA DE ACTIVIDAD */
+    .act-card {
+      background: linear-gradient(145deg, rgba(13,31,82,0.95), rgba(15,47,110,0.95));
+      border: 2px solid rgba(116,199,236,0.2);
+      border-radius: 22px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+    .act-card-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 18px 26px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .act-numero {
+      font-family: 'Fredoka One', cursive; font-size: 28px;
+      color: rgba(255,255,255,0.15); flex-shrink: 0;
+    }
+    .act-card-titulo {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(15px,2.2vw,20px);
+      color: var(--celeste); letter-spacing: 1.5px;
+    }
+    .act-card-icono { font-size: 28px; margin-left: auto; flex-shrink: 0; }
+    .act-card-body { padding: 22px 26px 26px; }
+
+    /* CONSIGNA */
+    .consigna {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(13px,1.8vw,16px); letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.9); line-height: 1.55;
+      background: rgba(116,199,236,0.08);
+      border-left: 4px solid var(--celeste);
+      padding: 11px 16px; border-radius: 0 10px 10px 0;
+      margin-bottom: 20px;
+    }
+
+    /* ══════ ACTIVIDAD 1: OPCIÓN MÚLTIPLE ══════ */
+    .preg-item { display: none; }
+    .preg-item.visible { display: block; }
+    .preg-num-label {
+      font-family: 'Fredoka One', cursive; font-size: 12px;
+      color: rgba(255,255,255,0.35); letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .preg-texto {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(15px,2.2vw,20px); color: var(--amarillo);
+      margin-bottom: 16px; line-height: 1.4;
+    }
+    .opciones-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    @media (max-width: 580px) { .opciones-grid { grid-template-columns: 1fr; } }
+    .opcion-btn {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(12px,1.7vw,15px); letter-spacing: 0.5px;
+      line-height: 1.4; padding: 13px 16px; border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05); color: #fff;
+      cursor: pointer; text-align: left;
+      transition: background 0.18s, border-color 0.18s, transform 0.15s;
+    }
+    .opcion-btn:hover:not(:disabled) {
+      background: rgba(116,199,236,0.15); border-color: var(--celeste);
+      transform: translateY(-2px);
+    }
+    .opcion-btn.correcta  { background: rgba(107,203,119,0.28); border-color: var(--verde); }
+    .opcion-btn.incorrecta { background: rgba(255,107,53,0.22); border-color: var(--naranja); opacity: 0.8; }
+    .opcion-btn:disabled  { cursor: default; transform: none !important; }
+
+    .preg-feedback {
+      font-family: 'Fredoka One', cursive; font-size: 14px;
+      margin-top: 12px; padding: 10px 14px; border-radius: 10px; display: none;
+      letter-spacing: 0.5px;
+    }
+    .preg-feedback.ok  { background: rgba(107,203,119,0.18); color: var(--verde); display: block; }
+    .preg-feedback.mal { background: rgba(255,107,53,0.18); color: var(--naranja); display: block; }
+
+    .preg-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 18px; flex-wrap: wrap; gap: 10px;
+    }
+    .preg-contador {
+      font-family: 'Fredoka One', cursive; font-size: 12px;
+      color: rgba(255,255,255,0.35); letter-spacing: 2px;
+    }
+
+    /* ══════ ACTIVIDAD 2: ORDENAR ══════ */
+    .orden-instruccion {
+      font-family: 'Fredoka One', cursive; font-size: 13px;
+      color: rgba(255,255,255,0.4); letter-spacing: 1px; margin-bottom: 12px;
+    }
+    /* zona de origen */
+    .origen-zona {
+      display: flex; flex-direction: row; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 18px; min-height: 60px;
+    }
+    /* zona destino */
+    .destino-zona {
+      display: flex; flex-direction: row; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .orden-slot {
+      flex: 1 1 calc(33.33% - 12px); min-width: 190px; min-height: 88px;
+      border: 2px dashed rgba(116,199,236,0.3);
+      border-radius: 14px; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .orden-slot .slot-label {
+      position: absolute; top: 6px; left: 10px;
+      font-family: 'Fredoka One', cursive; font-size: 11px;
+      color: rgba(255,255,255,0.25); letter-spacing: 1px;
+    }
+    .orden-slot.drag-over { border-color: var(--celeste); background: rgba(116,199,236,0.07); }
+    .orden-slot.correcta  { border-style: solid; border-color: var(--verde); }
+    .orden-slot.incorrecta { border-style: solid; border-color: var(--naranja); }
+
+    .orden-tarjeta {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(12px,1.7vw,15px); letter-spacing: 0.4px; line-height: 1.4;
+      background: rgba(199,125,255,0.13);
+      border: 2px solid rgba(199,125,255,0.35);
+      color: #fff; padding: 13px 16px; border-radius: 12px;
+      cursor: grab; user-select: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      flex: 1 1 calc(33.33% - 12px); min-width: 190px;
+      touch-action: none;
+    }
+    .orden-tarjeta:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+    .orden-tarjeta.dragging { opacity: 0.45; cursor: grabbing; }
+    .orden-tarjeta.correcta  { border-color: var(--verde);  background: rgba(107,203,119,0.18); cursor: default; }
+    .orden-tarjeta.incorrecta { border-color: var(--naranja); background: rgba(255,107,53,0.14); }
+
+    .orden-feedback {
+      font-family: 'Fredoka One', cursive; font-size: 14px;
+      padding: 10px 14px; border-radius: 10px; display: none;
+      letter-spacing: 0.5px; margin-bottom: 14px;
+    }
+    .orden-feedback.ok  { background: rgba(107,203,119,0.18); color: var(--verde);   display: block; }
+    .orden-feedback.mal { background: rgba(255,107,53,0.18);  color: var(--naranja); display: block; }
+
+    /* ══════ ACTIVIDAD 3: COMPLETAR ══════ */
+    .banco-titulo {
+      font-family: 'Fredoka One', cursive; font-size: 13px;
+      color: rgba(255,255,255,0.4); letter-spacing: 1.5px; margin-bottom: 10px;
+    }
+    .banco-palabras {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px;
+    }
+    .banco-palabra {
+      font-family: 'Fredoka One', cursive; font-size: 15px;
+      padding: 8px 18px; border-radius: 50px;
+      background: rgba(255,217,61,0.1); border: 2px solid rgba(255,217,61,0.35);
+      color: var(--amarillo); letter-spacing: 0.5px;
+      cursor: pointer; transition: background 0.18s, transform 0.15s;
+      user-select: none;
+    }
+    .banco-palabra:hover:not(.usada) { background: rgba(255,217,61,0.25); transform: translateY(-2px); }
+    .banco-palabra.usada { opacity: 0.28; cursor: default; text-decoration: line-through; }
+
+    .completar-parrafo {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(14px,2vw,17px); color: rgba(255,255,255,0.9);
+      line-height: 2.1; letter-spacing: 0.3px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 14px; padding: 20px 22px; margin-bottom: 18px;
+    }
+    .completar-input {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(13px,1.8vw,15px); color: var(--amarillo);
+      background: transparent; border: none;
+      border-bottom: 3px solid rgba(116,199,236,0.5);
+      width: clamp(80px,13vw,150px); padding: 2px 4px;
+      outline: none; text-align: center;
+      transition: border-color 0.2s; text-transform: uppercase;
+      cursor: pointer;
+    }
+    .completar-input:focus { border-color: var(--celeste); }
+    .completar-input.correcta   { border-color: var(--verde);   color: var(--verde); }
+    .completar-input.incorrecta { border-color: var(--naranja); color: var(--naranja); }
+    .completar-input:disabled   { cursor: default; }
+
+    .completar-feedback {
+      font-family: 'Fredoka One', cursive; font-size: 14px;
+      padding: 10px 14px; border-radius: 10px; display: none;
+      letter-spacing: 0.5px; margin-bottom: 14px;
+    }
+    .completar-feedback.ok  { background: rgba(107,203,119,0.18); color: var(--verde);   display: block; }
+    .completar-feedback.mal { background: rgba(255,107,53,0.18);  color: var(--naranja); display: block; }
+
+    /* BOTONES COMPARTIDOS */
+    .btn-verificar {
+      font-family: 'Fredoka One', cursive; font-size: 15px; letter-spacing: 1px;
+      padding: 12px 28px; border-radius: 50px; border: none; cursor: pointer;
+      background: linear-gradient(145deg, var(--celeste), var(--azul));
+      color: #fff; box-shadow: 0 5px 0 #1a50cc, 0 8px 18px rgba(0,0,0,0.35);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .btn-verificar:hover  { transform: translateY(-2px); box-shadow: 0 7px 0 #1a50cc, 0 12px 22px rgba(0,0,0,0.4); }
+    .btn-verificar:active { transform: translateY(2px);  box-shadow: 0 2px 0 #1a50cc; }
+    .btn-verificar:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+    .btn-siguiente {
+      font-family: 'Fredoka One', cursive; font-size: 15px; letter-spacing: 1px;
+      padding: 12px 28px; border-radius: 50px; border: none; cursor: pointer;
+      background: linear-gradient(145deg, var(--amarillo), var(--naranja2));
+      color: #2d2d2d; box-shadow: 0 5px 0 #c4500a, 0 8px 18px rgba(0,0,0,0.35);
+      transition: transform 0.12s, box-shadow 0.12s;
+      display: none; align-items: center; gap: 8px;
+    }
+    .btn-siguiente:hover  { transform: translateY(-2px); box-shadow: 0 7px 0 #c4500a, 0 12px 22px rgba(0,0,0,0.4); }
+    .btn-siguiente:active { transform: translateY(2px);  box-shadow: 0 2px 0 #c4500a; }
+    .btn-siguiente.visible { display: inline-flex; }
+
+    /* RESULTADO FINAL */
+    .resultado-panel {
+      display: none; text-align: center;
+      padding: 36px 20px 20px;
+    }
+    .resultado-panel.visible { display: block; }
+    .resultado-emoji { font-size: 70px; display: block; margin-bottom: 14px; animation: float 2s ease-in-out infinite; }
+    .resultado-titulo {
+      font-family: 'Fredoka One', cursive; font-size: clamp(22px,4vw,36px);
+      color: var(--amarillo); text-shadow: 2px 2px 0 var(--naranja);
+      letter-spacing: 1px; margin-bottom: 8px;
+    }
+    .resultado-estrellas { font-size: 38px; letter-spacing: 5px; margin: 14px 0; }
+    .resultado-puntaje {
+      font-family: 'Fredoka One', cursive; font-size: 18px;
+      color: rgba(255,255,255,0.65); letter-spacing: 2px; margin-bottom: 26px;
+    }
+    .resultado-mensaje {
+      font-family: 'Fredoka One', cursive; font-size: 16px;
+      color: rgba(255,255,255,0.5); letter-spacing: 1px; margin-bottom: 28px;
+    }
+    .btn-reiniciar {
+      font-family: 'Fredoka One', cursive; font-size: 15px; letter-spacing: 1px;
+      padding: 12px 32px; border-radius: 50px; border: none; cursor: pointer;
+      background: linear-gradient(145deg, var(--verde), #4caf50);
+      color: #fff; box-shadow: 0 5px 0 #388e3c, 0 8px 18px rgba(0,0,0,0.35);
+      margin: 6px; transition: transform 0.12s;
+    }
+    .btn-reiniciar:hover { transform: translateY(-2px); }
+    .btn-volver-final {
+      font-family: 'Fredoka One', cursive; font-size: 15px; letter-spacing: 1px;
+      padding: 12px 32px; border-radius: 50px; border: none; cursor: pointer;
+      background: linear-gradient(145deg, var(--celeste), var(--azul));
+      color: #fff; box-shadow: 0 5px 0 #1a50cc, 0 8px 18px rgba(0,0,0,0.35);
+      margin: 6px; transition: transform 0.12s; text-decoration: none;
+      display: inline-block;
+    }
+    .btn-volver-final:hover { transform: translateY(-2px); }
+
+    /* DIVISOR ENTRE ACTIVIDADES */
+    .divisor {
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Fredoka One', cursive; font-size: 12px;
+      color: rgba(255,255,255,0.2); letter-spacing: 3px;
+    }
+    .divisor::before, .divisor::after {
+      content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08);
+    }
+
+    /* ANIMACIONES */
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+    /* PIE */
+    .pie {
+      position: relative; z-index: 2; margin-top: 28px;
+      font-family: 'Fredoka One', cursive; font-size: 13px;
+      color: rgba(255,255,255,0.25); letter-spacing: 2px;
+    }
+
+    /* CONFETTI */
+    .confetti-piece {
+      position: fixed; pointer-events: none; z-index: 9999;
+      width: var(--w); height: var(--h); background: var(--col);
+      border-radius: var(--br);
+      animation: confetti-caer var(--dur) ease-out forwards;
+      top: var(--ty); left: var(--tx);
+    }
+    @keyframes confetti-caer {
+      0%   { opacity:1; transform:translate(0,0) rotate(0deg) scale(1); }
+      80%  { opacity:1; }
+      100% { opacity:0; transform:translate(var(--fx),var(--fy)) rotate(var(--rot)) scale(0.4); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ESTRELLAS FONDO -->
+  <div class="estrellas" aria-hidden="true">
+    <span class="estrella" style="--x:5%;--y:8%;--s:1.1;--d:0s">⭐</span>
+    <span class="estrella" style="--x:90%;--y:10%;--s:0.9;--d:0.5s">✨</span>
+    <span class="estrella" style="--x:15%;--y:70%;--s:1;--d:1s">⭐</span>
+    <span class="estrella" style="--x:85%;--y:65%;--s:0.8;--d:1.5s">✨</span>
+    <span class="estrella" style="--x:50%;--y:4%;--s:1.2;--d:0.8s">⭐</span>
+    <span class="estrella" style="--x:3%;--y:45%;--s:0.7;--d:2s">✨</span>
+    <span class="estrella" style="--x:96%;--y:40%;--s:1;--d:0.3s">⭐</span>
+    <span class="estrella" style="--x:70%;--y:80%;--s:0.9;--d:1.2s">✨</span>
+    <span class="estrella" style="--x:30%;--y:20%;--s:0.8;--d:0.6s">⭐</span>
+  </div>
+
+  <!-- ENCABEZADO -->
+  <header class="encabezado">
+    <span class="icono-top">🌟</span>
+    <h1 class="titulo-main">LA SEÑO QUE ABRÍA PUERTAS</h1>
+    <p class="subtitulo">COMPRENSIÓN LECTORA · CUENTO 2</p>
+    <a href="index.html" class="volver-link">← VOLVER A LA BIBLIOTECA</a>
+  </header>
+
+  <!-- CONTENIDO -->
+  <div class="contenedor">
+
+    <!-- Barra de estrellas global -->
+    <div class="barra-progreso">
+      <span class="barra-label">MIS ESTRELLAS:</span>
+      <div class="estrellas-iconos" id="estrellasIconos"></div>
+      <span class="puntaje-texto" id="puntajeTexto">0 / 11</span>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         ACTIVIDAD 1: OPCIÓN MÚLTIPLE
+    ══════════════════════════════════════════ -->
+    <div class="act-card" id="card1">
+      <div class="act-card-header">
+        <div class="act-numero">01</div>
+        <div class="act-card-titulo">PREGUNTAS DE COMPRENSIÓN</div>
+        <span class="act-card-icono">❓</span>
+      </div>
+      <div class="act-card-body">
+        <div class="consigna">LEÉ CON ATENCIÓN Y ELEGÍ LA RESPUESTA CORRECTA. LAS PREGUNTAS APARECEN DE A UNA.</div>
+
+        <!-- PREGUNTA 1 -->
+        <div class="preg-item visible" id="preg1">
+          <div class="preg-num-label">PREGUNTA 1 DE 5</div>
+          <div class="preg-texto">¿CUÁNDO LLEGABA LA SEÑO AL AULA?</div>
+          <div class="opciones-grid">
+            <button class="opcion-btn" data-ok="false">LLEGABA TARDE, CUANDO YA ESTABAN TODOS.</button>
+            <button class="opcion-btn" data-ok="true">ESTABA AHÍ ANTES DE QUE SONARA EL TIMBRE, COMO SI SIEMPRE HUBIESE ESTADO.</button>
+            <button class="opcion-btn" data-ok="false">LLEGABA AL MISMO TIEMPO QUE LOS ALUMNOS.</button>
+            <button class="opcion-btn" data-ok="false">LLEGABA DESPUÉS DE QUE TODOS SE SENTABAN.</button>
+          </div>
+          <div class="preg-feedback" id="fb1"></div>
+          <div class="preg-nav">
+            <span class="preg-contador" id="cnt1"></span>
+            <button class="btn-siguiente" id="sig1">SIGUIENTE ▶</button>
+          </div>
+        </div>
+
+        <!-- PREGUNTA 2 -->
+        <div class="preg-item" id="preg2">
+          <div class="preg-num-label">PREGUNTA 2 DE 5</div>
+          <div class="preg-texto">¿QUÉ SABÍA LA SEÑO DE SUS ALUMNOS?</div>
+          <div class="opciones-grid">
+            <button class="opcion-btn" data-ok="false">SABÍA SOLO LOS NOMBRES DE TODOS.</button>
+            <button class="opcion-btn" data-ok="false">SABÍA QUIÉNES LLEGABAN PRIMERO A LA ESCUELA.</button>
+            <button class="opcion-btn" data-ok="true">SABÍA QUE ALGUNOS ENTRABAN HABLANDO FUERTE Y OTROS MIRABAN TODO EN SILENCIO.</button>
+            <button class="opcion-btn" data-ok="false">SABÍA CUÁNTOS ALUMNOS TENÍA EN SU CLASE.</button>
+          </div>
+          <div class="preg-feedback" id="fb2"></div>
+          <div class="preg-nav">
+            <span class="preg-contador" id="cnt2"></span>
+            <button class="btn-siguiente" id="sig2">SIGUIENTE ▶</button>
+          </div>
+        </div>
+
+        <!-- PREGUNTA 3 -->
+        <div class="preg-item" id="preg3">
+          <div class="preg-num-label">PREGUNTA 3 DE 5</div>
+          <div class="preg-texto">¿QUÉ HACÍA LA SEÑO CUANDO ALGUIEN SE EQUIVOCABA?</div>
+          <div class="opciones-grid">
+            <button class="opcion-btn" data-ok="false">SE ENOJABA Y LO CORREGÍA ENSEGUIDA EN VOZ ALTA.</button>
+            <button class="opcion-btn" data-ok="true">MIRABA, ESCUCHABA Y ACOMPAÑABA SIN APURARSE A CORREGIR.</button>
+            <button class="opcion-btn" data-ok="false">LO IGNORABA Y SEGUÍA CON LA CLASE.</button>
+            <button class="opcion-btn" data-ok="false">LO MANDABA A SENTARSE EN SILENCIO.</button>
+          </div>
+          <div class="preg-feedback" id="fb3"></div>
+          <div class="preg-nav">
+            <span class="preg-contador" id="cnt3"></span>
+            <button class="btn-siguiente" id="sig3">SIGUIENTE ▶</button>
+          </div>
+        </div>
+
+        <!-- PREGUNTA 4 -->
+        <div class="preg-item" id="preg4">
+          <div class="preg-num-label">PREGUNTA 4 DE 5</div>
+          <div class="preg-texto">¿POR QUÉ EL AULA PARECÍA A VECES UN POCO REVUELTA?</div>
+          <div class="opciones-grid">
+            <button class="opcion-btn" data-ok="false">PORQUE LOS ALUMNOS NO RESPETABAN LAS REGLAS.</button>
+            <button class="opcion-btn" data-ok="false">PORQUE LA SEÑO NO PODÍA CONTROLAR LA CLASE.</button>
+            <button class="opcion-btn" data-ok="true">PORQUE ERA APRENDIZAJE EN MOVIMIENTO, Y LA SEÑO LO SABÍA.</button>
+            <button class="opcion-btn" data-ok="false">PORQUE HABÍA DEMASIADOS ALUMNOS EN EL AULA.</button>
+          </div>
+          <div class="preg-feedback" id="fb4"></div>
+          <div class="preg-nav">
+            <span class="preg-contador" id="cnt4"></span>
+            <button class="btn-siguiente" id="sig4">SIGUIENTE ▶</button>
+          </div>
+        </div>
+
+        <!-- PREGUNTA 5 -->
+        <div class="preg-item" id="preg5">
+          <div class="preg-num-label">PREGUNTA 5 DE 5</div>
+          <div class="preg-texto">¿QUÉ HACÍA LA SEÑO CUANDO VEÍA UNA MANO QUE DUDABA O UN CUADERNO QUE AVANZABA MÁS DESPACIO?</div>
+          <div class="opciones-grid">
+            <button class="opcion-btn" data-ok="false">ESPERABA A QUE EL ALUMNO PIDIERA AYUDA.</button>
+            <button class="opcion-btn" data-ok="false">LO IGNORABA PARA NO INTERRUMPIR LA CLASE.</button>
+            <button class="opcion-btn" data-ok="false">LLAMABA A LOS PAPÁS PARA AVISARLES.</button>
+            <button class="opcion-btn" data-ok="true">CAMBIABA: UNA PALABRA, UNA CONSIGNA O UNA MIRADA.</button>
+          </div>
+          <div class="preg-feedback" id="fb5"></div>
+          <div class="preg-nav">
+            <span class="preg-contador" id="cnt5"></span>
+            <button class="btn-siguiente" id="sig5">✔ TERMINÉ LAS PREGUNTAS</button>
+          </div>
+        </div>
+
+      </div><!-- /card-body -->
+    </div><!-- /card1 -->
+
+    <!-- ══════════════════════════════════════════
+         ACTIVIDAD 2: ORDENAR ORACIONES
+    ══════════════════════════════════════════ -->
+    <div class="act-card" id="card2">
+      <div class="act-card-header">
+        <div class="act-numero">02</div>
+        <div class="act-card-titulo">ORDENÁ LA HISTORIA</div>
+        <span class="act-card-icono">🔀</span>
+      </div>
+      <div class="act-card-body">
+        <div class="consigna">ARRASTRÁ CADA ORACIÓN AL LUGAR QUE LE CORRESPONDE EN EL ORDEN DEL CUENTO.</div>
+        <div class="orden-instruccion">ARRASTRÁ LAS TARJETAS HACIA LOS RECUADROS 1, 2 Y 3.</div>
+
+        <!-- Tarjetas para arrastrar (origen) -->
+        <div class="origen-zona" id="origenZona">
+          <div class="orden-tarjeta" draggable="true" data-id="A" id="tA">
+            LA SEÑO CAMBIABA UNA PALABRA, UNA CONSIGNA O UNA MIRADA CUANDO VEÍA QUE ALGUIEN LO NECESITABA.
+          </div>
+          <div class="orden-tarjeta" draggable="true" data-id="B" id="tB">
+            LA SEÑO ESTABA EN EL AULA ANTES DE QUE SONARA EL TIMBRE, COMO SI SIEMPRE HUBIERA ESTADO AHÍ.
+          </div>
+          <div class="orden-tarjeta" draggable="true" data-id="C" id="tC">
+            HAY MISTERIOS QUE NO SE CUENTAN. SE ACOMPAÑAN.
+          </div>
+        </div>
+
+        <!-- Slots destino -->
+        <div class="destino-zona" id="destinoZona">
+          <div class="orden-slot" data-pos="1" id="slot1">
+            <span class="slot-label">PRIMERO</span>
+          </div>
+          <div class="orden-slot" data-pos="2" id="slot2">
+            <span class="slot-label">DESPUÉS</span>
+          </div>
+          <div class="orden-slot" data-pos="3" id="slot3">
+            <span class="slot-label">AL FINAL</span>
+          </div>
+        </div>
+
+        <div class="orden-feedback" id="ordenFeedback"></div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+          <button class="btn-verificar" id="btnVerificarOrden">✔ VERIFICAR ORDEN</button>
+          <button class="btn-siguiente" id="btnSigOrden">CONTINUAR ▶</button>
+        </div>
+      </div>
+    </div><!-- /card2 -->
+
+    <!-- ══════════════════════════════════════════
+         ACTIVIDAD 3: COMPLETAR EL TEXTO
+    ══════════════════════════════════════════ -->
+    <div class="act-card" id="card3">
+      <div class="act-card-header">
+        <div class="act-numero">03</div>
+        <div class="act-card-titulo">COMPLETÁ EL PÁRRAFO</div>
+        <span class="act-card-icono">✏️</span>
+      </div>
+      <div class="act-card-body">
+        <div class="consigna">HACÉ CLIC EN UNA PALABRA DEL BANCO Y LUEGO EN EL ESPACIO EN BLANCO DONDE VA.</div>
+
+        <div class="banco-titulo">BANCO DE PALABRAS:</div>
+        <div class="banco-palabras" id="bancoPalabras">
+          <div class="banco-palabra" data-palabra="ESPERAR">ESPERAR</div>
+          <div class="banco-palabra" data-palabra="CONTENIDOS">CONTENIDOS</div>
+          <div class="banco-palabra" data-palabra="ANIMARSE">ANIMARSE</div>
+          <div class="banco-palabra" data-palabra="RITMO">RITMO</div>
+          <div class="banco-palabra" data-palabra="INTENTAR">INTENTAR</div>
+          <div class="banco-palabra" data-palabra="MISTERIO">MISTERIO</div>
+        </div>
+
+        <div class="completar-parrafo">
+          EN PRIMER GRADO, LA SEÑO NO ENSEÑABA SOLO
+          <input class="completar-input" id="inp1" data-resp="CONTENIDOS" readonly placeholder="_ _ _ _ _ _ _ _ _" />.
+          ENSEÑABA A <input class="completar-input" id="inp2" data-resp="ESPERAR" readonly placeholder="_ _ _ _ _ _" />.
+          A <input class="completar-input" id="inp3" data-resp="INTENTAR" readonly placeholder="_ _ _ _ _ _ _" /> OTRA VEZ.
+          A <input class="completar-input" id="inp4" data-resp="ANIMARSE" readonly placeholder="_ _ _ _ _ _ _" /> SIN APURO.
+          SABÍA QUE CADA UNO TENÍA SU PROPIO <input class="completar-input" id="inp5" data-resp="RITMO" readonly placeholder="_ _ _ _ _" />.
+          LA SEÑO NO PEDÍA QUE TODOS FUERAN IGUALES. ESO ERA UN <input class="completar-input" id="inp6" data-resp="MISTERIO" readonly placeholder="_ _ _ _ _ _ _" />.
+        </div>
+
+        <div class="completar-feedback" id="completarFeedback"></div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+          <button class="btn-verificar" id="btnVerificarCompletar">✔ VERIFICAR</button>
+          <button class="btn-siguiente" id="btnSigCompletar">VER MI CALIFICACIÓN ⭐</button>
+        </div>
+      </div>
+    </div><!-- /card3 -->
+
+    <!-- ══════════════════════════════════════════
+         RESULTADO FINAL
+    ══════════════════════════════════════════ -->
+    <div class="act-card" id="cardResultado" style="display:none;">
+      <div class="act-card-body">
+        <div class="resultado-panel visible" id="resultadoPanel">
+          <span class="resultado-emoji" id="resultadoEmoji">🏆</span>
+          <div class="resultado-titulo" id="resultadoTitulo">¡MUY BIEN!</div>
+          <div class="resultado-estrellas" id="resultadoEstrellas"></div>
+          <div class="resultado-puntaje" id="resultadoPuntaje"></div>
+          <div class="resultado-mensaje" id="resultadoMensaje"></div>
+          <div>
+            <button class="btn-reiniciar" id="btnReiniciar">🔄 VOLVER A INTENTAR</button>
+            <a href="index.html" class="btn-volver-final">📚 IR A LA BIBLIOTECA</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /contenedor -->
+
+  <p class="pie">📖 · BIBLIOTECA MÁGICA · PRIMER GRADO · 📖</p>
+
+<script>
+/* ════════════════════════════════════════════
+   SISTEMA DE PUNTAJE GLOBAL
+════════════════════════════════════════════ */
+const TOTAL_ESTRELLAS = 11; // 5 preguntas + 3 orden + 3 completar
+let puntajeTotal = 0;
+
+function actualizarEstrellas() {
+  const cont = document.getElementById('estrellasIconos');
+  const txt  = document.getElementById('puntajeTexto');
+  cont.innerHTML = '';
+  for (let i = 0; i < TOTAL_ESTRELLAS; i++) {
+    const s = document.createElement('span');
+    s.className = 'estrella-icono' + (i < puntajeTotal ? ' ganada' : '');
+    s.textContent = '⭐';
+    cont.appendChild(s);
+  }
+  txt.textContent = puntajeTotal + ' / ' + TOTAL_ESTRELLAS;
+}
+
+function sumarEstrella() {
+  if (puntajeTotal < TOTAL_ESTRELLAS) {
+    puntajeTotal++;
+    actualizarEstrellas();
+  }
+}
+
+function lanzarConfetti() {
+  const colores = ['#FFD93D','#FF6B35','#74C7EC','#6BCB77','#FF6B9D','#C77DFF','#fff'];
+  const shapes  = ['50%','4px','2px/8px'];
+  for (let i = 0; i < 60; i++) {
+    const p   = document.createElement('div');
+    p.className = 'confetti-piece';
+    const col   = colores[Math.floor(Math.random() * colores.length)];
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    const w = 7 + Math.random()*8, h = 7 + Math.random()*8;
+    const ang = Math.random()*360, dist = 100 + Math.random()*220;
+    const rad = ang * Math.PI / 180;
+    const dur = 0.7 + Math.random()*0.7;
+    const ox = window.innerWidth/2, oy = window.innerHeight/2;
+    p.style.cssText = `
+      --col:${col};--w:${w}px;--h:${h}px;--br:${shape};--dur:${dur}s;
+      --tx:${ox-w/2}px;--ty:${oy-h/2}px;
+      --fx:${Math.cos(rad)*dist}px;--fy:${Math.sin(rad)*dist-80}px;
+      --rot:${-360+Math.random()*720}deg;
+    `;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), dur*1000+200);
+  }
+}
+
+// Inicializar
+actualizarEstrellas();
+
+/* ════════════════════════════════════════════
+   ACTIVIDAD 1: OPCIÓN MÚLTIPLE
+════════════════════════════════════════════ */
+const pregs = [1,2,3,4,5];
+let pregActual = 1;
+let pregRespondidas = {};
+
+pregs.forEach(n => {
+  const preg = document.getElementById('preg' + n);
+  const fb   = document.getElementById('fb' + n);
+  const cnt  = document.getElementById('cnt' + n);
+  const sig  = document.getElementById('sig' + n);
+  const btns = preg.querySelectorAll('.opcion-btn');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (pregRespondidas[n]) return;
+      pregRespondidas[n] = true;
+
+      const esCorrecta = btn.dataset.ok === 'true';
+      btns.forEach(b => {
+        b.disabled = true;
+        if (b.dataset.ok === 'true') b.classList.add('correcta');
+      });
+      if (!esCorrecta) btn.classList.add('incorrecta');
+
+      if (esCorrecta) {
+        sumarEstrella();
+        fb.textContent = '✅ ¡CORRECTO! MUY BIEN.';
+        fb.className = 'preg-feedback ok';
+      } else {
+        fb.textContent = '❌ NO ES ESA. LA RESPUESTA CORRECTA ESTÁ MARCADA EN VERDE.';
+        fb.className = 'preg-feedback mal';
+      }
+      cnt.textContent = 'PREGUNTA ' + n + ' DE 5';
+      sig.classList.add('visible');
+    });
+  });
+
+  sig.addEventListener('click', () => {
+    if (!pregRespondidas[n]) return;
+    const actual = document.getElementById('preg' + n);
+    actual.classList.remove('visible');
+    if (n < 5) {
+      const siguiente = document.getElementById('preg' + (n+1));
+      siguiente.classList.add('visible');
+    } else {
+      // Fin de las preguntas — scroll a actividad 2
+      document.getElementById('card2').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+});
+
+/* ════════════════════════════════════════════
+   ACTIVIDAD 2: ORDENAR ORACIONES (drag & drop)
+════════════════════════════════════════════ */
+// Orden correcto: B (llegaba), A (cambiaba), C (misterios)
+const ORDEN_CORRECTO = { '1': 'B', '2': 'A', '3': 'C' };
+
+let draggingId = null;
+let slotContent = { '1': null, '2': null, '3': null }; // qué tarjeta hay en cada slot
+let ordenVerificado = false;
+
+// Drag desde origen
+document.querySelectorAll('.orden-tarjeta').forEach(tarjeta => {
+  tarjeta.addEventListener('dragstart', e => {
+    draggingId = tarjeta.dataset.id;
+    setTimeout(() => tarjeta.classList.add('dragging'), 0);
+  });
+  tarjeta.addEventListener('dragend', () => {
+    tarjeta.classList.remove('dragging');
+    draggingId = null;
+  });
+  // Touch support
+  tarjeta.addEventListener('touchstart', e => {
+    draggingId = tarjeta.dataset.id;
+  }, {passive:true});
+});
+
+// Drag sobre slots
+document.querySelectorAll('.orden-slot').forEach(slot => {
+  slot.addEventListener('dragover', e => {
+    e.preventDefault();
+    slot.classList.add('drag-over');
+  });
+  slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+  slot.addEventListener('drop', e => {
+    e.preventDefault();
+    slot.classList.remove('drag-over');
+    if (!draggingId || ordenVerificado) return;
+    soltarEnSlot(slot, draggingId);
+  });
+  // Touch: tap para soltar
+  slot.addEventListener('click', () => {
+    if (!draggingId || ordenVerificado) return;
+    soltarEnSlot(slot, draggingId);
+  });
+});
+
+function soltarEnSlot(slot, id) {
+  const pos = slot.dataset.pos;
+  // Si ya había algo en ese slot, devolver al origen
+  if (slotContent[pos]) {
+    const prevId = slotContent[pos];
+    const prevTarjeta = document.getElementById('t' + prevId);
+    document.getElementById('origenZona').appendChild(prevTarjeta);
+  }
+  // Si la tarjeta estaba en otro slot, liberar ese slot
+  for (const p in slotContent) {
+    if (slotContent[p] === id) slotContent[p] = null;
+  }
+  slotContent[pos] = id;
+  const tarjeta = document.getElementById('t' + id);
+  // Quitar label de slot para que no se superponga
+  const label = slot.querySelector('.slot-label');
+  slot.appendChild(tarjeta);
+  draggingId = null;
+}
+
+document.getElementById('btnVerificarOrden').addEventListener('click', () => {
+  if (ordenVerificado) return;
+  const fb = document.getElementById('ordenFeedback');
+  // Verificar que todos los slots están llenos
+  if (!slotContent['1'] || !slotContent['2'] || !slotContent['3']) {
+    fb.textContent = '⚠️ FALTAN ORACIONES. COMPLETÁ LOS TRES RECUADROS.';
+    fb.className = 'orden-feedback mal';
+    return;
+  }
+  let aciertos = 0;
+  let estrellasPorOrden = 0;
+  for (const pos in ORDEN_CORRECTO) {
+    const slot = document.getElementById('slot' + pos);
+    const tarjeta = document.getElementById('t' + slotContent[pos]);
+    if (slotContent[pos] === ORDEN_CORRECTO[pos]) {
+      slot.classList.add('correcta');
+      tarjeta.classList.add('correcta');
+      aciertos++;
+      estrellasPorOrden++;
+    } else {
+      slot.classList.add('incorrecta');
+      tarjeta.classList.add('incorrecta');
+    }
+  }
+  // Bloquear arrastre
+  document.querySelectorAll('.orden-tarjeta').forEach(t => {
+    t.setAttribute('draggable','false');
+    t.style.cursor = 'default';
+  });
+  ordenVerificado = true;
+  for (let i = 0; i < estrellasPorOrden; i++) sumarEstrella();
+
+  if (aciertos === 3) {
+    fb.textContent = '✅ ¡PERFECTO! ORDENASTE BIEN LAS TRES ORACIONES.';
+    fb.className = 'orden-feedback ok';
+  } else {
+    fb.textContent = '❌ ALGUNAS ORACIONES NO ESTÁN EN EL LUGAR CORRECTO. FIJATE EN EL VERDE.';
+    fb.className = 'orden-feedback mal';
+  }
+  document.getElementById('btnSigOrden').classList.add('visible');
+});
+
+document.getElementById('btnSigOrden').addEventListener('click', () => {
+  document.getElementById('card3').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ════════════════════════════════════════════
+   ACTIVIDAD 3: COMPLETAR EL TEXTO
+════════════════════════════════════════════ */
+let palabraSeleccionada = null;
+let completarVerificado = false;
+
+document.querySelectorAll('.banco-palabra').forEach(pal => {
+  pal.addEventListener('click', () => {
+    if (pal.classList.contains('usada') || completarVerificado) return;
+    // Deseleccionar la anterior
+    document.querySelectorAll('.banco-palabra').forEach(p => p.style.outline = '');
+    if (palabraSeleccionada === pal.dataset.palabra) {
+      palabraSeleccionada = null;
+      return;
+    }
+    palabraSeleccionada = pal.dataset.palabra;
+    pal.style.outline = '3px solid var(--celeste)';
+  });
+});
+
+document.querySelectorAll('.completar-input').forEach(inp => {
+  inp.addEventListener('click', () => {
+    if (!palabraSeleccionada || completarVerificado) return;
+    // Si ya tenía algo, devolver la palabra anterior al banco
+    if (inp.value) {
+      const pal = document.querySelector(`.banco-palabra[data-palabra="${inp.value}"]`);
+      if (pal) pal.classList.remove('usada');
+    }
+    inp.value = palabraSeleccionada;
+    // Marcar como usada
+    const palEl = document.querySelector(`.banco-palabra[data-palabra="${palabraSeleccionada}"]`);
+    if (palEl) { palEl.classList.add('usada'); palEl.style.outline = ''; }
+    palabraSeleccionada = null;
+    document.querySelectorAll('.banco-palabra').forEach(p => p.style.outline = '');
+  });
+});
+
+document.getElementById('btnVerificarCompletar').addEventListener('click', () => {
+  if (completarVerificado) return;
+  const inputs = document.querySelectorAll('.completar-input');
+  // Verificar que todos estén completos
+  let todos = true;
+  inputs.forEach(inp => { if (!inp.value) todos = false; });
+  if (!todos) {
+    const fb = document.getElementById('completarFeedback');
+    fb.textContent = '⚠️ COMPLETÁ TODOS LOS ESPACIOS ANTES DE VERIFICAR.';
+    fb.className = 'completar-feedback mal';
+    return;
+  }
+  let aciertos = 0;
+  inputs.forEach(inp => {
+    inp.disabled = true;
+    if (inp.value === inp.dataset.resp) {
+      inp.classList.add('correcta');
+      aciertos++;
+    } else {
+      inp.classList.add('incorrecta');
+    }
+  });
+  completarVerificado = true;
+  for (let i = 0; i < aciertos; i++) sumarEstrella();
+
+  const fb = document.getElementById('completarFeedback');
+  if (aciertos === 6) {
+    fb.textContent = '✅ ¡EXCELENTE! COMPLETASTE TODO CORRECTAMENTE.';
+    fb.className = 'completar-feedback ok';
+  } else {
+    fb.textContent = '❌ ALGUNAS PALABRAS NO CORRESPONDEN. LAS CORRECTAS ESTÁN EN VERDE.';
+    fb.className = 'completar-feedback mal';
+  }
+  document.getElementById('btnSigCompletar').classList.add('visible');
+});
+
+document.getElementById('btnSigCompletar').addEventListener('click', () => {
+  mostrarResultado();
+});
+
+/* ════════════════════════════════════════════
+   RESULTADO FINAL
+════════════════════════════════════════════ */
+function mostrarResultado() {
+  const card = document.getElementById('cardResultado');
+  card.style.display = 'block';
+  card.scrollIntoView({behavior:'smooth', block:'start'});
+
+  const porcentaje = puntajeTotal / TOTAL_ESTRELLAS;
+  let emoji, titulo, mensaje;
+
+  if (porcentaje === 1) {
+    emoji = '🏆'; titulo = '¡FELICITACIONES!';
+    mensaje = '¡RESPONDISTE TODO CORRECTAMENTE! ERES UNA ESTRELLA.';
+    lanzarConfetti();
+  } else if (porcentaje >= 0.7) {
+    emoji = '🌟'; titulo = '¡MUY BIEN!';
+    mensaje = '¡LO HICISTE GENIAL! PODÉS VOLVER A INTENTARLO PARA MEJORAR.';
+  } else if (porcentaje >= 0.4) {
+    emoji = '😊'; titulo = '¡BUEN ESFUERZO!';
+    mensaje = 'TE FUE BIEN EN ALGUNOS. ¡VOLVÉ A INTENTARLO!';
+  } else {
+    emoji = '📖'; titulo = '¡SEGUÍ PRACTICANDO!';
+    mensaje = 'LEÉS EL CUENTO OTRA VEZ Y VOLVÉ A INTENTARLO. ¡VOS PODÉS!';
+  }
+
+  // Estrellas visuales en el resultado
+  let estStr = '';
+  for (let i = 0; i < TOTAL_ESTRELLAS; i++) {
+    estStr += i < puntajeTotal ? '⭐' : '☆';
+  }
+
+  document.getElementById('resultadoEmoji').textContent = emoji;
+  document.getElementById('resultadoTitulo').textContent = titulo;
+  document.getElementById('resultadoEstrellas').textContent = estStr;
+  document.getElementById('resultadoPuntaje').textContent = puntajeTotal + ' DE ' + TOTAL_ESTRELLAS + ' ESTRELLAS';
+  document.getElementById('resultadoMensaje').textContent = mensaje;
+}
+
+document.getElementById('btnReiniciar').addEventListener('click', () => {
+  location.reload();
+});
+</script>
+
+</body>
+</html>
