@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ACTIVIDADES · NUESTRO PRIMER DÍA EN PRIMERO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --amarillo: #FFD93D;
+      --naranja:  #FF6B35;
+      --naranja2: #FF9F1C;
+      --celeste:  #74C7EC;
+      --azul:     #3A86FF;
+      --verde:    #6BCB77;
+      --rosa:     #FF6B9D;
+      --violeta:  #C77DFF;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden; /* sin scroll */
+      font-family: 'Nunito', sans-serif;
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(107,203,119,0.1) 0%, transparent 60%),
+        linear-gradient(170deg, #080f2a 0%, #0d1f52 30%, #0a3040 60%, #0d2a1a 100%);
+      display: flex; flex-direction: column;
+    }
+
+    /* ── FONDO ESTRELLAS ── */
+    .estrellas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .estrella {
+      position: absolute; left: var(--x); top: var(--y);
+      font-size: calc(12px * var(--s));
+      animation: twinkle 3s infinite ease-in-out var(--d); opacity: 0.45;
+    }
+    @keyframes twinkle {
+      0%,100%{ opacity:0.45; transform:scale(1); }
+      50%    { opacity:0.08; transform:scale(0.5); }
+    }
+
+    /* ── PANTALLAS ── */
+    .pantalla {
+      display: none;
+      position: relative; z-index: 2;
+      width: 100%; height: 100vh;
+      flex-direction: column;
+    }
+    .pantalla.activa { display: flex; }
+
+    /* ── HEADER COMPACTO (todas las pantallas) ── */
+    .header {
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 24px;
+      background: rgba(0,0,0,0.28);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .header-izq { display: flex; align-items: center; gap: 10px; }
+    .header-icono { font-size: 26px; }
+    .header-titulo {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(12px,1.6vw,17px);
+      color: var(--verde); letter-spacing: 1.5px; line-height: 1.2;
+    }
+    .header-subtitulo {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(10px,1.1vw,13px);
+      color: rgba(255,255,255,0.38); letter-spacing: 2px;
+    }
+    /* Barra de estrellas en header */
+    .header-estrellas {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .est-label {
+      font-family: 'Fredoka One', cursive; font-size: 11px;
+      color: rgba(255,255,255,0.4); letter-spacing: 1.5px;
+    }
+    .est-iconos { display: flex; gap: 3px; }
+    .est-icono {
+      font-size: 16px;
+      filter: grayscale(1) brightness(0.3);
+      transition: filter 0.3s, transform 0.3s;
+    }
+    .est-icono.ganada {
+      filter: none;
+      animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes pop { 0%{transform:scale(0.3)} 100%{transform:scale(1)} }
+    .est-pts {
+      font-family: 'Fredoka One', cursive; font-size: 13px;
+      color: var(--amarillo);
+    }
+
+    /* ── ÁREA DE ACTIVIDAD ── */
+    .actividad-area {
+      flex: 1; display: flex; flex-direction: column;
+      padding: 10px 24px 8px; overflow: hidden;
+      gap: 8px;
+    }
+
+    /* ── TÍTULO + CONSIGNA ── */
+    .act-header-bloque {
+      flex-shrink: 0;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .act-num {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(28px,4vw,46px);
+      color: rgba(255,255,255,0.08); flex-shrink: 0;
+      line-height: 1;
+    }
+    .act-titulo-wrap {}
+    .act-titulo {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(14px,2vw,20px);
+      color: var(--verde); letter-spacing: 1.5px;
+    }
+    .consigna {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(11px,1.5vw,15px); letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.85); line-height: 1.4;
+      background: rgba(107,203,119,0.1);
+      border-left: 4px solid var(--verde);
+      padding: 8px 14px; border-radius: 0 10px 10px 0;
+      margin-top: 4px;
+    }
+
+    /* ── ZONA DE CONTENIDO CENTRAL ── */
+    .zona-contenido {
+      flex: 1; display: flex;
+      gap: 14px; overflow: hidden;
+      align-items: stretch;
+    }
+
+    /* ── BOTÓN FOOTER ── */
+    .footer-barra {
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 6px 24px 10px; gap: 14px;
+    }
+    .feedback-global {
+      flex: 1;
+      font-family: 'Fredoka One', cursive; font-size: clamp(12px,1.5vw,15px);
+      letter-spacing: 0.5px; padding: 8px 14px; border-radius: 10px;
+      display: none;
+    }
+    .feedback-global.ok  { background: rgba(107,203,119,0.18); color: var(--verde);   display: block; }
+    .feedback-global.mal { background: rgba(255,107,53,0.18);  color: var(--naranja); display: block; }
+
+    .btn-verificar, .btn-sig {
+      font-family: 'Fredoka One', cursive; font-size: clamp(13px,1.6vw,16px);
+      letter-spacing: 1px; padding: 10px 24px; border-radius: 50px;
+      border: none; cursor: pointer; white-space: nowrap;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .btn-verificar {
+      background: linear-gradient(145deg, var(--verde), #3a9e48);
+      color: #fff; box-shadow: 0 5px 0 #27703a, 0 8px 16px rgba(0,0,0,0.35);
+    }
+    .btn-verificar:hover  { transform: translateY(-2px); box-shadow: 0 7px 0 #27703a; }
+    .btn-verificar:active { transform: translateY(2px);  box-shadow: 0 2px 0 #27703a; }
+    .btn-verificar:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+    .btn-sig {
+      background: linear-gradient(145deg, var(--amarillo), var(--naranja2));
+      color: #2d2d2d; box-shadow: 0 5px 0 #c4500a, 0 8px 16px rgba(0,0,0,0.35);
+      display: none;
+    }
+    .btn-sig:hover  { transform: translateY(-2px); box-shadow: 0 7px 0 #c4500a; }
+    .btn-sig:active { transform: translateY(2px);  box-shadow: 0 2px 0 #c4500a; }
+    .btn-sig.visible { display: inline-flex; align-items: center; gap: 8px; }
+
+    /* ═══════════════════════════════════════════
+       PANTALLA 0: PRESENTACIÓN
+    ═══════════════════════════════════════════ */
+    .pres-contenido {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      gap: 40px; padding: 0 40px;
+    }
+    .pres-icono { font-size: clamp(60px,10vw,100px); animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .pres-texto { max-width: 560px; }
+    .pres-titulo {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(22px,4vw,42px);
+      color: var(--verde);
+      text-shadow: 3px 3px 0 #27703a, 0 0 30px rgba(107,203,119,0.4);
+      letter-spacing: 2px; line-height: 1.15; margin-bottom: 10px;
+    }
+    .pres-cuento {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(13px,1.8vw,18px);
+      color: rgba(255,255,255,0.5); letter-spacing: 3px; margin-bottom: 18px;
+    }
+    .pres-chips {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px;
+    }
+    .pres-chip {
+      font-family: 'Fredoka One', cursive; font-size: 13px;
+      padding: 7px 16px; border-radius: 50px;
+      background: rgba(107,203,119,0.12); border: 2px solid rgba(107,203,119,0.3);
+      color: var(--verde); letter-spacing: 1px;
+    }
+    .btn-empezar {
+      font-family: 'Fredoka One', cursive; font-size: clamp(15px,2vw,20px);
+      letter-spacing: 1.5px; padding: 14px 40px; border-radius: 50px;
+      border: none; cursor: pointer;
+      background: linear-gradient(145deg, var(--amarillo), var(--naranja2));
+      color: #2d2d2d; box-shadow: 0 6px 0 #c4500a, 0 10px 24px rgba(0,0,0,0.35);
+      transition: transform 0.12s;
+    }
+    .btn-empezar:hover { transform: translateY(-3px); }
+    .volver-link {
+      display: block; margin-top: 14px;
+      font-family: 'Fredoka One', cursive; font-size: 13px; letter-spacing: 2px;
+      color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s;
+    }
+    .volver-link:hover { color: var(--amarillo); }
+
+    /* ═══════════════════════════════════════════
+       PANTALLA 1: OPCIÓN MÚLTIPLE
+    ═══════════════════════════════════════════ */
+    .preg-item { display: none; }
+    .preg-item.visible { display: contents; }
+
+    .preg-zona {
+      flex: 1; display: flex; flex-direction: column; gap: 10px; overflow: hidden;
+    }
+    .preg-top {
+      flex-shrink: 0;
+      display: flex; gap: 6px; align-items: center;
+    }
+    .preg-contador-badge {
+      font-family: 'Fredoka One', cursive; font-size: 12px;
+      padding: 4px 12px; border-radius: 50px;
+      background: rgba(107,203,119,0.15); color: var(--verde); letter-spacing: 1px;
+    }
+    .preg-texto {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(14px,2.2vw,22px); color: var(--amarillo); line-height: 1.35;
+      flex: 1;
+    }
+    .opciones-grid {
+      flex: 1; display: grid; grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr; gap: 10px; overflow: hidden;
+    }
+    .opcion-btn {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(12px,1.6vw,16px); letter-spacing: 0.5px; line-height: 1.4;
+      padding: 0 18px; border-radius: 14px;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05); color: #fff;
+      cursor: pointer; text-align: left; width: 100%; height: 100%;
+      transition: background 0.18s, border-color 0.18s, transform 0.15s;
+    }
+    .opcion-btn:hover:not(:disabled) {
+      background: rgba(107,203,119,0.15); border-color: var(--verde);
+      transform: translateY(-2px);
+    }
+    .opcion-btn.correcta  { background: rgba(107,203,119,0.28); border-color: var(--verde); }
+    .opcion-btn.incorrecta { background: rgba(255,107,53,0.22); border-color: var(--naranja); opacity:0.8; }
+    .opcion-btn:disabled  { cursor: default; transform: none !important; }
+
+    /* ═══════════════════════════════════════════
+       PANTALLA 2: ORDENAR SECUENCIA DE IMÁGENES
+    ═══════════════════════════════════════════ */
+    .secuencia-wrap {
+      flex: 1; display: flex; flex-direction: column; gap: 10px; overflow: hidden;
+    }
+    .instruccion-small {
+      font-family: 'Fredoka One', cursive; font-size: 12px;
+      color: rgba(255,255,255,0.38); letter-spacing: 1px; flex-shrink: 0;
+    }
+    /* Zona de origen (imágenes desordenadas) */
+    .origen-imgs {
+      flex: 1; display: flex; gap: 10px; align-items: stretch;
+      min-height: 0;
+    }
+    .img-draggable {
+      flex: 1; border-radius: 12px; overflow: hidden;
+      border: 3px solid rgba(255,255,255,0.14);
+      cursor: grab; position: relative;
+      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+      touch-action: none;
+    }
+    .img-draggable:hover { transform: translateY(-4px); border-color: var(--verde); box-shadow: 0 10px 24px rgba(0,0,0,0.5); }
+    .img-draggable.dragging { opacity: 0.45; cursor: grabbing; }
+    .img-draggable.correcta  { border-color: var(--verde);   box-shadow: 0 0 0 3px rgba(107,203,119,0.5); }
+    .img-draggable.incorrecta { border-color: var(--naranja); box-shadow: 0 0 0 3px rgba(255,107,53,0.5); }
+    .img-draggable img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      pointer-events: none; user-select: none;
+    }
+    .img-draggable .img-num {
+      position: absolute; top: 6px; left: 8px;
+      font-family: 'Fredoka One', cursive; font-size: 13px;
+      background: rgba(0,0,0,0.55); color: #fff;
+      padding: 2px 8px; border-radius: 8px; letter-spacing: 1px;
+    }
+    /* Zona de destino (slots numerados) */
+    .destino-slots {
+      flex-shrink: 0;
+      display: flex; gap: 10px; height: 44px; align-items: center;
+    }
+    .dest-slot-img {
+      flex: 1; height: 100%;
+      border: 2px dashed rgba(107,203,119,0.3); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; transition: border-color 0.2s, background 0.2s;
+    }
+    .dest-slot-img .slot-num {
+      font-family: 'Fredoka One', cursive; font-size: 15px;
+      color: rgba(255,255,255,0.22); letter-spacing: 1px;
+    }
+    .dest-slot-img.drag-over { border-color: var(--verde); background: rgba(107,203,119,0.08); }
+    .dest-slot-img.correcta  { border-style: solid; border-color: var(--verde); background: rgba(107,203,119,0.12); }
+    .dest-slot-img.incorrecta { border-style: solid; border-color: var(--naranja); background: rgba(255,107,53,0.08); }
+    .dest-slot-img .slot-thumb {
+      position: absolute; inset: 2px; border-radius: 7px; overflow: hidden;
+    }
+    .dest-slot-img .slot-thumb img {
+      width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;
+    }
+
+    /* ═══════════════════════════════════════════
+       PANTALLA 3: UNIR IMAGEN CON ORACIÓN
+    ═══════════════════════════════════════════ */
+    .unir-wrap {
+      flex: 1; display: flex; gap: 16px; overflow: hidden;
+    }
+    /* Columna izquierda: imágenes */
+    .col-imgs {
+      display: flex; flex-direction: column; gap: 8px; width: 34%; flex-shrink: 0;
+    }
+    .unir-img-card {
+      flex: 1; border-radius: 12px; overflow: hidden;
+      border: 3px solid rgba(255,255,255,0.12);
+      cursor: pointer; position: relative;
+      transition: border-color 0.2s, transform 0.18s;
+    }
+    .unir-img-card:hover { border-color: var(--verde); transform: scale(1.02); }
+    .unir-img-card.seleccionada { border-color: var(--amarillo); box-shadow: 0 0 0 3px rgba(255,217,61,0.4); }
+    .unir-img-card.correcta     { border-color: var(--verde);   box-shadow: 0 0 0 3px rgba(107,203,119,0.5); cursor:default; }
+    .unir-img-card.incorrecta   { border-color: var(--naranja); box-shadow: 0 0 0 3px rgba(255,107,53,0.4); }
+    .unir-img-card img {
+      width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;
+    }
+    .unir-img-card .img-badge {
+      position: absolute; top: 5px; left: 6px;
+      font-family: 'Fredoka One', cursive; font-size: 12px;
+      background: rgba(0,0,0,0.6); color: #fff;
+      padding: 2px 8px; border-radius: 8px;
+    }
+    .unir-img-card .check-badge {
+      position: absolute; bottom: 5px; right: 6px; font-size: 18px; display: none;
+    }
+    .unir-img-card.correcta .check-badge   { display: block; }
+
+    /* Línea central SVG */
+    .lineas-svg {
+      flex-shrink: 0; width: 60px; overflow: visible;
+    }
+
+    /* Columna derecha: oraciones */
+    .col-oraciones {
+      flex: 1; display: flex; flex-direction: column; gap: 8px;
+    }
+    .oracion-card {
+      flex: 1; border-radius: 12px; padding: 0 16px;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05); color: #fff;
+      cursor: pointer; display: flex; align-items: center;
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(11px,1.5vw,14px); letter-spacing: 0.4px; line-height: 1.4;
+      transition: border-color 0.2s, background 0.2s, transform 0.18s;
+      position: relative;
+    }
+    .oracion-card:hover:not(.correcta):not(.incorrecta) {
+      border-color: var(--verde); background: rgba(107,203,119,0.1); transform: translateX(-2px);
+    }
+    .oracion-card.seleccionada { border-color: var(--amarillo); background: rgba(255,217,61,0.1); }
+    .oracion-card.correcta     { border-color: var(--verde);   background: rgba(107,203,119,0.18); cursor:default; }
+    .oracion-card.incorrecta   { border-color: var(--naranja); background: rgba(255,107,53,0.1);  opacity:0.7; }
+    .oracion-card:disabled     { cursor: default; }
+    .oracion-num {
+      font-size: 10px; color: rgba(255,255,255,0.25); letter-spacing: 1px;
+      margin-right: 10px; flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════
+       PANTALLA 4: RESULTADO FINAL
+    ═══════════════════════════════════════════ */
+    .resultado-centro {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+    }
+    .resultado-box {
+      text-align: center; max-width: 540px; padding: 20px;
+    }
+    .res-emoji { font-size: clamp(50px,9vw,80px); display: block; margin-bottom: 12px; animation: float 2s ease-in-out infinite; }
+    .res-titulo {
+      font-family: 'Fredoka One', cursive; font-size: clamp(24px,4vw,40px);
+      color: var(--amarillo); text-shadow: 2px 2px 0 var(--naranja);
+      letter-spacing: 1px; margin-bottom: 8px;
+    }
+    .res-estrellas { font-size: clamp(22px,4vw,36px); letter-spacing: 4px; margin: 12px 0; }
+    .res-puntaje {
+      font-family: 'Fredoka One', cursive; font-size: clamp(14px,2vw,18px);
+      color: rgba(255,255,255,0.6); letter-spacing: 2px; margin-bottom: 12px;
+    }
+    .res-mensaje {
+      font-family: 'Fredoka One', cursive; font-size: clamp(12px,1.6vw,16px);
+      color: rgba(255,255,255,0.42); letter-spacing: 1px; margin-bottom: 24px;
+    }
+    .res-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-reiniciar, .btn-volver {
+      font-family: 'Fredoka One', cursive; font-size: clamp(13px,1.6vw,16px);
+      letter-spacing: 1px; padding: 12px 28px; border-radius: 50px; border: none; cursor: pointer;
+      transition: transform 0.12s; text-decoration: none; display: inline-block;
+    }
+    .btn-reiniciar {
+      background: linear-gradient(145deg, var(--verde), #3a9e48);
+      color: #fff; box-shadow: 0 5px 0 #27703a;
+    }
+    .btn-volver {
+      background: linear-gradient(145deg, var(--celeste), var(--azul));
+      color: #fff; box-shadow: 0 5px 0 #1a50cc;
+    }
+    .btn-reiniciar:hover, .btn-volver:hover { transform: translateY(-2px); }
+
+    /* CONFETTI */
+    .confetti-piece {
+      position: fixed; pointer-events: none; z-index: 9999;
+      width:var(--w); height:var(--h); background:var(--col); border-radius:var(--br);
+      animation: cfcaer var(--dur) ease-out forwards;
+      top:var(--ty); left:var(--tx);
+    }
+    @keyframes cfcaer {
+      0%  { opacity:1; transform:translate(0,0) rotate(0deg) scale(1); }
+      80% { opacity:1; }
+      100%{ opacity:0; transform:translate(var(--fx),var(--fy)) rotate(var(--rot)) scale(0.4); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- FONDO -->
+<div class="estrellas" aria-hidden="true">
+  <span class="estrella" style="--x:5%;--y:8%;--s:1.1;--d:0s">⭐</span>
+  <span class="estrella" style="--x:90%;--y:10%;--s:0.9;--d:0.5s">✨</span>
+  <span class="estrella" style="--x:14%;--y:72%;--s:1;--d:1s">⭐</span>
+  <span class="estrella" style="--x:85%;--y:66%;--s:0.8;--d:1.5s">✨</span>
+  <span class="estrella" style="--x:50%;--y:4%;--s:1.2;--d:0.8s">🌈</span>
+  <span class="estrella" style="--x:3%;--y:44%;--s:0.7;--d:2s">✨</span>
+  <span class="estrella" style="--x:95%;--y:38%;--s:1;--d:0.3s">⭐</span>
+  <span class="estrella" style="--x:68%;--y:80%;--s:0.9;--d:1.2s">✨</span>
+  <span class="estrella" style="--x:30%;--y:20%;--s:0.8;--d:0.6s">⭐</span>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANTALLA 0: PRESENTACIÓN
+══════════════════════════════════════════════ -->
+<div class="pantalla activa" id="pan0">
+  <div class="pres-contenido">
+    <div class="pres-icono">🌈</div>
+    <div class="pres-texto">
+      <div class="pres-cuento">COMPRENSIÓN LECTORA · CUENTO 4</div>
+      <h1 class="pres-titulo">NUESTRO PRIMER DÍA EN PRIMERO</h1>
+      <div class="pres-chips">
+        <span class="pres-chip">❓ 5 PREGUNTAS</span>
+        <span class="pres-chip">🖼️ ORDENAR IMÁGENES</span>
+        <span class="pres-chip">🔗 UNIR CON ORACIÓN</span>
+        <span class="pres-chip">⭐ 13 ESTRELLAS</span>
+      </div>
+      <button class="btn-empezar" onclick="irA(1)">▶ EMPEZAR</button>
+      <a href="index.html" class="volver-link">← VOLVER A LA BIBLIOTECA</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANTALLA 1: OPCIÓN MÚLTIPLE (5 preguntas)
+══════════════════════════════════════════════ -->
+<div class="pantalla" id="pan1">
+  <div class="header">
+    <div class="header-izq">
+      <span class="header-icono">❓</span>
+      <div>
+        <div class="header-titulo">ACTIVIDAD 1 · PREGUNTAS DE COMPRENSIÓN</div>
+        <div class="header-subtitulo">NUESTRO PRIMER DÍA EN PRIMERO</div>
+      </div>
+    </div>
+    <div class="header-estrellas">
+      <span class="est-label">ESTRELLAS:</span>
+      <div class="est-iconos" id="estIconos1"></div>
+      <span class="est-pts" id="estPts1"></span>
+    </div>
+  </div>
+
+  <div class="actividad-area">
+    <div class="preg-zona" id="pregZona">
+
+      <!-- PREGUNTA 1 -->
+      <div class="preg-item visible" id="p1">
+        <div class="act-header-bloque">
+          <div class="act-num">1</div>
+          <div class="act-titulo-wrap">
+            <span class="preg-contador-badge">PREGUNTA 1 DE 5</span>
+            <div class="preg-texto" style="margin-top:6px;">¿CÓMO SE CONOCÍAN LOS CHICOS ANTES DE ENTRAR A PRIMER GRADO?</div>
+          </div>
+        </div>
+        <div class="opciones-grid">
+          <button class="opcion-btn" data-ok="false">NO SE CONOCÍAN, ERA LA PRIMERA VEZ QUE SE VEÍAN.</button>
+          <button class="opcion-btn" data-ok="true">YA SE CONOCÍAN: HABÍAN JUGADO JUNTOS EN EL JARDÍN.</button>
+          <button class="opcion-btn" data-ok="false">SE CONOCÍAN PORQUE VIVÍAN EN EL MISMO BARRIO.</button>
+          <button class="opcion-btn" data-ok="false">SE HABÍAN CONOCIDO EN LAS VACACIONES.</button>
+        </div>
+      </div>
+
+      <!-- PREGUNTA 2 -->
+      <div class="preg-item" id="p2">
+        <div class="act-header-bloque">
+          <div class="act-num">2</div>
+          <div class="act-titulo-wrap">
+            <span class="preg-contador-badge">PREGUNTA 2 DE 5</span>
+            <div class="preg-texto" style="margin-top:6px;">¿QUÉ DECÍA EL CARTEL EN LA PUERTA DEL AULA?</div>
+          </div>
+        </div>
+        <div class="opciones-grid">
+          <button class="opcion-btn" data-ok="false">BIENVENIDOS A LA ESCUELA.</button>
+          <button class="opcion-btn" data-ok="false">SALA DE JARDÍN DE INFANTES.</button>
+          <button class="opcion-btn" data-ok="true">PRIMER GRADO.</button>
+          <button class="opcion-btn" data-ok="false">AULA 4 - TURNO MAÑANA.</button>
+        </div>
+      </div>
+
+      <!-- PREGUNTA 3 -->
+      <div class="preg-item" id="p3">
+        <div class="act-header-bloque">
+          <div class="act-num">3</div>
+          <div class="act-titulo-wrap">
+            <span class="preg-contador-badge">PREGUNTA 3 DE 5</span>
+            <div class="preg-texto" style="margin-top:6px;">¿QUÉ PASABA CUANDO ALGUIEN DUDABA EN UNA PALABRA AL LEER?</div>
+          </div>
+        </div>
+        <div class="opciones-grid">
+          <button class="opcion-btn" data-ok="false">LA SEÑO LO CORREGÍA EN VOZ ALTA.</button>
+          <button class="opcion-btn" data-ok="false">TODOS SE REÍAN Y SEGUÍAN LEYENDO.</button>
+          <button class="opcion-btn" data-ok="true">OTRO COMPAÑERO SUSURRABA BAJITO LA AYUDA, COMO UN SECRETO BUENO.</button>
+          <button class="opcion-btn" data-ok="false">NADIE LO AYUDABA Y TENÍA QUE ESPERAR.</button>
+        </div>
+      </div>
+
+      <!-- PREGUNTA 4 -->
+      <div class="preg-item" id="p4">
+        <div class="act-header-bloque">
+          <div class="act-num">4</div>
+          <div class="act-titulo-wrap">
+            <span class="preg-contador-badge">PREGUNTA 4 DE 5</span>
+            <div class="preg-texto" style="margin-top:6px;">¿QUÉ HICIERON LOS CHICOS CUANDO SE CAYÓ UNA CARTUCHERA?</div>
+          </div>
+        </div>
+        <div class="opciones-grid">
+          <button class="opcion-btn" data-ok="false">SE ENOJARON Y SIGUIERON CON LA TAREA.</button>
+          <button class="opcion-btn" data-ok="true">SE RIERON CUANDO RODARON LOS LÁPICES POR EL PISO.</button>
+          <button class="opcion-btn" data-ok="false">AVISARON A LA SEÑO PARA QUE LA LEVANTARA.</button>
+          <button class="opcion-btn" data-ok="false">SALIERON CORRIENDO AL RECREO.</button>
+        </div>
+      </div>
+
+      <!-- PREGUNTA 5 -->
+      <div class="preg-item" id="p5">
+        <div class="act-header-bloque">
+          <div class="act-num">5</div>
+          <div class="act-titulo-wrap">
+            <span class="preg-contador-badge">PREGUNTA 5 DE 5</span>
+            <div class="preg-texto" style="margin-top:6px;">¿QUÉ ENTENDIERON LOS CHICOS AL FINAL DEL DÍA?</div>
+          </div>
+        </div>
+        <div class="opciones-grid">
+          <button class="opcion-btn" data-ok="false">QUE PRIMERO GRADO ERA MUY DIFÍCIL.</button>
+          <button class="opcion-btn" data-ok="false">QUE EXTRAÑABAN MUCHO EL JARDÍN.</button>
+          <button class="opcion-btn" data-ok="false">QUE LA SEÑO ERA MUY ESTRICTA.</button>
+          <button class="opcion-btn" data-ok="true">QUE ERAN UN EQUIPO DE PRIMERO Y SEGUÍAN CRECIENDO JUNTOS.</button>
+        </div>
+      </div>
+
+    </div><!-- /pregZona -->
+  </div>
+
+  <div class="footer-barra">
+    <div class="feedback-global" id="fb1"></div>
+    <button class="btn-sig" id="sigP1">SIGUIENTE ▶</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANTALLA 2: ORDENAR SECUENCIA DE IMÁGENES
+══════════════════════════════════════════════ -->
+<div class="pantalla" id="pan2">
+  <div class="header">
+    <div class="header-izq">
+      <span class="header-icono">🖼️</span>
+      <div>
+        <div class="header-titulo">ACTIVIDAD 2 · ORDENÁ LA SECUENCIA</div>
+        <div class="header-subtitulo">NUESTRO PRIMER DÍA EN PRIMERO</div>
+      </div>
+    </div>
+    <div class="header-estrellas">
+      <span class="est-label">ESTRELLAS:</span>
+      <div class="est-iconos" id="estIconos2"></div>
+      <span class="est-pts" id="estPts2"></span>
+    </div>
+  </div>
+
+  <div class="actividad-area">
+    <div class="act-header-bloque" style="flex-shrink:0;">
+      <div class="act-num">2</div>
+      <div class="act-titulo-wrap">
+        <div class="act-titulo">ORDENÁ LA SECUENCIA</div>
+        <div class="consigna">ARRASTRÁ LAS IMÁGENES AL NÚMERO QUE LES CORRESPONDE SEGÚN EL ORDEN EN QUE SUCEDEN EN EL CUENTO.</div>
+      </div>
+    </div>
+
+    <div class="secuencia-wrap">
+      <div class="instruccion-small">ARRASTRÁ CADA IMAGEN AL RECUADRO NUMERADO CORRECTO · EN TABLET: TOCÁ UNA IMAGEN Y LUEGO EL NÚMERO</div>
+
+      <!-- Imágenes desordenadas (origen) -->
+      <div class="origen-imgs" id="origenSeq">
+        <!-- orden inicial mezclado: 3,1,5,2,4 -->
+        <div class="img-draggable" draggable="true" data-id="3" id="seqImg3">
+          <img src="momento3.png" alt="Imagen 3">
+          <span class="img-num">📷</span>
+        </div>
+        <div class="img-draggable" draggable="true" data-id="1" id="seqImg1">
+          <img src="momento1.png" alt="Imagen 1">
+          <span class="img-num">📷</span>
+        </div>
+        <div class="img-draggable" draggable="true" data-id="5" id="seqImg5">
+          <img src="momento5.png" alt="Imagen 5">
+          <span class="img-num">📷</span>
+        </div>
+        <div class="img-draggable" draggable="true" data-id="2" id="seqImg2">
+          <img src="momento2.png" alt="Imagen 2">
+          <span class="img-num">📷</span>
+        </div>
+        <div class="img-draggable" draggable="true" data-id="4" id="seqImg4">
+          <img src="momento4.png" alt="Imagen 4">
+          <span class="img-num">📷</span>
+        </div>
+      </div>
+
+      <!-- Slots numerados destino -->
+      <div class="destino-slots" id="destinoSeq">
+        <div class="dest-slot-img" data-pos="1" id="slotS1"><span class="slot-num">1°</span></div>
+        <div class="dest-slot-img" data-pos="2" id="slotS2"><span class="slot-num">2°</span></div>
+        <div class="dest-slot-img" data-pos="3" id="slotS3"><span class="slot-num">3°</span></div>
+        <div class="dest-slot-img" data-pos="4" id="slotS4"><span class="slot-num">4°</span></div>
+        <div class="dest-slot-img" data-pos="5" id="slotS5"><span class="slot-num">5°</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-barra">
+    <div class="feedback-global" id="fb2"></div>
+    <button class="btn-verificar" id="btnVerSeq">✔ VERIFICAR</button>
+    <button class="btn-sig" id="sigSeq">SIGUIENTE ▶</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANTALLA 3: UNIR IMAGEN CON ORACIÓN
+══════════════════════════════════════════════ -->
+<div class="pantalla" id="pan3">
+  <div class="header">
+    <div class="header-izq">
+      <span class="header-icono">🔗</span>
+      <div>
+        <div class="header-titulo">ACTIVIDAD 3 · UNÍ LA IMAGEN CON LA ORACIÓN</div>
+        <div class="header-subtitulo">NUESTRO PRIMER DÍA EN PRIMERO</div>
+      </div>
+    </div>
+    <div class="header-estrellas">
+      <span class="est-label">ESTRELLAS:</span>
+      <div class="est-iconos" id="estIconos3"></div>
+      <span class="est-pts" id="estPts3"></span>
+    </div>
+  </div>
+
+  <div class="actividad-area">
+    <div class="act-header-bloque" style="flex-shrink:0;">
+      <div class="act-num">3</div>
+      <div class="act-titulo-wrap">
+        <div class="act-titulo">UNÍ IMAGEN Y ORACIÓN</div>
+        <div class="consigna">HACÉ CLIC EN UNA IMAGEN Y DESPUÉS EN LA ORACIÓN QUE LA DESCRIBE CORRECTAMENTE.</div>
+      </div>
+    </div>
+
+    <div class="unir-wrap">
+      <!-- Columna imágenes -->
+      <div class="col-imgs" id="colImgs">
+        <div class="unir-img-card" data-id="A" id="uImg-A">
+          <img src="momento1.png" alt="Escena A">
+          <span class="img-badge">IMG A</span>
+          <span class="check-badge">✅</span>
+        </div>
+        <div class="unir-img-card" data-id="B" id="uImg-B">
+          <img src="momento3.png" alt="Escena B">
+          <span class="img-badge">IMG B</span>
+          <span class="check-badge">✅</span>
+        </div>
+        <div class="unir-img-card" data-id="C" id="uImg-C">
+          <img src="momento5.png" alt="Escena C">
+          <span class="img-badge">IMG C</span>
+          <span class="check-badge">✅</span>
+        </div>
+      </div>
+
+      <!-- SVG líneas de conexión -->
+      <svg class="lineas-svg" id="svgLineas" xmlns="http://www.w3.org/2000/svg"></svg>
+
+      <!-- Columna oraciones -->
+      <div class="col-oraciones" id="colOraciones">
+        <div class="oracion-card" data-id="2" id="uOr-2">
+          <span class="oracion-num">A</span>
+          LOS CHICOS ENTRARON AL AULA Y VIERON EL CARTEL QUE DECÍA "PRIMER GRADO". SE MIRARON Y SONRIERON: ERA VERDAD.
+        </div>
+        <div class="oracion-card" data-id="3" id="uOr-3">
+          <span class="oracion-num">B</span>
+          EN EL RECREO CORRIERON Y SE RIERON. NADA HABÍA CAMBIADO TANTO, PERO AHORA ERAN UN EQUIPO DE PRIMERO.
+        </div>
+        <div class="oracion-card" data-id="1" id="uOr-1">
+          <span class="oracion-num">C</span>
+          AL FINAL DEL DÍA, LA SEÑO PREGUNTÓ SI LES HABÍA GUSTADO EMPEZAR PRIMERO. TODOS DIJERON QUE SÍ.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-barra">
+    <div class="feedback-global" id="fb3"></div>
+    <button class="btn-verificar" id="btnVerUnir" disabled>✔ VERIFICAR</button>
+    <button class="btn-sig" id="sigUnir">VER MI CALIFICACIÓN ⭐</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANTALLA 4: RESULTADO FINAL
+══════════════════════════════════════════════ -->
+<div class="pantalla" id="pan4">
+  <div class="header">
+    <div class="header-izq">
+      <span class="header-icono">🏆</span>
+      <div>
+        <div class="header-titulo">RESULTADO FINAL</div>
+        <div class="header-subtitulo">NUESTRO PRIMER DÍA EN PRIMERO</div>
+      </div>
+    </div>
+    <div class="header-estrellas">
+      <span class="est-label">TOTAL:</span>
+      <div class="est-iconos" id="estIconos4"></div>
+      <span class="est-pts" id="estPts4"></span>
+    </div>
+  </div>
+
+  <div class="resultado-centro">
+    <div class="resultado-box">
+      <span class="res-emoji" id="resEmoji">🏆</span>
+      <div class="res-titulo" id="resTitulo">¡FELICITACIONES!</div>
+      <div class="res-estrellas" id="resEstrellas"></div>
+      <div class="res-puntaje" id="resPuntaje"></div>
+      <div class="res-mensaje" id="resMensaje"></div>
+      <div class="res-btns">
+        <button class="btn-reiniciar" onclick="location.reload()">🔄 VOLVER A INTENTAR</button>
+        <a href="index.html" class="btn-volver">📚 IR A LA BIBLIOTECA</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ JAVASCRIPT ══ -->
+<script>
+/* ═══════════════════════════
+   PUNTAJE GLOBAL
+═══════════════════════════ */
+const TOTAL = 13; // 5 preguntas + 5 secuencia + 3 unir
+let puntaje = 0;
+const COLORES_CF = ['#FFD93D','#FF6B35','#74C7EC','#6BCB77','#FF6B9D','#C77DFF','#fff'];
+
+function renderEstrellas(sufijo) {
+  const cont = document.getElementById('estIconos' + sufijo);
+  const pts  = document.getElementById('estPts'   + sufijo);
+  if (!cont) return;
+  cont.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const s = document.createElement('span');
+    s.className = 'est-icono' + (i < puntaje ? ' ganada' : '');
+    s.textContent = '⭐';
+    cont.appendChild(s);
+  }
+  pts.textContent = puntaje + '/' + TOTAL;
+}
+function sumar(n=1) {
+  puntaje = Math.min(puntaje + n, TOTAL);
+  ['1','2','3','4'].forEach(s => renderEstrellas(s));
+}
+function confetti() {
+  const sh=['50%','4px','2px/8px'];
+  for(let i=0;i<65;i++){
+    const p=document.createElement('div'); p.className='confetti-piece';
+    const col=COLORES_CF[Math.floor(Math.random()*COLORES_CF.length)];
+    const shape=sh[Math.floor(Math.random()*sh.length)];
+    const w=7+Math.random()*8, h=7+Math.random()*8;
+    const ang=Math.random()*360, dist=100+Math.random()*230;
+    const rad=ang*Math.PI/180, dur=0.7+Math.random()*0.7;
+    const ox=window.innerWidth/2, oy=window.innerHeight/2;
+    p.style.cssText=`--col:${col};--w:${w}px;--h:${h}px;--br:${shape};--dur:${dur}s;
+      --tx:${ox-w/2}px;--ty:${oy-h/2}px;
+      --fx:${Math.cos(rad)*dist}px;--fy:${Math.sin(rad)*dist-80}px;
+      --rot:${-360+Math.random()*720}deg;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),dur*1000+200);
+  }
+}
+
+function irA(n) {
+  document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('activa'));
+  document.getElementById('pan'+n).classList.add('activa');
+  ['1','2','3','4'].forEach(s=>renderEstrellas(s));
+}
+
+// Init
+['1','2','3','4'].forEach(s=>renderEstrellas(s));
+
+/* ═══════════════════════════
+   ACTIVIDAD 1: OPCIÓN MÚLTIPLE
+═══════════════════════════ */
+const CORRECTAS_P = {1:false,2:false,3:false,4:false,5:false};
+let pregActual = 1;
+
+function mostrarPreg(n) {
+  for(let i=1;i<=5;i++) document.getElementById('p'+i).classList.remove('visible');
+  document.getElementById('p'+n).classList.add('visible');
+}
+
+for(let n=1;n<=5;n++){
+  const preg = document.getElementById('p'+n);
+  const btns = preg.querySelectorAll('.opcion-btn');
+  btns.forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(CORRECTAS_P[n]!==false && CORRECTAS_P[n]!==undefined && typeof CORRECTAS_P[n]==='boolean' && CORRECTAS_P[n]) return;
+      if(typeof CORRECTAS_P[n]==='string') return; // ya respondida
+      const ok = btn.dataset.ok==='true';
+      btns.forEach(b=>{ b.disabled=true; if(b.dataset.ok==='true') b.classList.add('correcta'); });
+      if(!ok) btn.classList.add('incorrecta');
+      CORRECTAS_P[n] = ok ? 'ok' : 'mal';
+      if(ok) sumar(1);
+      const fb = document.getElementById('fb1');
+      fb.textContent = ok ? '✅ ¡CORRECTO! MUY BIEN.' : '❌ NO ES ESA. LA RESPUESTA CORRECTA ESTÁ MARCADA EN VERDE.';
+      fb.className = 'feedback-global ' + (ok ? 'ok' : 'mal');
+      // Avanzar automáticamente si no es la última
+      setTimeout(()=>{
+        if(n<5){
+          pregActual = n+1;
+          mostrarPreg(pregActual);
+          fb.className='feedback-global'; // ocultar feedback
+        } else {
+          document.getElementById('sigP1').classList.add('visible');
+        }
+      }, ok ? 900 : 1400);
+    });
+  });
+}
+document.getElementById('sigP1').addEventListener('click',()=>irA(2));
+
+/* ═══════════════════════════
+   ACTIVIDAD 2: ORDENAR SECUENCIA
+   Orden correcto: 1→2→3→4→5
+═══════════════════════════ */
+// slotContent: pos → imgId
+let slotSeq = {1:null,2:null,3:null,4:null,5:null};
+let seqVerificado = false;
+let seqDragging = null;
+let seqTapSelected = null; // id de imagen seleccionada (para tap/click)
+
+document.querySelectorAll('.img-draggable').forEach(img=>{
+  img.addEventListener('dragstart',()=>{
+    seqDragging = img.dataset.id;
+    setTimeout(()=>img.classList.add('dragging'),0);
+  });
+  img.addEventListener('dragend',()=>{ img.classList.remove('dragging'); seqDragging=null; });
+  img.addEventListener('click',()=>{
+    if(seqVerificado) return;
+    document.querySelectorAll('.img-draggable').forEach(x=>x.style.outline='');
+    if(seqTapSelected===img.dataset.id){ seqTapSelected=null; return; }
+    seqTapSelected=img.dataset.id;
+    img.style.outline='3px solid var(--amarillo)';
+  });
+});
+
+document.querySelectorAll('.dest-slot-img').forEach(slot=>{
+  slot.addEventListener('dragover',e=>{ e.preventDefault(); slot.classList.add('drag-over'); });
+  slot.addEventListener('dragleave',()=>slot.classList.remove('drag-over'));
+  slot.addEventListener('drop',e=>{
+    e.preventDefault(); slot.classList.remove('drag-over');
+    if(!seqDragging||seqVerificado) return;
+    colocarImgEnSlot(slot, seqDragging); seqDragging=null;
+  });
+  slot.addEventListener('click',()=>{
+    if(seqVerificado) return;
+    if(seqTapSelected){
+      colocarImgEnSlot(slot, seqTapSelected);
+      document.querySelectorAll('.img-draggable').forEach(x=>x.style.outline='');
+      seqTapSelected=null;
+    }
+  });
+});
+
+function colocarImgEnSlot(slot, imgId){
+  const pos = slot.dataset.pos;
+  // Si el slot tenía algo, devolver al origen
+  if(slotSeq[pos]){
+    document.getElementById('origenSeq').appendChild(document.getElementById('seqImg'+slotSeq[pos]));
+  }
+  // Liberar slot anterior de esta imagen
+  for(const p in slotSeq){ if(slotSeq[p]==imgId){ slotSeq[p]=null; } }
+  slotSeq[pos]=imgId;
+  // Mover imagen al slot
+  const imgEl=document.getElementById('seqImg'+imgId);
+  // Crear thumb dentro del slot
+  let thumb = slot.querySelector('.slot-thumb');
+  if(!thumb){ thumb=document.createElement('div'); thumb.className='slot-thumb'; slot.appendChild(thumb); }
+  thumb.innerHTML='';
+  const clone=document.createElement('img');
+  clone.src=imgEl.querySelector('img').src; clone.alt='';
+  thumb.appendChild(clone);
+  // Agregar badge de número al slot
+  const numSpan=slot.querySelector('.slot-num');
+  if(numSpan) numSpan.style.opacity='0';
+  // Remover la imagen original del origen y guardarla oculta
+  imgEl.style.display='none';
+  // Guardar referencia
+  slot._imgId=imgId;
+  // Click en slot ocupado: devolver imagen al origen
+  slot.onclick=()=>{
+    if(seqVerificado) return;
+    if(seqTapSelected){
+      colocarImgEnSlot(slot, seqTapSelected);
+      document.querySelectorAll('.img-draggable').forEach(x=>x.style.outline='');
+      seqTapSelected=null;
+    } else if(slot._imgId){
+      // Click en slot lleno sin selección: devolver imagen
+      const pid=slotSeq[pos];
+      slotSeq[pos]=null;
+      slot._imgId=null;
+      thumb.innerHTML='';
+      if(numSpan) numSpan.style.opacity='1';
+      document.getElementById('seqImg'+pid).style.display='';
+    }
+  };
+}
+
+document.getElementById('btnVerSeq').addEventListener('click',()=>{
+  if(seqVerificado) return;
+  // Verificar que todos los slots estén llenos
+  for(let p=1;p<=5;p++){
+    if(!slotSeq[p]){
+      const fb=document.getElementById('fb2');
+      fb.textContent='⚠️ FALTAN IMÁGENES. COMPLETÁ LOS 5 LUGARES.';
+      fb.className='feedback-global mal'; return;
+    }
+  }
+  seqVerificado=true;
+  let ok=0;
+  for(let p=1;p<=5;p++){
+    const slot=document.getElementById('slotS'+p);
+    if(parseInt(slotSeq[p])===p){ slot.classList.add('correcta'); ok++; }
+    else slot.classList.add('incorrecta');
+  }
+  sumar(ok);
+  const fb=document.getElementById('fb2');
+  fb.textContent = ok===5
+    ? '✅ ¡PERFECTO! ORDENASTE LAS 5 IMÁGENES CORRECTAMENTE.'
+    : `✅ BIEN! ORDENASTE ${ok} DE 5 CORRECTAMENTE.`;
+  if(ok===0){fb.textContent='❌ NINGUNA IMAGEN ESTÁ EN EL ORDEN CORRECTO. ¡INTENTÁ OTRA VEZ LA PRÓXIMA!';}
+  fb.className='feedback-global '+(ok>0?'ok':'mal');
+  document.getElementById('btnVerSeq').disabled=true;
+  document.getElementById('sigSeq').classList.add('visible');
+});
+
+document.getElementById('sigSeq').addEventListener('click',()=>irA(3));
+
+/* ═══════════════════════════
+   ACTIVIDAD 3: UNIR IMAGEN CON ORACIÓN
+   Pares correctos (imgId → oracionId):
+     A (momento1) → 2 (Cartel "Primer grado")
+     B (momento3) → 3 (Recreo / equipo)
+     C (momento5) → 1 (Final del día / seño pregunta)
+═══════════════════════════ */
+const PARES = { A:'2', B:'3', C:'1' };
+let unirImgSel = null;
+let unirOrSel  = null;
+let unirPares  = {}; // imgId → oracionId
+let unirVerificado = false;
+
+function actualizarBtnUnir(){
+  // Habilitar verificar solo cuando hay 3 pares
+  document.getElementById('btnVerUnir').disabled = Object.keys(unirPares).length < 3;
+}
+
+document.querySelectorAll('.unir-img-card').forEach(img=>{
+  img.addEventListener('click',()=>{
+    if(unirVerificado || img.classList.contains('correcta')) return;
+    // Deseleccionar todo
+    document.querySelectorAll('.unir-img-card').forEach(x=>x.classList.remove('seleccionada'));
+    document.querySelectorAll('.oracion-card').forEach(x=>x.classList.remove('seleccionada'));
+    unirImgSel = img.dataset.id;
+    img.classList.add('seleccionada');
+    // Si ya había una oracion seleccionada, intentar emparejar
+    if(unirOrSel){ hacerPar(unirImgSel, unirOrSel); unirImgSel=null; unirOrSel=null; }
+  });
+});
+
+document.querySelectorAll('.oracion-card').forEach(or=>{
+  or.addEventListener('click',()=>{
+    if(unirVerificado || or.classList.contains('correcta')) return;
+    document.querySelectorAll('.oracion-card').forEach(x=>x.classList.remove('seleccionada'));
+    document.querySelectorAll('.unir-img-card').forEach(x=>x.classList.remove('seleccionada'));
+    unirOrSel = or.dataset.id;
+    or.classList.add('seleccionada');
+    if(unirImgSel){ hacerPar(unirImgSel, unirOrSel); unirImgSel=null; unirOrSel=null; }
+  });
+});
+
+function hacerPar(imgId, orId){
+  // Eliminar par previo de esta imagen si existía
+  if(unirPares[imgId]){
+    const prevOr = document.querySelector(`.oracion-card[data-id="${unirPares[imgId]}"]`);
+    if(prevOr){ prevOr.classList.remove('seleccionada'); }
+  }
+  unirPares[imgId]=orId;
+  document.querySelectorAll('.unir-img-card').forEach(x=>x.classList.remove('seleccionada'));
+  document.querySelectorAll('.oracion-card').forEach(x=>x.classList.remove('seleccionada'));
+  // Mostrar visual de conexión pendiente
+  const imgEl=document.getElementById('uImg-'+imgId);
+  const orEl=document.querySelector(`.oracion-card[data-id="${orId}"]`);
+  imgEl.style.borderColor='rgba(255,217,61,0.6)';
+  orEl.classList.add('seleccionada');
+  actualizarBtnUnir();
+  dibujarLineas();
+}
+
+function dibujarLineas(){
+  const svg=document.getElementById('svgLineas');
+  svg.innerHTML='';
+  const svgRect=svg.getBoundingClientRect();
+  for(const imgId in unirPares){
+    const orId=unirPares[imgId];
+    const imgEl=document.getElementById('uImg-'+imgId);
+    const orEl=document.querySelector(`.oracion-card[data-id="${orId}"]`);
+    if(!imgEl||!orEl) continue;
+    const ir=imgEl.getBoundingClientRect(), or2=orEl.getBoundingClientRect();
+    const x1=ir.right-svgRect.left, y1=ir.top+ir.height/2-svgRect.top;
+    const x2=or2.left-svgRect.left, y2=or2.top+or2.height/2-svgRect.top;
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','rgba(255,217,61,0.5)');
+    line.setAttribute('stroke-width','2.5');
+    line.setAttribute('stroke-dasharray','6,4');
+    svg.appendChild(line);
+  }
+}
+
+document.getElementById('btnVerUnir').addEventListener('click',()=>{
+  if(unirVerificado) return;
+  unirVerificado=true;
+  let ok=0;
+  const svgEl=document.getElementById('svgLineas');
+  svgEl.innerHTML='';
+  const svgRect=svgEl.getBoundingClientRect();
+
+  for(const imgId in unirPares){
+    const orId=unirPares[imgId];
+    const imgEl=document.getElementById('uImg-'+imgId);
+    const orEl=document.querySelector(`.oracion-card[data-id="${orId}"]`);
+    const correcto = PARES[imgId]===orId;
+    if(correcto){
+      imgEl.classList.add('correcta'); orEl.classList.add('correcta'); ok++;
+    } else {
+      imgEl.classList.add('incorrecta'); orEl.classList.add('incorrecta');
+    }
+    imgEl.style.borderColor='';
+    // Dibujar línea final
+    const ir=imgEl.getBoundingClientRect(), or2=orEl.getBoundingClientRect();
+    const x1=ir.right-svgRect.left, y1=ir.top+ir.height/2-svgRect.top;
+    const x2=or2.left-svgRect.left, y2=or2.top+or2.height/2-svgRect.top;
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke', correcto ? 'var(--verde)' : 'var(--naranja)');
+    line.setAttribute('stroke-width','3');
+    svgEl.appendChild(line);
+  }
+  sumar(ok);
+  const fb=document.getElementById('fb3');
+  fb.textContent = ok===3 ? '✅ ¡EXCELENTE! UNISTE TODAS LAS IMÁGENES CORRECTAMENTE.' : `✅ UNISTE ${ok} DE 3 CORRECTAMENTE.`;
+  if(ok===0) fb.textContent='❌ NINGÚN PAR ES CORRECTO. ¡NO TE RINDAS!';
+  fb.className='feedback-global '+(ok>0?'ok':'mal');
+  document.getElementById('btnVerUnir').disabled=true;
+  document.getElementById('sigUnir').classList.add('visible');
+});
+
+document.getElementById('sigUnir').addEventListener('click',()=>{
+  irA(4);
+  mostrarResultado();
+});
+
+/* ═══════════════════════════
+   RESULTADO FINAL
+═══════════════════════════ */
+function mostrarResultado(){
+  const pct=puntaje/TOTAL;
+  let emoji,titulo,mensaje;
+  if(pct===1){ emoji='🏆'; titulo='¡FELICITACIONES!'; mensaje='¡RESPONDISTE TODO CORRECTAMENTE! ERES UNA ESTRELLA.'; confetti(); }
+  else if(pct>=0.7){ emoji='🌟'; titulo='¡MUY BIEN!'; mensaje='¡LO HICISTE GENIAL! PODÉS VOLVER A INTENTARLO PARA MEJORAR.'; }
+  else if(pct>=0.4){ emoji='😊'; titulo='¡BUEN ESFUERZO!'; mensaje='TE FUÉ BIEN EN ALGUNOS. ¡VOLVÉ A INTENTARLO!'; }
+  else { emoji='📖'; titulo='¡SEGUÍ PRACTICANDO!'; mensaje='RELEÉ EL CUENTO Y VOLVÉ A INTENTARLO. ¡VOS PODÉS!'; }
+  let estStr='';
+  for(let i=0;i<TOTAL;i++) estStr+= i<puntaje ? '⭐' : '☆';
+  document.getElementById('resEmoji').textContent=emoji;
+  document.getElementById('resTitulo').textContent=titulo;
+  document.getElementById('resEstrellas').textContent=estStr;
+  document.getElementById('resPuntaje').textContent=puntaje+' DE '+TOTAL+' ESTRELLAS';
+  document.getElementById('resMensaje').textContent=mensaje;
+  renderEstrellas('4');
+}
+
+// Redibujar líneas al redimensionar
+window.addEventListener('resize', dibujarLineas);
+</script>
+</body>
+</html>
