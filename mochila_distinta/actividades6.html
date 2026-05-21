@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ACTIVIDADES · LA MOCHILA PESABA DISTINTO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --amarillo: #FFD93D;
+      --naranja:  #FF6B35;
+      --naranja2: #FF9F1C;
+      --celeste:  #74C7EC;
+      --azul:     #3A86FF;
+      --verde:    #6BCB77;
+      --rosa:     #FF6B9D;
+      --violeta:  #C77DFF;
+      --acento:   #FF6B9D;   /* rosa temático — mochilas */
+      --acento2:  #C77DFF;
+      --sombra:   #9b1a52;
+    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html, body { width:100%; height:100%; overflow:hidden; font-family:'Nunito',sans-serif; }
+
+    body {
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,107,157,0.1) 0%, transparent 60%),
+        linear-gradient(170deg,#1a0014 0%,#2a0030 30%,#0d0f30 60%,#080f2a 100%);
+      display:flex; flex-direction:column;
+    }
+
+    /* ── FONDO ── */
+    .bg-stars { position:fixed; inset:0; pointer-events:none; z-index:0; }
+    .bg-star { position:absolute; left:var(--x); top:var(--y); font-size:calc(12px*var(--s)); animation:twinkle 3s infinite ease-in-out var(--d); opacity:.45; }
+    @keyframes twinkle { 0%,100%{opacity:.45;transform:scale(1)} 50%{opacity:.08;transform:scale(.5)} }
+
+    /* ── PANTALLAS ── */
+    .pantalla { display:none; position:relative; z-index:2; width:100%; height:100vh; flex-direction:column; }
+    .pantalla.activa { display:flex; }
+
+    /* ── HEADER ── */
+    .header {
+      flex-shrink:0; display:flex; align-items:center; justify-content:space-between;
+      padding:8px 24px; background:rgba(0,0,0,0.32);
+      border-bottom:1px solid rgba(255,255,255,0.07);
+    }
+    .header-izq { display:flex; align-items:center; gap:10px; }
+    .header-icono { font-size:26px; }
+    .header-titulo { font-family:'Fredoka One',cursive; font-size:clamp(12px,1.6vw,17px); color:var(--acento); letter-spacing:1.5px; line-height:1.2; }
+    .header-sub    { font-family:'Fredoka One',cursive; font-size:clamp(10px,1.1vw,13px); color:rgba(255,255,255,.38); letter-spacing:2px; }
+    .header-est    { display:flex; align-items:center; gap:8px; }
+    .est-label     { font-family:'Fredoka One',cursive; font-size:11px; color:rgba(255,255,255,.4); letter-spacing:1.5px; }
+    .est-iconos    { display:flex; gap:3px; }
+    .est-icono     { font-size:16px; filter:grayscale(1) brightness(.3); transition:filter .3s,transform .3s; }
+    .est-icono.ganada { filter:none; animation:pop .4s cubic-bezier(.34,1.56,.64,1); }
+    @keyframes pop { 0%{transform:scale(.3)} 100%{transform:scale(1)} }
+    .est-pts { font-family:'Fredoka One',cursive; font-size:13px; color:var(--amarillo); }
+
+    /* ── ÁREA ── */
+    .actividad-area { flex:1; display:flex; flex-direction:column; padding:10px 24px 8px; overflow:hidden; gap:8px; }
+
+    /* ── BLOQUE TÍTULO ── */
+    .act-bloque { flex-shrink:0; display:flex; align-items:center; gap:14px; }
+    .act-num    { font-family:'Fredoka One',cursive; font-size:clamp(28px,4vw,46px); color:rgba(255,255,255,.08); flex-shrink:0; line-height:1; }
+    .act-titulo { font-family:'Fredoka One',cursive; font-size:clamp(14px,2vw,20px); color:var(--acento); letter-spacing:1.5px; }
+    .consigna   {
+      font-family:'Fredoka One',cursive; font-size:clamp(11px,1.5vw,15px); letter-spacing:.5px;
+      color:rgba(255,255,255,.85); line-height:1.4;
+      background:rgba(255,107,157,.1); border-left:4px solid var(--acento);
+      padding:8px 14px; border-radius:0 10px 10px 0; margin-top:4px;
+    }
+
+    /* ── FOOTER ── */
+    .footer-barra { flex-shrink:0; display:flex; align-items:center; justify-content:flex-end; padding:6px 24px 10px; gap:14px; }
+    .fb-txt { flex:1; font-family:'Fredoka One',cursive; font-size:clamp(12px,1.5vw,15px); letter-spacing:.5px; padding:8px 14px; border-radius:10px; display:none; }
+    .fb-txt.ok  { background:rgba(107,203,119,.18); color:var(--verde); display:block; }
+    .fb-txt.mal { background:rgba(255,107,53,.18);  color:var(--naranja); display:block; }
+
+    .btn-ver, .btn-sig {
+      font-family:'Fredoka One',cursive; font-size:clamp(13px,1.6vw,16px);
+      letter-spacing:1px; padding:10px 24px; border-radius:50px; border:none; cursor:pointer;
+      white-space:nowrap; transition:transform .12s, box-shadow .12s;
+    }
+    .btn-ver {
+      background:linear-gradient(145deg,var(--acento),#c01060);
+      color:#fff; box-shadow:0 5px 0 var(--sombra), 0 8px 16px rgba(0,0,0,.35);
+    }
+    .btn-ver:hover  { transform:translateY(-2px); }
+    .btn-ver:active { transform:translateY(2px); }
+    .btn-ver:disabled { opacity:.4; cursor:default; transform:none; }
+    .btn-sig {
+      background:linear-gradient(145deg,var(--amarillo),var(--naranja2));
+      color:#2d2d2d; box-shadow:0 5px 0 #c4500a, 0 8px 16px rgba(0,0,0,.35); display:none;
+    }
+    .btn-sig:hover  { transform:translateY(-2px); box-shadow:0 7px 0 #c4500a; }
+    .btn-sig:active { transform:translateY(2px);  box-shadow:0 2px 0 #c4500a; }
+    .btn-sig.visible { display:inline-flex; align-items:center; gap:8px; }
+
+    /* ══ PANTALLA 0: PRESENTACIÓN ══ */
+    .pres-body  { flex:1; display:flex; align-items:center; justify-content:center; gap:40px; padding:0 40px; }
+    .pres-icon  { font-size:clamp(60px,10vw,100px); animation:float 3s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .pres-txt   { max-width:580px; }
+    .pres-cuento{ font-family:'Fredoka One',cursive; font-size:clamp(13px,1.8vw,18px); color:rgba(255,255,255,.5); letter-spacing:3px; margin-bottom:10px; }
+    .pres-titulo{
+      font-family:'Fredoka One',cursive; font-size:clamp(22px,4vw,42px);
+      color:var(--acento); text-shadow:3px 3px 0 var(--sombra), 0 0 30px rgba(255,107,157,.4);
+      letter-spacing:2px; line-height:1.15; margin-bottom:12px;
+    }
+    .pres-chips { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
+    .pres-chip  {
+      font-family:'Fredoka One',cursive; font-size:13px; padding:7px 16px; border-radius:50px;
+      background:rgba(255,107,157,.12); border:2px solid rgba(255,107,157,.3); color:var(--acento); letter-spacing:1px;
+    }
+    .btn-emp {
+      font-family:'Fredoka One',cursive; font-size:clamp(15px,2vw,20px); letter-spacing:1.5px;
+      padding:14px 40px; border-radius:50px; border:none; cursor:pointer;
+      background:linear-gradient(145deg,var(--amarillo),var(--naranja2));
+      color:#2d2d2d; box-shadow:0 6px 0 #c4500a, 0 10px 24px rgba(0,0,0,.35); transition:transform .12s;
+    }
+    .btn-emp:hover { transform:translateY(-3px); }
+    .volver-link { display:block; margin-top:14px; font-family:'Fredoka One',cursive; font-size:13px; letter-spacing:2px; color:rgba(255,255,255,.3); text-decoration:none; transition:color .2s; }
+    .volver-link:hover { color:var(--amarillo); }
+
+    /* ══ PANTALLA 1: OPCIÓN MÚLTIPLE ══ */
+    .preg-item { display:none; }
+    .preg-item.visible { display:contents; }
+    .preg-zona  { flex:1; display:flex; flex-direction:column; gap:10px; overflow:hidden; }
+    .badge-num  { font-family:'Fredoka One',cursive; font-size:12px; padding:4px 12px; border-radius:50px; background:rgba(255,107,157,.15); color:var(--acento); letter-spacing:1px; }
+    .preg-texto { font-family:'Fredoka One',cursive; font-size:clamp(14px,2.2vw,22px); color:var(--amarillo); line-height:1.35; flex:1; }
+    .opciones-grid { flex:1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:10px; overflow:hidden; }
+    .op-btn {
+      font-family:'Fredoka One',cursive; font-size:clamp(12px,1.6vw,16px); letter-spacing:.5px; line-height:1.4;
+      padding:0 18px; border-radius:14px; border:2px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.05); color:#fff; cursor:pointer; text-align:left; width:100%; height:100%;
+      transition:background .18s, border-color .18s, transform .15s;
+    }
+    .op-btn:hover:not(:disabled) { background:rgba(255,107,157,.15); border-color:var(--acento); transform:translateY(-2px); }
+    .op-btn.correcta   { background:rgba(107,203,119,.28); border-color:var(--verde); }
+    .op-btn.incorrecta { background:rgba(255,107,53,.22);  border-color:var(--naranja); opacity:.8; }
+    .op-btn:disabled   { cursor:default; transform:none !important; }
+
+    /* ══ PANTALLA 2: ORDENAR SECUENCIA ══
+       Las 4 imágenes se muestran siempre del mismo tamaño,
+       tanto en el área de origen como en los slots destino.
+       Usamos un grid de 2 filas × 4 columnas que ocupa todo el espacio.
+    ══ */
+    .seq-wrap { flex:1; display:flex; flex-direction:column; gap:12px; overflow:hidden; }
+    .instruccion { font-family:'Fredoka One',cursive; font-size:12px; color:rgba(255,255,255,.38); letter-spacing:1px; flex-shrink:0; }
+
+    /* Fila de imágenes (origen) */
+    .origen-imgs {
+      flex:1; display:flex; gap:12px; align-items:stretch; min-height:0;
+    }
+    /* Fila de slots (destino) — misma altura que origen */
+    .dest-slots {
+      flex:1; display:flex; gap:12px; align-items:stretch; min-height:0;
+    }
+
+    /* Tarjeta de imagen arrastrable */
+    .img-drag {
+      flex:1; border-radius:14px; overflow:hidden;
+      border:3px solid rgba(255,255,255,.16); cursor:grab; position:relative;
+      transition:border-color .18s, box-shadow .18s;
+      /* NO transform on hover para no cambiar tamaño visual */
+    }
+    .img-drag:hover { border-color:var(--acento); box-shadow:0 0 0 3px rgba(255,107,157,.4); }
+    .img-drag.dragging { opacity:.45; cursor:grabbing; }
+    .img-drag.placed   { opacity:.3; cursor:default; border-color:rgba(255,255,255,.06); }
+    .img-drag img { width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none; }
+
+    /* Slot destino */
+    .dest-slot {
+      flex:1; border-radius:14px; border:3px dashed rgba(255,107,157,.4);
+      position:relative; overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+      transition:border-color .2s, background .2s;
+      background:rgba(255,107,157,.04);
+    }
+    .dest-slot .snum {
+      font-family:'Fredoka One',cursive; font-size:clamp(20px,3vw,34px);
+      color:rgba(255,255,255,.18); letter-spacing:1px; pointer-events:none;
+    }
+    .dest-slot.drag-over  { border-color:var(--acento); background:rgba(255,107,157,.1); }
+    .dest-slot.correcta   { border-style:solid; border-color:var(--verde);   background:rgba(107,203,119,.12); }
+    .dest-slot.incorrecta { border-style:solid; border-color:var(--naranja); background:rgba(255,107,53,.08); }
+
+    /* Imagen dentro del slot — ocupa todo el slot */
+    .slot-img-inner {
+      position:absolute; inset:0;
+      width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none;
+    }
+    /* Badge de verificación */
+    .slot-badge {
+      position:absolute; bottom:6px; right:8px;
+      font-size:20px; display:none;
+    }
+    .dest-slot.correcta   .slot-badge { display:block; }
+    /* Número orden pequeño sobre la imagen colocada */
+    .slot-placed-num {
+      position:absolute; top:5px; left:8px;
+      font-family:'Fredoka One',cursive; font-size:13px;
+      background:rgba(0,0,0,.55); color:#fff;
+      padding:2px 8px; border-radius:8px; display:none;
+    }
+    .dest-slot.has-img .slot-placed-num { display:block; }
+
+    /* ══ PANTALLA 3: UNIR IMAGEN CON ORACIÓN ══ */
+    .unir-wrap { flex:1; display:flex; gap:14px; overflow:hidden; }
+    .col-imgs   { display:flex; flex-direction:column; gap:8px; width:34%; flex-shrink:0; }
+    .u-img {
+      flex:1; border-radius:12px; overflow:hidden; border:3px solid rgba(255,255,255,.12);
+      cursor:pointer; position:relative; transition:border-color .2s, transform .18s;
+    }
+    .u-img:hover { border-color:var(--acento); transform:scale(1.02); }
+    .u-img.sel      { border-color:var(--amarillo); box-shadow:0 0 0 3px rgba(255,217,61,.4); }
+    .u-img.correcta { border-color:var(--verde);   box-shadow:0 0 0 3px rgba(107,203,119,.5); cursor:default; }
+    .u-img.incorrecta { border-color:var(--naranja); box-shadow:0 0 0 3px rgba(255,107,53,.4); }
+    .u-img img { width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
+    .u-img .ibadge { position:absolute; top:5px; left:6px; font-family:'Fredoka One',cursive; font-size:12px; background:rgba(0,0,0,.6); color:#fff; padding:2px 8px; border-radius:8px; }
+    .u-img .chk    { position:absolute; bottom:5px; right:6px; font-size:18px; display:none; }
+    .u-img.correcta .chk { display:block; }
+    .lineas-svg   { flex-shrink:0; width:60px; overflow:visible; }
+    .col-oraciones { flex:1; display:flex; flex-direction:column; gap:8px; }
+    .or-card {
+      flex:1; border-radius:12px; padding:0 16px; border:2px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.05); color:#fff; cursor:pointer;
+      display:flex; align-items:center;
+      font-family:'Fredoka One',cursive; font-size:clamp(11px,1.5vw,14px); letter-spacing:.4px; line-height:1.4;
+      transition:border-color .2s, background .2s, transform .18s;
+    }
+    .or-card:hover:not(.correcta):not(.incorrecta) { border-color:var(--acento); background:rgba(255,107,157,.1); transform:translateX(-2px); }
+    .or-card.sel      { border-color:var(--amarillo); background:rgba(255,217,61,.1); }
+    .or-card.correcta { border-color:var(--verde);    background:rgba(107,203,119,.18); cursor:default; }
+    .or-card.incorrecta { border-color:var(--naranja); background:rgba(255,107,53,.1); opacity:.7; }
+    .or-num { font-size:10px; color:rgba(255,255,255,.25); letter-spacing:1px; margin-right:10px; flex-shrink:0; }
+
+    /* ══ PANTALLA 4: COMPLETAR SÍNTESIS ══ */
+    .comp-wrap   { flex:1; display:flex; flex-direction:column; gap:10px; overflow:hidden; }
+    .banco-label { font-family:'Fredoka One',cursive; font-size:12px; color:rgba(255,255,255,.38); letter-spacing:1.5px; flex-shrink:0; }
+    .banco       { display:flex; flex-wrap:wrap; gap:10px; flex-shrink:0; }
+    .banco-pal   {
+      font-family:'Fredoka One',cursive; font-size:15px; padding:7px 18px; border-radius:50px;
+      background:rgba(255,217,61,.1); border:2px solid rgba(255,217,61,.35); color:var(--amarillo);
+      letter-spacing:.5px; cursor:pointer; transition:background .18s, transform .15s; user-select:none;
+    }
+    .banco-pal:hover:not(.usada) { background:rgba(255,217,61,.25); transform:translateY(-2px); }
+    .banco-pal.usada   { opacity:.28; cursor:default; text-decoration:line-through; }
+    .banco-pal.sel-pal { outline:3px solid var(--acento); }
+    .sintesis {
+      flex:1; font-family:'Fredoka One',cursive; font-size:clamp(13px,1.9vw,18px);
+      color:rgba(255,255,255,.9); line-height:2.3; letter-spacing:.3px;
+      background:rgba(255,255,255,.04); border-radius:14px; padding:18px 22px; overflow:hidden;
+    }
+    .comp-inp {
+      font-family:'Fredoka One',cursive; font-size:clamp(13px,1.7vw,16px); color:var(--amarillo);
+      background:transparent; border:none; border-bottom:3px solid rgba(255,107,157,.5);
+      width:clamp(80px,11vw,150px); padding:2px 4px; outline:none; text-align:center;
+      transition:border-color .2s; text-transform:uppercase; cursor:pointer;
+    }
+    .comp-inp:focus { border-color:var(--acento); }
+    .comp-inp.correcta   { border-color:var(--verde);   color:var(--verde); }
+    .comp-inp.incorrecta { border-color:var(--naranja); color:var(--naranja); }
+    .comp-inp:disabled   { cursor:default; }
+
+    /* ══ PANTALLA 5: RESULTADO ══ */
+    .res-centro { flex:1; display:flex; align-items:center; justify-content:center; }
+    .res-box    { text-align:center; max-width:540px; padding:20px; }
+    .res-emoji  { font-size:clamp(50px,9vw,80px); display:block; margin-bottom:12px; animation:float 2s ease-in-out infinite; }
+    .res-titulo { font-family:'Fredoka One',cursive; font-size:clamp(24px,4vw,40px); color:var(--amarillo); text-shadow:2px 2px 0 var(--naranja); letter-spacing:1px; margin-bottom:8px; }
+    .res-estrellas { font-size:clamp(18px,3vw,30px); letter-spacing:4px; margin:12px 0; word-break:break-all; }
+    .res-puntaje { font-family:'Fredoka One',cursive; font-size:clamp(14px,2vw,18px); color:rgba(255,255,255,.6); letter-spacing:2px; margin-bottom:10px; }
+    .res-mensaje { font-family:'Fredoka One',cursive; font-size:clamp(12px,1.6vw,16px); color:rgba(255,255,255,.42); letter-spacing:1px; margin-bottom:22px; }
+    .res-btns   { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    .btn-rein, .btn-volver {
+      font-family:'Fredoka One',cursive; font-size:clamp(13px,1.6vw,16px); letter-spacing:1px;
+      padding:12px 28px; border-radius:50px; border:none; cursor:pointer;
+      transition:transform .12s; text-decoration:none; display:inline-block;
+    }
+    .btn-rein  { background:linear-gradient(145deg,var(--verde),#3a9e48); color:#fff; box-shadow:0 5px 0 #27703a; }
+    .btn-volver { background:linear-gradient(145deg,var(--celeste),var(--azul)); color:#fff; box-shadow:0 5px 0 #1a50cc; }
+    .btn-rein:hover, .btn-volver:hover { transform:translateY(-2px); }
+
+    /* CONFETTI */
+    .cf { position:fixed; pointer-events:none; z-index:9999; width:var(--w); height:var(--h); background:var(--col); border-radius:var(--br); animation:cfcaer var(--dur) ease-out forwards; top:var(--ty); left:var(--tx); }
+    @keyframes cfcaer { 0%{opacity:1;transform:translate(0,0) rotate(0deg) scale(1)} 80%{opacity:1} 100%{opacity:0;transform:translate(var(--fx),var(--fy)) rotate(var(--rot)) scale(.4)} }
+  </style>
+</head>
+<body>
+
+<div class="bg-stars" aria-hidden="true">
+  <span class="bg-star" style="--x:5%;--y:8%;--s:1.1;--d:0s">🎒</span>
+  <span class="bg-star" style="--x:90%;--y:10%;--s:.9;--d:.5s">✨</span>
+  <span class="bg-star" style="--x:14%;--y:72%;--s:1;--d:1s">⭐</span>
+  <span class="bg-star" style="--x:85%;--y:66%;--s:.8;--d:1.5s">✨</span>
+  <span class="bg-star" style="--x:50%;--y:4%;--s:1.2;--d:.8s">🎒</span>
+  <span class="bg-star" style="--x:3%;--y:44%;--s:.7;--d:2s">✨</span>
+  <span class="bg-star" style="--x:95%;--y:38%;--s:1;--d:.3s">⭐</span>
+  <span class="bg-star" style="--x:68%;--y:80%;--s:.9;--d:1.2s">✨</span>
+  <span class="bg-star" style="--x:30%;--y:20%;--s:.8;--d:.6s">⭐</span>
+</div>
+
+<!-- ══ P0: PRESENTACIÓN ══ -->
+<div class="pantalla activa" id="pan0">
+  <div class="pres-body">
+    <div class="pres-icon">🎒</div>
+    <div class="pres-txt">
+      <div class="pres-cuento">COMPRENSIÓN LECTORA · CUENTO 6</div>
+      <h1 class="pres-titulo">LA MOCHILA PESABA DISTINTO</h1>
+      <div class="pres-chips">
+        <span class="pres-chip">❓ 5 PREGUNTAS</span>
+        <span class="pres-chip">🖼️ ORDENAR IMÁGENES</span>
+        <span class="pres-chip">🔗 UNIR CON ORACIÓN</span>
+        <span class="pres-chip">✏️ COMPLETAR SÍNTESIS</span>
+        <span class="pres-chip">⭐ 15 ESTRELLAS</span>
+      </div>
+      <button class="btn-emp" onclick="irA(1)">▶ EMPEZAR</button>
+      <a href="index.html" class="volver-link">← VOLVER A LA BIBLIOTECA</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ P1: OPCIÓN MÚLTIPLE ══ -->
+<div class="pantalla" id="pan1">
+  <div class="header">
+    <div class="header-izq"><span class="header-icono">❓</span>
+      <div><div class="header-titulo">ACTIVIDAD 1 · PREGUNTAS DE COMPRENSIÓN</div>
+           <div class="header-sub">LA MOCHILA PESABA DISTINTO</div></div>
+    </div>
+    <div class="header-est"><span class="est-label">ESTRELLAS:</span><div class="est-iconos" id="ei1"></div><span class="est-pts" id="ep1"></span></div>
+  </div>
+  <div class="actividad-area">
+    <div class="preg-zona">
+
+      <div class="preg-item visible" id="p1">
+        <div class="act-bloque"><div class="act-num">1</div>
+          <div><span class="badge-num">PREGUNTA 1 DE 5</span>
+            <div class="preg-texto" style="margin-top:6px;">¿QUÉ DESCUBRIERON LOS CHICOS AL VER DOS MOCHILAS IGUALES EN LA FILA?</div></div></div>
+        <div class="opciones-grid">
+          <button class="op-btn" data-ok="false">QUE LAS DOS ERAN DE LA MISMA MARCA.</button>
+          <button class="op-btn" data-ok="true">QUE ERAN IGUALES POR FUERA: MISMO COLOR, MISMO DIBUJO Y HASTA EL MISMO LLAVERO.</button>
+          <button class="op-btn" data-ok="false">QUE LAS DOS TENÍAN EL MISMO NOMBRE ADENTRO.</button>
+          <button class="op-btn" data-ok="false">QUE LAS DOS PESABAN EXACTAMENTE LO MISMO.</button>
+        </div>
+      </div>
+
+      <div class="preg-item" id="p2">
+        <div class="act-bloque"><div class="act-num">2</div>
+          <div><span class="badge-num">PREGUNTA 2 DE 5</span>
+            <div class="preg-texto" style="margin-top:6px;">¿QUÉ PASÓ CUANDO UN CHICO AGARRÓ RÁPIDO UNA DE LAS MOCHILAS IGUALES?</div></div></div>
+        <div class="opciones-grid">
+          <button class="op-btn" data-ok="false">LA MOCHILA TENÍA SUS PROPIAS COSAS ADENTRO.</button>
+          <button class="op-btn" data-ok="false">NO PASÓ NADA, ERA LA SUYA.</button>
+          <button class="op-btn" data-ok="true">CUANDO LA ABRIÓ, SE QUEDÓ QUIETO: EL CUADERNO TENÍA OTRO NOMBRE Y LA MERIENDA ERA DIFERENTE.</button>
+          <button class="op-btn" data-ok="false">LA MOCHILA ESTABA VACÍA POR DENTRO.</button>
+        </div>
+      </div>
+
+      <div class="preg-item" id="p3">
+        <div class="act-bloque"><div class="act-num">3</div>
+          <div><span class="badge-num">PREGUNTA 3 DE 5</span>
+            <div class="preg-texto" style="margin-top:6px;">¿CÓMO ENCONTRARON LA MOCHILA QUE FALTABA?</div></div></div>
+        <div class="opciones-grid">
+          <button class="op-btn" data-ok="false">LE PREGUNTARON A LA SEÑO QUIÉN SE LA HABÍA LLEVADO.</button>
+          <button class="op-btn" data-ok="false">LA ENCONTRARON EN EL PATIO DEL RECREO.</button>
+          <button class="op-btn" data-ok="true">REVISARON UNA POR UNA, ABRIENDO CIERRES Y MIRANDO ETIQUETAS, HASTA QUE APARECIÓ AL FONDO DEL AULA.</button>
+          <button class="op-btn" data-ok="false">LA BUSCARON EN EL CUARTO DE LA DIRECCIÓN.</button>
+        </div>
+      </div>
+
+      <div class="preg-item" id="p4">
+        <div class="act-bloque"><div class="act-num">4</div>
+          <div><span class="badge-num">PREGUNTA 4 DE 5</span>
+            <div class="preg-texto" style="margin-top:6px;">¿CÓMO SUPIERON QUE LA MOCHILA ENCONTRADA ERA LA CORRECTA?</div></div></div>
+        <div class="opciones-grid">
+          <button class="op-btn" data-ok="false">PORQUE TENÍA UNA ETIQUETA CON EL NOMBRE EN LA AGARRADERA.</button>
+          <button class="op-btn" data-ok="true">PORQUE ADENTRO ESTABAN LA FIGURITA EN EL BOLSILLO, EL CUADERNO CON LA PRIMERA HOJA ESCRITA Y LA GOMA MORDIDA.</button>
+          <button class="op-btn" data-ok="false">PORQUE EL DIBUJO DE AFUERA ERA DIFERENTE AL DE LA OTRA.</button>
+          <button class="op-btn" data-ok="false">PORQUE PESABA MÁS QUE LAS DEMÁS MOCHILAS.</button>
+        </div>
+      </div>
+
+      <div class="preg-item" id="p5">
+        <div class="act-bloque"><div class="act-num">5</div>
+          <div><span class="badge-num">PREGUNTA 5 DE 5</span>
+            <div class="preg-texto" style="margin-top:6px;">¿QUÉ APRENDIERON LOS CHICOS SOBRE LAS MOCHILAS?</div></div></div>
+        <div class="opciones-grid">
+          <button class="op-btn" data-ok="false">QUE HAY QUE PONER EL NOMBRE MUY GRANDE POR FUERA.</button>
+          <button class="op-btn" data-ok="false">QUE ES MEJOR TENER UNA MOCHILA DE COLOR DIFERENTE A LOS DEMÁS.</button>
+          <button class="op-btn" data-ok="false">QUE LAS MOCHILAS SIEMPRE SE PIERDEN EN PRIMERO.</button>
+          <button class="op-btn" data-ok="true">QUE LAS MOCHILAS NO SE RECONOCEN POR EL DIBUJO, SINO POR LO QUE GUARDAN ADENTRO.</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="footer-barra">
+    <div class="fb-txt" id="fb1"></div>
+    <button class="btn-sig" id="sig1">SIGUIENTE ▶</button>
+  </div>
+</div>
+
+<!-- ══ P2: ORDENAR SECUENCIA (4 imágenes) ══ -->
+<div class="pantalla" id="pan2">
+  <div class="header">
+    <div class="header-izq"><span class="header-icono">🖼️</span>
+      <div><div class="header-titulo">ACTIVIDAD 2 · ORDENÁ LA SECUENCIA</div>
+           <div class="header-sub">LA MOCHILA PESABA DISTINTO</div></div>
+    </div>
+    <div class="header-est"><span class="est-label">ESTRELLAS:</span><div class="est-iconos" id="ei2"></div><span class="est-pts" id="ep2"></span></div>
+  </div>
+  <div class="actividad-area">
+    <div class="act-bloque">
+      <div class="act-num">2</div>
+      <div>
+        <div class="act-titulo">ORDENÁ LA SECUENCIA</div>
+        <div class="consigna">ARRASTRÁ CADA IMAGEN AL NÚMERO QUE LE CORRESPONDE SEGÚN EL ORDEN DEL CUENTO. EN CHROMEBOOK: HACÉ CLIC EN UNA IMAGEN Y DESPUÉS EN EL NÚMERO DONDE VA.</div>
+      </div>
+    </div>
+
+    <div class="seq-wrap">
+      <div class="instruccion">LAS IMÁGENES MANTIENEN SU TAMAÑO · ARRASTRÁ O HACÉ CLIC PARA COLOCARLAS</div>
+
+      <!-- ORIGEN: imágenes mezcladas (orden mostrado: 5, 1, 7, 2) -->
+      <div class="origen-imgs" id="origenSeq">
+        <div class="img-drag" draggable="true" data-id="5" id="sImg5"><img src="momento5.png" alt="Escena 5"></div>
+        <div class="img-drag" draggable="true" data-id="1" id="sImg1"><img src="momento1.png" alt="Escena 1"></div>
+        <div class="img-drag" draggable="true" data-id="7" id="sImg7"><img src="momento7.png" alt="Escena 7"></div>
+        <div class="img-drag" draggable="true" data-id="2" id="sImg2"><img src="momento2.png" alt="Escena 2"></div>
+      </div>
+
+      <!-- DESTINO: 4 slots numerados -->
+      <div class="dest-slots" id="destSeq">
+        <div class="dest-slot" data-pos="1" id="ds1"><span class="snum">1°</span><span class="slot-badge">✅</span><span class="slot-placed-num">1°</span></div>
+        <div class="dest-slot" data-pos="2" id="ds2"><span class="snum">2°</span><span class="slot-badge">✅</span><span class="slot-placed-num">2°</span></div>
+        <div class="dest-slot" data-pos="3" id="ds3"><span class="snum">3°</span><span class="slot-badge">✅</span><span class="slot-placed-num">3°</span></div>
+        <div class="dest-slot" data-pos="4" id="ds4"><span class="snum">4°</span><span class="slot-badge">✅</span><span class="slot-placed-num">4°</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-barra">
+    <div class="fb-txt" id="fb2"></div>
+    <button class="btn-ver" id="btnVS">✔ VERIFICAR</button>
+    <button class="btn-sig" id="sig2">SIGUIENTE ▶</button>
+  </div>
+</div>
+
+<!-- ══ P3: UNIR IMAGEN CON ORACIÓN ══ -->
+<div class="pantalla" id="pan3">
+  <div class="header">
+    <div class="header-izq"><span class="header-icono">🔗</span>
+      <div><div class="header-titulo">ACTIVIDAD 3 · UNÍ LA IMAGEN CON LA ORACIÓN</div>
+           <div class="header-sub">LA MOCHILA PESABA DISTINTO</div></div>
+    </div>
+    <div class="header-est"><span class="est-label">ESTRELLAS:</span><div class="est-iconos" id="ei3"></div><span class="est-pts" id="ep3"></span></div>
+  </div>
+  <div class="actividad-area">
+    <div class="act-bloque">
+      <div class="act-num">3</div>
+      <div>
+        <div class="act-titulo">UNÍ IMAGEN Y ORACIÓN</div>
+        <div class="consigna">HACÉ CLIC EN UNA IMAGEN Y DESPUÉS EN LA ORACIÓN QUE LA DESCRIBE CORRECTAMENTE.</div>
+      </div>
+    </div>
+    <div class="unir-wrap">
+      <div class="col-imgs">
+        <!-- A = momento1: niños revisando mochilas -->
+        <div class="u-img" data-id="A" id="uA">
+          <img src="momento1.png" alt="">
+          <span class="ibadge">IMG A</span><span class="chk">✅</span>
+        </div>
+        <!-- B = momento2: mochilas apoyadas en la pared -->
+        <div class="u-img" data-id="B" id="uB">
+          <img src="momento2.png" alt="">
+          <span class="ibadge">IMG B</span><span class="chk">✅</span>
+        </div>
+        <!-- C = momento7: niños abriendo cartucheras en los bancos -->
+        <div class="u-img" data-id="C" id="uC">
+          <img src="momento7.png" alt="">
+          <span class="ibadge">IMG C</span><span class="chk">✅</span>
+        </div>
+      </div>
+      <svg class="lineas-svg" id="svgL" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="col-oraciones">
+        <!-- oración B: mochilas apoyadas -->
+        <div class="or-card" data-id="B" id="oB">
+          <span class="or-num">A</span>
+          EL PRIMER DÍA DE PRIMERO APOYAMOS LAS MOCHILAS CONTRA LA PARED. ALGUNAS QUEDARON DERECHAS, OTRAS TORCIDAS. LAS MIRÁBAMOS DE REOJO.
+        </div>
+        <!-- oración A: niños revisando -->
+        <div class="or-card" data-id="A" id="oA">
+          <span class="or-num">B</span>
+          EMPEZAMOS A REVISAR UNA POR UNA: ABRÍAMOS CIERRES, MIRÁBAMOS ETIQUETAS Y COMPARÁBAMOS DETALLES HASTA ENCONTRAR LA QUE FALTABA.
+        </div>
+        <!-- oración C: cartucheras en los bancos -->
+        <div class="or-card" data-id="C" id="oC">
+          <span class="or-num">C</span>
+          CUANDO NOS SENTAMOS, EL RUIDO DE LAS CARTUCHERAS LLENÓ EL AULA. CLAC. CLINC. CRRRR. ERA EL SONIDO DE PRIMERO.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-barra">
+    <div class="fb-txt" id="fb3"></div>
+    <button class="btn-ver" id="btnVU" disabled>✔ VERIFICAR</button>
+    <button class="btn-sig" id="sig3">SIGUIENTE ▶</button>
+  </div>
+</div>
+
+<!-- ══ P4: COMPLETAR SÍNTESIS ══ -->
+<div class="pantalla" id="pan4">
+  <div class="header">
+    <div class="header-izq"><span class="header-icono">✏️</span>
+      <div><div class="header-titulo">ACTIVIDAD 4 · COMPLETÁ LA SÍNTESIS</div>
+           <div class="header-sub">LA MOCHILA PESABA DISTINTO</div></div>
+    </div>
+    <div class="header-est"><span class="est-label">ESTRELLAS:</span><div class="est-iconos" id="ei4"></div><span class="est-pts" id="ep4"></span></div>
+  </div>
+  <div class="actividad-area">
+    <div class="act-bloque">
+      <div class="act-num">4</div>
+      <div>
+        <div class="act-titulo">COMPLETÁ LA SÍNTESIS</div>
+        <div class="consigna">HACÉ CLIC EN UNA PALABRA DEL BANCO Y LUEGO EN EL ESPACIO EN BLANCO DONDE VA.</div>
+      </div>
+    </div>
+    <div class="comp-wrap">
+      <div class="banco-label">BANCO DE PALABRAS:</div>
+      <div class="banco" id="banco">
+        <div class="banco-pal" data-p="IGUALES">IGUALES</div>
+        <div class="banco-pal" data-p="ADENTRO">ADENTRO</div>
+        <div class="banco-pal" data-p="NOMBRE">NOMBRE</div>
+        <div class="banco-pal" data-p="DIBUJO">DIBUJO</div>
+        <div class="banco-pal" data-p="GUARDABAN">GUARDABAN</div>
+        <div class="banco-pal" data-p="ETIQUETAS">ETIQUETAS</div>
+      </div>
+      <div class="sintesis">
+        LOS CHICOS DESCUBRIERON DOS MOCHILAS
+        <input class="comp-inp" id="ci1" data-r="IGUALES" readonly placeholder="_ _ _ _ _ _ _">.
+        CUANDO UNO LAS ABRIÓ, VIO QUE EL CUADERNO TENÍA OTRO
+        <input class="comp-inp" id="ci2" data-r="NOMBRE" readonly placeholder="_ _ _ _ _ _">
+        Y LA MERIENDA ERA DIFERENTE.
+        BUSCARON MIRANDO
+        <input class="comp-inp" id="ci3" data-r="ETIQUETAS" readonly placeholder="_ _ _ _ _ _ _ _ _">
+        HASTA ENCONTRAR LA QUE FALTABA.
+        LAS MOCHILAS NO SE RECONOCEN POR EL
+        <input class="comp-inp" id="ci4" data-r="DIBUJO" readonly placeholder="_ _ _ _ _ _">
+        DE AFUERA,
+        SINO POR LO QUE
+        <input class="comp-inp" id="ci5" data-r="GUARDABAN" readonly placeholder="_ _ _ _ _ _ _ _ _">
+        <input class="comp-inp" id="ci6" data-r="ADENTRO" readonly placeholder="_ _ _ _ _ _">.
+      </div>
+    </div>
+  </div>
+  <div class="footer-barra">
+    <div class="fb-txt" id="fb4"></div>
+    <button class="btn-ver" id="btnVC">✔ VERIFICAR</button>
+    <button class="btn-sig" id="sig4">VER MI CALIFICACIÓN ⭐</button>
+  </div>
+</div>
+
+<!-- ══ P5: RESULTADO ══ -->
+<div class="pantalla" id="pan5">
+  <div class="header">
+    <div class="header-izq"><span class="header-icono">🏆</span>
+      <div><div class="header-titulo">RESULTADO FINAL</div>
+           <div class="header-sub">LA MOCHILA PESABA DISTINTO</div></div>
+    </div>
+    <div class="header-est"><span class="est-label">TOTAL:</span><div class="est-iconos" id="ei5"></div><span class="est-pts" id="ep5"></span></div>
+  </div>
+  <div class="res-centro">
+    <div class="res-box">
+      <span class="res-emoji" id="rEmoji">🏆</span>
+      <div class="res-titulo" id="rTitulo"></div>
+      <div class="res-estrellas" id="rEst"></div>
+      <div class="res-puntaje" id="rPunt"></div>
+      <div class="res-mensaje" id="rMsg"></div>
+      <div class="res-btns">
+        <button class="btn-rein" onclick="location.reload()">🔄 VOLVER A INTENTAR</button>
+        <a href="index.html" class="btn-volver">📚 IR A LA BIBLIOTECA</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══ PUNTAJE: 5 preguntas + 4 secuencia + 3 unir + 3 completar = 15 ══ */
+const TOTAL = 15;
+let pts = 0;
+const CFCOLS = ['#FFD93D','#FF6B35','#74C7EC','#6BCB77','#FF6B9D','#C77DFF','#fff'];
+
+function renderEst(id) {
+  const c = document.getElementById('ei'+id), p = document.getElementById('ep'+id);
+  if (!c) return;
+  c.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const s = document.createElement('span');
+    s.className = 'est-icono' + (i < pts ? ' ganada' : '');
+    s.textContent = '⭐'; c.appendChild(s);
+  }
+  p.textContent = pts + '/' + TOTAL;
+}
+function sumar(n=1) { pts = Math.min(pts+n, TOTAL); [1,2,3,4,5].forEach(i=>renderEst(i)); }
+function irA(n) {
+  document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('activa'));
+  document.getElementById('pan'+n).classList.add('activa');
+  [1,2,3,4,5].forEach(i=>renderEst(i));
+}
+function confetti() {
+  for (let i=0; i<65; i++) {
+    const p = document.createElement('div'); p.className='cf';
+    const col=CFCOLS[~~(Math.random()*CFCOLS.length)], sh=['50%','4px','2px/8px'][~~(Math.random()*3)];
+    const w=7+Math.random()*8, h=7+Math.random()*8, ang=Math.random()*360, dist=100+Math.random()*230;
+    const rad=ang*Math.PI/180, dur=0.7+Math.random()*0.7, ox=innerWidth/2, oy=innerHeight/2;
+    p.style.cssText=`--col:${col};--w:${w}px;--h:${h}px;--br:${sh};--dur:${dur}s;--tx:${ox-w/2}px;--ty:${oy-h/2}px;--fx:${Math.cos(rad)*dist}px;--fy:${Math.sin(rad)*dist-80}px;--rot:${-360+Math.random()*720}deg;`;
+    document.body.appendChild(p); setTimeout(()=>p.remove(), dur*1000+200);
+  }
+}
+[1,2,3,4,5].forEach(i=>renderEst(i));
+
+/* ══ ACT 1: OPCIÓN MÚLTIPLE ══ */
+const resp1 = {};
+for (let n=1; n<=5; n++) {
+  const preg = document.getElementById('p'+n);
+  const btns = preg.querySelectorAll('.op-btn');
+  btns.forEach(b => {
+    b.addEventListener('click', () => {
+      if (resp1[n]) return;
+      resp1[n] = true;
+      const ok = b.dataset.ok === 'true';
+      btns.forEach(x => { x.disabled=true; if(x.dataset.ok==='true') x.classList.add('correcta'); });
+      if (!ok) b.classList.add('incorrecta');
+      if (ok) sumar(1);
+      const fb = document.getElementById('fb1');
+      fb.textContent = ok ? '✅ ¡CORRECTO! MUY BIEN.' : '❌ NO ES ESA. LA RESPUESTA CORRECTA ESTÁ MARCADA EN VERDE.';
+      fb.className = 'fb-txt '+(ok?'ok':'mal');
+      setTimeout(() => {
+        if (n < 5) {
+          document.getElementById('p'+n).classList.remove('visible');
+          document.getElementById('p'+(n+1)).classList.add('visible');
+          fb.className = 'fb-txt';
+        } else {
+          document.getElementById('sig1').classList.add('visible');
+        }
+      }, ok ? 900 : 1400);
+    });
+  });
+}
+document.getElementById('sig1').addEventListener('click', ()=>irA(2));
+
+/* ══ ACT 2: ORDENAR SECUENCIA
+   Orden correcto: pos1→img1, pos2→img2, pos3→img5, pos4→img7
+   Los IDs de imágenes son sus números de archivo: 1,2,5,7
+══ */
+const ORDEN_OK = { '1':'1', '2':'2', '3':'5', '4':'7' };
+let slotSeq = {1:null, 2:null, 3:null, 4:null};
+let seqV=false, seqDrag=null, seqTap=null;
+
+document.querySelectorAll('.img-drag').forEach(img => {
+  img.addEventListener('dragstart', () => {
+    if (seqV) return;
+    seqDrag = img.dataset.id;
+    setTimeout(()=>img.classList.add('dragging'), 0);
+  });
+  img.addEventListener('dragend', () => { img.classList.remove('dragging'); seqDrag=null; });
+  img.addEventListener('click', () => {
+    if (seqV) return;
+    document.querySelectorAll('.img-drag').forEach(x=>x.style.outline='');
+    if (seqTap === img.dataset.id) { seqTap=null; return; }
+    seqTap = img.dataset.id;
+    img.style.outline = '3px solid var(--acento)';
+  });
+});
+
+document.querySelectorAll('.dest-slot').forEach(sl => {
+  sl.addEventListener('dragover', e => { e.preventDefault(); if(!seqV) sl.classList.add('drag-over'); });
+  sl.addEventListener('dragleave', () => sl.classList.remove('drag-over'));
+  sl.addEventListener('drop', e => {
+    e.preventDefault(); sl.classList.remove('drag-over');
+    if (!seqDrag || seqV) return;
+    putSeq(sl, seqDrag); seqDrag=null;
+  });
+  sl.addEventListener('click', () => {
+    if (seqV) return;
+    if (seqTap) {
+      putSeq(sl, seqTap);
+      document.querySelectorAll('.img-drag').forEach(x=>x.style.outline='');
+      seqTap=null;
+    } else if (sl._iid) {
+      // devolver imagen al origen
+      const id = sl._iid;
+      slotSeq[sl.dataset.pos] = null; sl._iid = null;
+      const img = sl.querySelector('.slot-img-inner');
+      if (img) img.remove();
+      sl.querySelector('.snum').style.opacity = '1';
+      sl.classList.remove('has-img');
+      document.getElementById('sImg'+id).classList.remove('placed');
+    }
+  });
+});
+
+function putSeq(sl, id) {
+  const pos = sl.dataset.pos;
+  // si el slot ya tenía imagen, devolver esa al origen
+  if (sl._iid) {
+    document.getElementById('sImg'+sl._iid).classList.remove('placed');
+  }
+  // liberar slot anterior de esta misma imagen
+  for (const p in slotSeq) {
+    if (slotSeq[p] == id) {
+      slotSeq[p] = null;
+      const prevSl = document.getElementById('ds'+p);
+      if (prevSl) {
+        const prevImg = prevSl.querySelector('.slot-img-inner');
+        if (prevImg) prevImg.remove();
+        prevSl.querySelector('.snum').style.opacity='1';
+        prevSl.classList.remove('has-img');
+        prevSl._iid = null;
+      }
+    }
+  }
+  slotSeq[pos] = id;
+  sl._iid = id;
+  // Crear imagen dentro del slot
+  let existing = sl.querySelector('.slot-img-inner');
+  if (existing) existing.remove();
+  const imgEl = document.getElementById('sImg'+id).querySelector('img');
+  const clone = document.createElement('img');
+  clone.src = imgEl.src; clone.className = 'slot-img-inner'; clone.alt = '';
+  sl.appendChild(clone);
+  sl.querySelector('.snum').style.opacity = '0';
+  sl.classList.add('has-img');
+  // Marcar imagen original como "colocada"
+  document.getElementById('sImg'+id).classList.add('placed');
+}
+
+document.getElementById('btnVS').addEventListener('click', () => {
+  if (seqV) return;
+  for (let p=1; p<=4; p++) {
+    if (!slotSeq[p]) {
+      const fb=document.getElementById('fb2');
+      fb.textContent='⚠️ FALTAN IMÁGENES. COMPLETÁ LOS 4 LUGARES.';
+      fb.className='fb-txt mal'; return;
+    }
+  }
+  seqV = true; let ok=0;
+  for (let p=1; p<=4; p++) {
+    const sl = document.getElementById('ds'+p);
+    if (slotSeq[p] === ORDEN_OK[String(p)]) { sl.classList.add('correcta'); ok++; }
+    else sl.classList.add('incorrecta');
+  }
+  document.querySelectorAll('.img-drag').forEach(x=>{ x.setAttribute('draggable','false'); x.style.cursor='default'; });
+  sumar(ok);
+  const fb=document.getElementById('fb2');
+  fb.textContent = ok===4 ? '✅ ¡PERFECTO! ORDENASTE LAS 4 IMÁGENES CORRECTAMENTE.' : (ok>0 ? `✅ ORDENASTE ${ok} DE 4 CORRECTAMENTE.` : '❌ NINGUNA IMAGEN ESTÁ EN EL ORDEN CORRECTO.');
+  fb.className = 'fb-txt '+(ok>0?'ok':'mal');
+  document.getElementById('btnVS').disabled=true;
+  document.getElementById('sig2').classList.add('visible');
+});
+document.getElementById('sig2').addEventListener('click', ()=>irA(3));
+
+/* ══ ACT 3: UNIR IMAGEN CON ORACIÓN
+   A→A (momento1 / revisar), B→B (momento2 / mochilas pared), C→C (momento7 / cartucheras)
+══ */
+const PARES = { A:'A', B:'B', C:'C' };
+let uImgSel=null, uOrSel=null, uPares={}, uV=false;
+
+function actBtnVU() { document.getElementById('btnVU').disabled = Object.keys(uPares).length < 3; }
+
+document.querySelectorAll('.u-img').forEach(img => {
+  img.addEventListener('click', () => {
+    if (uV || img.classList.contains('correcta')) return;
+    document.querySelectorAll('.u-img').forEach(x=>{ x.classList.remove('sel'); x.style.borderColor=''; });
+    document.querySelectorAll('.or-card').forEach(x=>x.classList.remove('sel'));
+    uImgSel = img.dataset.id; img.classList.add('sel');
+    if (uOrSel) { hacerPar(uImgSel, uOrSel); uImgSel=null; uOrSel=null; }
+  });
+});
+document.querySelectorAll('.or-card').forEach(or => {
+  or.addEventListener('click', () => {
+    if (uV || or.classList.contains('correcta')) return;
+    document.querySelectorAll('.or-card').forEach(x=>x.classList.remove('sel'));
+    document.querySelectorAll('.u-img').forEach(x=>{ x.classList.remove('sel'); x.style.borderColor=''; });
+    uOrSel = or.dataset.id; or.classList.add('sel');
+    if (uImgSel) { hacerPar(uImgSel, uOrSel); uImgSel=null; uOrSel=null; }
+  });
+});
+
+function hacerPar(imgId, orId) {
+  uPares[imgId] = orId;
+  document.querySelectorAll('.u-img').forEach(x=>{ x.classList.remove('sel'); x.style.borderColor=''; });
+  document.querySelectorAll('.or-card').forEach(x=>x.classList.remove('sel'));
+  document.getElementById('u'+imgId).style.borderColor = 'rgba(255,217,61,.6)';
+  document.querySelector(`.or-card[data-id="${orId}"]`).classList.add('sel');
+  actBtnVU(); dibujarLineas();
+}
+
+function dibujarLineas() {
+  const svg=document.getElementById('svgL'); svg.innerHTML='';
+  const sr=svg.getBoundingClientRect();
+  for (const imgId in uPares) {
+    const orId=uPares[imgId];
+    const ie=document.getElementById('u'+imgId), oe=document.querySelector(`.or-card[data-id="${orId}"]`);
+    if(!ie||!oe) continue;
+    const ir=ie.getBoundingClientRect(), or2=oe.getBoundingClientRect();
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',ir.right-sr.left); ln.setAttribute('y1',ir.top+ir.height/2-sr.top);
+    ln.setAttribute('x2',or2.left-sr.left); ln.setAttribute('y2',or2.top+or2.height/2-sr.top);
+    ln.setAttribute('stroke','rgba(255,217,61,.5)'); ln.setAttribute('stroke-width','2.5'); ln.setAttribute('stroke-dasharray','6,4');
+    svg.appendChild(ln);
+  }
+}
+
+document.getElementById('btnVU').addEventListener('click', () => {
+  if (uV) return; uV=true; let ok=0;
+  const svg=document.getElementById('svgL'); svg.innerHTML='';
+  const sr=svg.getBoundingClientRect();
+  for (const imgId in uPares) {
+    const orId=uPares[imgId];
+    const ie=document.getElementById('u'+imgId), oe=document.querySelector(`.or-card[data-id="${orId}"]`);
+    const correcto = PARES[imgId]===orId;
+    if(correcto){ ie.classList.add('correcta'); oe.classList.add('correcta'); ok++; }
+    else { ie.classList.add('incorrecta'); oe.classList.add('incorrecta'); }
+    ie.style.borderColor='';
+    const ir=ie.getBoundingClientRect(), or2=oe.getBoundingClientRect();
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',ir.right-sr.left); ln.setAttribute('y1',ir.top+ir.height/2-sr.top);
+    ln.setAttribute('x2',or2.left-sr.left); ln.setAttribute('y2',or2.top+or2.height/2-sr.top);
+    ln.setAttribute('stroke',correcto?'var(--verde)':'var(--naranja)'); ln.setAttribute('stroke-width','3');
+    svg.appendChild(ln);
+  }
+  sumar(ok);
+  const fb=document.getElementById('fb3');
+  fb.textContent=ok===3?'✅ ¡EXCELENTE! UNISTE TODAS LAS IMÁGENES CORRECTAMENTE.':(ok>0?`✅ UNISTE ${ok} DE 3 CORRECTAMENTE.`:'❌ NINGÚN PAR ES CORRECTO. ¡NO TE RINDAS!');
+  fb.className='fb-txt '+(ok>0?'ok':'mal');
+  document.getElementById('btnVU').disabled=true;
+  document.getElementById('sig3').classList.add('visible');
+});
+document.getElementById('sig3').addEventListener('click', ()=>irA(4));
+
+/* ══ ACT 4: COMPLETAR SÍNTESIS ══ */
+let cPalSel=null, cV=false;
+document.querySelectorAll('.banco-pal').forEach(pal => {
+  pal.addEventListener('click', () => {
+    if (pal.classList.contains('usada')||cV) return;
+    document.querySelectorAll('.banco-pal').forEach(p=>{ p.style.outline=''; p.classList.remove('sel-pal'); });
+    if (cPalSel===pal.dataset.p) { cPalSel=null; return; }
+    cPalSel=pal.dataset.p; pal.classList.add('sel-pal');
+  });
+});
+document.querySelectorAll('.comp-inp').forEach(inp => {
+  inp.addEventListener('click', () => {
+    if (!cPalSel||cV) return;
+    if (inp.value) { const prev=document.querySelector(`.banco-pal[data-p="${inp.value}"]`); if(prev) prev.classList.remove('usada'); }
+    inp.value=cPalSel;
+    const palEl=document.querySelector(`.banco-pal[data-p="${cPalSel}"]`);
+    if(palEl){ palEl.classList.add('usada'); palEl.style.outline=''; palEl.classList.remove('sel-pal'); }
+    cPalSel=null; document.querySelectorAll('.banco-pal').forEach(p=>p.style.outline='');
+  });
+});
+document.getElementById('btnVC').addEventListener('click', () => {
+  if (cV) return;
+  const inputs=document.querySelectorAll('.comp-inp');
+  let todos=true; inputs.forEach(i=>{ if(!i.value) todos=false; });
+  if (!todos) { const fb=document.getElementById('fb4'); fb.textContent='⚠️ COMPLETÁ TODOS LOS ESPACIOS ANTES DE VERIFICAR.'; fb.className='fb-txt mal'; return; }
+  cV=true; let ok=0;
+  inputs.forEach(i=>{ i.disabled=true; if(i.value===i.dataset.r){ i.classList.add('correcta'); ok++; } else i.classList.add('incorrecta'); });
+  sumar(ok);
+  const fb=document.getElementById('fb4');
+  fb.textContent=ok===6?'✅ ¡EXCELENTE! COMPLETASTE TODA LA SÍNTESIS CORRECTAMENTE.':(ok>0?`✅ COMPLETASTE ${ok} DE 6 CORRECTAMENTE.`:'❌ NINGUNA PALABRA ES CORRECTA. ¡REVISÁ EL BANCO!');
+  fb.className='fb-txt '+(ok>0?'ok':'mal');
+  document.getElementById('btnVC').disabled=true;
+  document.getElementById('sig4').classList.add('visible');
+});
+document.getElementById('sig4').addEventListener('click', ()=>{ irA(5); mostrarRes(); });
+
+/* ══ RESULTADO ══ */
+function mostrarRes() {
+  const pct=pts/TOTAL;
+  let emoji,titulo,mensaje;
+  if(pct===1){ emoji='🏆'; titulo='¡FELICITACIONES!'; mensaje='¡RESPONDISTE TODO CORRECTAMENTE! ERES UNA ESTRELLA.'; confetti(); }
+  else if(pct>=0.7){ emoji='🌟'; titulo='¡MUY BIEN!'; mensaje='¡LO HICISTE GENIAL! PODÉS VOLVER A INTENTARLO PARA MEJORAR.'; }
+  else if(pct>=0.4){ emoji='😊'; titulo='¡BUEN ESFUERZO!'; mensaje='TE FUÉ BIEN EN ALGUNOS. ¡VOLVÉ A INTENTARLO!'; }
+  else { emoji='📖'; titulo='¡SEGUÍ PRACTICANDO!'; mensaje='RELEÉ EL CUENTO Y VOLVÉ A INTENTARLO. ¡VOS PODÉS!'; }
+  let est=''; for(let i=0;i<TOTAL;i++) est+=i<pts?'⭐':'☆';
+  document.getElementById('rEmoji').textContent=emoji;
+  document.getElementById('rTitulo').textContent=titulo;
+  document.getElementById('rEst').textContent=est;
+  document.getElementById('rPunt').textContent=pts+' DE '+TOTAL+' ESTRELLAS';
+  document.getElementById('rMsg').textContent=mensaje;
+}
+
+window.addEventListener('resize', dibujarLineas);
+</script>
+</body>
+</html>
